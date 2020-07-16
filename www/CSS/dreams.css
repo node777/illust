@@ -1,0 +1,180 @@
+@charset "utf-8";
+
+:root {
+	--color1: #d2d1dc;
+	--color2: #181818;
+	--color3: #242424;
+  }
+body {
+	color: var(--color1);
+	background-color: var(--color2);
+	margin: 0;
+	display: flex;
+    flex-wrap: wrap;
+    font-family: 'Montserrat', sans-serif;
+    /*font-variant: small-caps;*/
+    letter-spacing: 2px;
+
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+	-moz-user-select: none;     /* Firefox all */
+	-ms-user-select: none;      /* IE 10+ */
+	user-select: none;      
+}
+body > *{
+    width: 100%;
+}
+img{
+	width:100%;
+}
+input{
+    display: none;
+}
+model-viewer{
+    position: absolute;
+    height:80%;
+}
+#header{
+    top:0;
+    padding: 5%;
+    height:64px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+#nav{
+    top:64px;
+    height:32px;
+}
+#content{
+    top:96px;
+    bottom:32px;
+}
+#content div{
+    flex:1;
+}
+#footer{
+    display: flex;
+    bottom: 0px;
+    height: 32px;
+    padding: 0 32px;
+}
+#modelSelect{
+    position: absolute;
+    bottom:0;
+    top:80%;
+    height: 20%;
+    overflow-y: hidden;
+    /* We set the scroll snapping */
+    scroll-snap-type: x mandatory;
+    /* Necessary for mobile scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* For layout purposes */
+    display: flex;
+    overflow-x: scroll;
+
+    text-align: center;
+    scroll-behavior: smooth;
+}
+#modelSelect>*{
+    min-width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* Set where the snapping should happen */
+    scroll-snap-align: start;
+    scroll-behavior: smooth;
+}
+#minimizeButton{
+    display: none;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    left:16px;
+    bottom:16px;
+    transform: rotate(180deg);
+
+}
+#maximizeButton{
+    display: none;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    bottom: calc(20% + 16px);
+    left:16px;
+
+}
+#nextButton{
+    position: absolute;
+    transform: rotate(270deg);
+    width: 40px;
+    height: 40px;
+    bottom: calc(10% - 20px);
+    right:16px;
+    z-index: 20;
+
+}
+#uPopup{
+	color: var(--color1);
+	background-color: var(--color1);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#uPopup>div{
+    position: absolute;
+    top: 5%;
+    bottom: 5%;
+    left: 5%;
+    right: 5%;
+	background-color: var(--color2);
+}
+#uPopup input{
+    display: initial;
+    font-family: 'Montserrat', sans-serif;
+    margin: 3% 13%;
+    width: 74%;
+}
+.mobile{
+    display: none;
+}
+.button{
+    cursor: pointer;
+    border: 2px solid var(--color1);
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+    padding: 16px;
+    margin: 10%;
+}
+a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+a:link {
+    color: #FFFFFF;
+}
+a:visited {
+    color: #FFFFFF;
+}
+a:hover {
+    color: #ABA62F;
+}
+a:active {
+	color: #D7E919;
+}
+
+/*mobile*/
+
+@media (orientation: portrait) {
+    .mobile{
+        display: initial;
+    }
+}
