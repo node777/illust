@@ -5,11 +5,9 @@ var modelControl={
     modelList:{},
     display: function display(s){
         console.log(modelControl.modelList)
-        this.mv.src="assets/models/"+Object.keys(modelControl.modelList)[s]+".gltf";
-        /*
+        this.mv.src="assets/"+models[s].src+".glb";
         this.mv.alt=models[s].alt;
         this.mv.setAttribute("ios-src", models[s].ios);
-        */
     },
     maximize: function maximize(){
         this.mv.style="height:100%;";
@@ -42,29 +40,21 @@ var modelControl={
 
     },
     loadAllModels: function loadAll(){
-        var request = new XMLHttpRequest(); 
-        request.onreadystatechange = function() {
-            if (request.readyState === 4) {
-                modelControl.modelList=JSON.parse(request.response);
-                for(m in modelControl.modelList){
-                    console.log(m, modelControl.modelList[m]);
-         
-                    let model=modelControl.modelList[m].info;
-                    //add new model to select bar
-                     document.getElementById("modelSelect").innerHTML+=`
-                     <div id="m${m}" onclick="modelControl.display(${m});">
-                         ${model.Name}
-                         <br>Author: ${model.Author||"None"}
-                         <br>Licence:${model.Licence||"None"}
-                         <br>Hash: ${m[0]+m[1]+m[2]+m[3]+m[4]+m[5]+"..."+m[61]+m[62]+m[63]}
-                     </div>`
-                 }         
-                 console.log(Object.keys(modelControl.modelList));
-                 modelControl.display(0);
-            }
-        }
-        request.open("GET", "/models");
-        request.send();
+        for(m in models){
+            console.log(m, modelControl.modelList[m]);
+    
+            let model=modelControl.modelList[m].info;
+            //add new model to select bar
+                document.getElementById("modelSelect").innerHTML+=`
+                <div id="m${m}" onclick="modelControl.display(${m});">
+                    ${model.Name}
+                    <br>Author: ${model.Author||"None"}
+                    <br>Licence:${model.Licence||"None"}
+                    <br>Hash: ${m[0]+m[1]+m[2]+m[3]+m[4]+m[5]+"..."+m[61]+m[62]+m[63]}
+                </div>`
+        }         
+        console.log(Object.keys(modelControl.modelList));
+        modelControl.display(0);
     }
 }
 modelControl.loadAllModels();

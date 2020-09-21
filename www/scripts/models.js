@@ -47,5 +47,5 @@ var models=[
         author: "Tuturu",
         licence: "CC-BY",
         hash: "#nan"
-    },
+    }
 ]

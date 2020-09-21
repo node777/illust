@@ -10,12 +10,12 @@
 
     <link rel="stylesheet" href="CSS/dreams.css">
     
-    <script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.1.3/webcomponents-loader.js"></script>
-    <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
-    <script src="https://unpkg.com/resize-observer-polyfill@1.5.0/dist/ResizeObserver.js"></script>
-    <script src="https://unpkg.com/fullscreen-polyfill@1.0.2/dist/fullscreen.polyfill.js"></script>
-    <script src="https://unpkg.com/@magicleap/prismatic/prismatic.min.js"></script>
-    <script src="https://unpkg.com/focus-visible@5.0.2/dist/focus-visible.js" defer></script>
+    <script src="scripts/webcomponents-loader.js"></script>
+    <script src="scripts/intersection-observer.js"></script>
+    <script src="scripts/ResizeObserver.js"></script>
+    <script src="scripts/fullscreen.polyfill.js"></script>
+    <script src="scripts/prismatic.min.js"></script>
+    <script src="scripts/focus-visible.js" defer></script>
 
   </head> 
 <body>
@@ -26,7 +26,8 @@
                   camera-controls
                   interaction-prompt="auto"
                   auto-rotate ar magic-leap>
-	</model-viewer>
+  </model-viewer>
+  <div class="br" style="position:absolute;top:80%;left:2%;"></div>
 	<img src="assets/arrow.svg" id="minimizeButton" onmousedown="modelControl.minimize();"></img>
 	<img src="assets/arrow.svg" id="maximizeButton" onmousedown="modelControl.maximize();"></img>
 	<img src="assets/arrow.svg" id="nextButton" onmousedown="modelControl.next();"></img>
@@ -35,8 +36,8 @@
 	</div>
   
 
-  <script type="module" src="https://unpkg.com/@google/model-viewer@v0.9.0/dist/model-viewer.js"></script>
-  <script nomodule src="https://unpkg.com/@google/model-viewer@v0.9.0/dist/model-viewer-legacy.js"></script>
+  <script type="module" src="scripts/model-viewer.js"></script>
+  <script nomodule src="scripts/model-viewer-legacy.js"></script>
   
   <script src="scripts/models.js"></script>
   <script src="scripts/modelController.js"></script>
