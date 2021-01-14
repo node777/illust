@@ -23,6 +23,7 @@ async function changePage (x){
     }catch(e){
         lux.t.innerHTML = elements.pages["404"]();
     }
+    sidebar(1);
 }
 window.onload=()=>{
     setup();

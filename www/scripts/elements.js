@@ -1,104 +1,1256 @@
 var elements = {
     pages:{
         content: ()=>{
-            return `
-            <div>
-                <div class="mobile">
-                    <img src="images/box.gif"></img>
-                </div>
-                <div class="button" onmousedown="account()">
-                    CONNECT
-                </div>
-                <a href="explore.html">
-                    <div class="button" onmousedown="explore()">
-                        EXPLORE
+            return elements.pages.winners2();
+        },
+        editAssets:()=>{
+            
+            var request = new XMLHttpRequest(); 
+            request.onreadystatechange = async function() {
+                if (request.readyState === 4) {
+                    if(localStorage.provider&&localStorage.provider!="web3"){
+                        account.logout();
+
+                    }
+                    if(!localStorage.provider){
+                        localStorage.provider="web3"
+                        await account.login();
+                    }
+                    let m=JSON.parse(request.response);
+                    let r=""
+                    console.log(m);
+                    for(a in m){
+                        let vars="";
+                        for(v in m[a]){
+                            if(v=="animation_url"){
+                                vars+=`
+                                    <model-viewer ar src="${m[a][v]}" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>`
+                            }else{
+                                vars+=`${v}: ${m[a][v]}<br>`
+                            }
+                        }
+                        r+=`<div class="box">
+                            ID: ${a} <br><br>
+                            ${vars}
+                            <div class="button" onclick="location.hash='editAsset?${a}'">Edit Asset</div>
+                            <div class="button" onclick="location.hash='asset?${a}'">View Asset</div>
+                        </div>`
+                    }
+                    document.getElementById("assetList").innerHTML=r + `
+                        <div class="box">   
+                            Add new Asset
+
+                            <div class="box">
+                                Upload FBX
+                                <input type="file" id="assetInput">
+                                <div class="button" onclick="assets.upload()">Upload</div>
+                            </div>
+
+
+                            <div class="box">
+                                Mint new asset (ERC721 smart contract)<br>
+                                <input id="assetMintID" placeholder="assetID" />
+                                <input id="assetMintUser" placeholder="User to mint asset ID under" />
+                                <input id="recipient1" placeholder="Fee recipient 1" />
+                                <input id="recipient2" placeholder="Fee recipient 2" />
+                                <input id="split" placeholder="Recipient 1 pecent / 100" />
+                                <div class="button" onclick="invokeERC('a');">Mint Asset</div>
+                            </div>
+
+                            <div class="box">
+                                Create new Asset
+                                <input id="asset_id" placeholder="asset id"></input>
+                                <div class="button" onclick="addAsset()">Add Asset</div>
+                            </div>
+                        </div>
+                    `
+                }
+            }
+            request.open("GET", "https://us-central1-illust.cloudfunctions.net/metadata");
+            request.send();
+            return `Illust Assets:<div id='assetList'>Loading Assets...${elements.loading()}</div>`
+        },
+        editAsset:(a)=>{
+            var request = new XMLHttpRequest(); 
+            request.onreadystatechange = function() {
+                if (request.readyState === 4) {
+                    var m
+                    try{
+                        m=JSON.parse(request.response);
+                    }catch{
+                        m={
+                            "name":"None listed",
+                            "description":"None listed",
+                            "animation_url":"None listed"
+                        }
+                    }
+                    let r=""
+                    let vars=""
+                    console.log(m);
+                    
+                    for(v in m){
+                        assetData[v]=m[v];
+                        vars+=`${v}: <input id="asset_${v}" value="${m[v]}"></input><br>`
+                    }
+                    r=`
+                    
+
+                    <div id="asset" class="box">
+                        Asset ID: ${a[1]} <br><br>
+                        <div id="varBox">
+                            ${vars}
+                        </div>
+                        <div class="box">
+                            Add animation_url (.gltf file)
+                            <div class="button" onclick="window.open('https://gofile.io/uploadFiles', '_blank');/*addField('animation_url');*/">Upload .gltf on Gofile</div>
+                        </div>
+                        <div class="box">
+                            Begin Auction
+                            <input id="auction_starting_bid" placeholder="Starting Bid"></input>
+                            Auction Close Time:
+                            <input id="auction_close" type="datetime-local"></input>
+                            <div class="button" onclick="auction.beginAuction()">Begin Auction</div>
+                        </div>
+                        <div class="box">
+                            Add custom field
+                            <input id="fieldName" placeholder="Field Name"></input>
+                            <div class="button" onclick="addField(${a[1]})">add field</div>
+                        </div>
+                        <div class="button" onclick="editAsset(${a[1]})">Save Asset</div>
                     </div>
-                </a>
-                <input type="file" id="upload">
-                <div class="button" onmousedown="upload()">
-                    UPLOAD
+                    <div class="button" onclick="location.hash='editAssets'">Back</div>`
+                    
+                    document.getElementById("assetList").innerHTML=r
+                }
+            }
+            request.open("GET", `https://us-central1-illust.cloudfunctions.net/metadata/${a[1]}`);
+            request.send();
+            return "<div id='assetList'></div>"
+        },
+        winners:()=>{
+            return `
+                <h1 style="margin:64px 1% 0">MF DOOM AUCTION 1 CLOSED</h1>   
+                <div class="br" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
+                <br>
+                Please stay tuned as the second MF DOOM AR NFT drop featuring 3 limited edition, one of a kind masks will be available starting Thursday 10/29 @12 PM PST until Friday 10/30 @6 PM PST.<br><br>
+                Check out our <a href="https://www.illust.space/news/">Blog</a>, <a href="https://discord.gg/98qqje5">Discord</a>, or sign up with our email form for more details about this final Halloween 2020 AR NFT drop!<br><br>
+                
+                <div id="mc_embed_signup">
+                <form action="https://illustagency.us4.list-manage.com/subscribe/post?u=c6f33ff36317a1dd23746cc23&amp;id=d8a9f22827" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+                    <div id="mc_embed_signup_scroll">
+                <label for="mce-EMAIL">SIGN UP FOR UPDATES</label><br>
+                <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required><br>
+                    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_c6f33ff36317a1dd23746cc23_d8a9f22827" tabindex="-1" value=""></div>
+                    <div><input type="submit" value="SUBSCRIBE" name="subscribe" id="mc-embedded-subscribe" class="button" style="margin:0 25%"></div>
+                    </div>
+                </form>
+                </div><br><br>
+                <div class="flex w1" style="font-size:80%;z-index:4">
+                    <div>
+                        <h2>Collection</h2>
+                        MF DOOM Halloween Collection
+                    </div>
+                    <div>
+                        <h2>What</h2>
+                        Exclusive MF DOOM AR NFTs
+                    </div>
+                    <div>
+                        <h2>Launch</h2>
+                        October 23rd 2020
+                    </div>
+                    <div>
+                        <h2>Auction</h2>
+                        Limited Run NFT AR Pieces
+                    </div>
                 </div>
-                <div>
+                <div class="w1" style="background-image:url('images/doom3.png'); width:110%;height:75vw;background-size: 100%; margin:0 -10% -10%;background-repeat:no-repeat;"></div>
+                
+                <div class="flex  wrap w1" style="text-align:center;margin-bottom:152px">
+                    <h1>MF-7</h1>
+                    <div>
+                        1/4
+                        <div class="br" style="float:left;width:64px;"></div>
+            
+
+                        <model-viewer ar ios-src="assets/models/green.usdz" src="assets/models/green.glb" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        Winner: Blakezodoq
+                        <div class="button w5" onclick="location.hash='lot?90007'">View Collection</div>
+                        
+                    </div>
+                    <div>
+                        2/4
+                        <div class="br" style="float:left;width:64px;"></div>
+
+                        <model-viewer ar ios-src="assets/models/green2.usdz" src="assets/models/green2.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        Winner: nicooo9999
+                        <div class="button w5" onclick="location.hash='lot?90007'">View Collection</div>
+                        
+                    </div>
+                    <div>
+                        3/4
+                        <div class="br" style="float:left;width:64px;"></div>
+
+                        <model-viewer ar ios-src="assets/models/green3.usdz" src="assets/models/green3.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        Winner: Zanzibar
+                        <div class="button w5" onclick="location.hash='lot?90007'">View Collection</div>
+                        
+                    </div>
+                    <div>
+                        4/4
+                        <div class="br" style="float:left;width:64px;"></div>
+
+                        <model-viewer ar ios-src="assets/models/green4.usdz" src="assets/models/green4.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        Winner: shredordie911
+                        <div class="button w5" onclick="location.hash='lot?90007'">View Collection</div>
+                        
+                    </div>
                 </div>
-            </div>
+                <div class="flex  wrap w1" style="text-align:center;margin-bottom:92px">
+                    <h1>MF-8</h1>
+                    <div>
+                        1/4
+                        <div class="br" style="float:left;width:64px;"></div>
+            
+
+                        <model-viewer ar ios-src="assets/models/blue.usdz" src="assets/models/blue.glb" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        Winner: Zco
+
+                        <div class="button w5" onclick="location.hash='lot?90008'">View Collection</div>
+                        
+                    </div>
+                    <div>
+                        2/4
+                        <div class="br" style="float:left;width:64px;"></div>
+
+                        <model-viewer ar ios-src="assets/models/blue2.usdz" src="assets/models/blue2.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        Winner: metalfingers
+                        <div class="button w5" onclick="location.hash='lot?90008'">View Collection</div>
+                        
+                    </div>
+                    <div>
+                        3/4
+                        <div class="br" style="float:left;width:64px;"></div>
+
+                        <model-viewer ar ios-src="assets/models/blue3.usdz" src="assets/models/blue3.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        Winner: cultbitz
+                        <div class="button w5" onclick="location.hash='lot?90008'">View Collection</div>
+                        
+                    </div>
+                    <div>
+                        4/4
+                        <div class="br" style="float:left;width:64px;"></div>
+
+                        <model-viewer ar ios-src="assets/models/blue4.usdz" src="assets/models/blue4.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        Winner: elCastor
+                        <div class="button w5" onclick="location.hash='lot?90008'">View Collection</div>
+                        
+                    </div>
+                </div>
             `
         },
-        account:async()=>{
-            await connectAccount();
-            let n;
-            switch(window.ethereum.chainId){
-                case "0x1":
-                    n="Main Ethereum Network"
-                    break
-                case "0x3":
-                    n="Ropsten Ethereum Test Network"
-                    break
-                case "0x4":
-                    n="Rinkeby Ethereum Test Network"
-                    break
-                case "0x5":
-                    n="Goerli Ethereum Network"
-                    break
-                case "0x42":
-                    n="Kovan Ethereum Network"
-                    break
-                default:
-                    n="No provider connected"
-            }
-            let r;
-            try{
-                let b=await provider.getBalance(window.ethereum.selectedAddress);
-                r= `
-                    <div class="pad">
-                        <h1>ACCOUNT</h1>
-                        Wallet Address: <br>${window.ethereum.selectedAddress}<br><br>
-                        Balance: <br>${ethers.utils.formatEther(b)}<br><br>
-                        Wallet Name: <br>None Claimed<br><br>
-                        Network: <br>${n}<br><br>
-                        Provider: <br>${provider.connection.url}<br><br>
-                        ${elements.homeButton}
+        winners2:()=>{
+            return `
+                <h1 style="margin:64px 1% 0">MF DOOM AUCTION 2 CLOSED</h1>   
+                <div class="br" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
+                <br>
+                <br><br>
+                Check out our <a href="https://www.illust.space/news/">Blog</a>, <a href="https://discord.gg/98qqje5">Discord</a>, or sign up with our email form for more details about the next drop.<br><br>
+                
+                <div id="mc_embed_signup">
+                <form action="https://illustagency.us4.list-manage.com/subscribe/post?u=c6f33ff36317a1dd23746cc23&amp;id=d8a9f22827" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+                    <div id="mc_embed_signup_scroll">
+                <label for="mce-EMAIL">SIGN UP FOR UPDATES</label><br>
+                <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required><br>
+                    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_c6f33ff36317a1dd23746cc23_d8a9f22827" tabindex="-1" value=""></div>
+                    <div><input type="submit" value="SUBSCRIBE" name="subscribe" id="mc-embedded-subscribe" class="button" style="margin:0 25%"></div>
                     </div>
-                `
-            }catch{
-                r= `No account found`
+                </form>
+                </div><br><br>
+                <div class="flex w1" style="font-size:80%;z-index:4">
+                    <div>
+                        <h2>Collection</h2>
+                        MF DOOM Halloween Collection
+                    </div>
+                    <div>
+                        <h2>What</h2>
+                        Exclusive MF DOOM AR NFTs
+                    </div>
+                    <div>
+                        <h2>Launch</h2>
+                        October 29rd 2020
+                    </div>
+                    <div>
+                        <h2>Auction</h2>
+                        Limited Run NFT AR Pieces
+                    </div>
+                </div>
+                <div class="w1" style="background-image:url('images/doom4.png'); width:110%;height:75vw;background-size: 100%; margin:0 -10% -10%;background-repeat:no-repeat;"></div>
+                
+                <div class="flex  wrap w1" style="text-align:center;margin-bottom:152px">
+        
+                    <div>
+                        <div class="br" style="float:left;width:64px;"></div>
+            
+
+                        <model-viewer ar ios-src="assets/models/15656630424036753581450935940596632215884383929372546170587529153151943392229.usdz" src="assets/models/15656630424036753581450935940596632215884383929372546170587529153151943392229.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        Winner: metalfingers
+                        <div class="button w5" onclick="location.hash='asset?15656630424036753581450935940596632215884383929372546170587529153151943392229'">View Collection</div>
+                        
+                    </div>
+                    <div>
+                        <div class="br" style="float:left;width:64px;"></div>
+
+                        <model-viewer ar ios-src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.usdz" src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        Winner: Betosk8s
+                        <div class="button w5" onclick="location.hash='asset?70937556211959927769088791688503419832872233678974511813637293239899188185264'">View Collection</div>
+                        
+                    </div>
+                    <div>
+                        <div class="br" style="float:left;width:64px;"></div>
+
+                        <model-viewer ar ios-src="assets/models/8456350751317975846800924683986100177337207567287562046240586730923411985742.usdz" src="assets/models/8456350751317975846800924683986100177337207567287562046240586730923411985742.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        Winner: kingvanilli
+                        <div class="button w5" onclick="location.hash='asset?8456350751317975846800924683986100177337207567287562046240586730923411985742'">View Collection</div>
+                        
+                    </div>
+                </div>
+            `
+        },
+        maskTransfer:()=>{
+            account.load();
+            return `
+                <div class="button" onclick="invokeERC('r')">Approve Transfer</div>
+            `
+        },
+        claimItem:(i)=>{
+            a=i[1];
+            p=i[2];
+            console.log(i, a, p);
+            if(localStorage.provider){
+                account.load().then(()=>{
+                    setTimeout(invokeCos("b", a),1000);
+                    document.getElementById("aBox").innerHTML=`Your Address: ${provider.provider.selectedAddress}<br />`
+                    
+                });
+                return `
+                    <div id="aBox"></div>
+                    <div id="itemData"></div>
+                    <div class="button" onclick="invokeCos('qq', '${a}')">Claim Item</div>
+                    `
+            }else{
+                return `
+                    Please connect your wallet to claim this item
+                    <div class="button" onclick="location.hash='account'">Connect</div>
+                    `                
             }
-            return r;
+        },
+        account:async()=>{
+            console.log(provider);
+            //document.getElementById("content").innerHTML=elements.connect();
+            try{
+                await account.load();
+                return elements.account();
+                
+            }catch(e){
+                return elements.connect();
+            }
+        },
+        lots:()=>{
+            return `
+                <div id="lotBox">
+                    <div class="box">
+                        <h1>Lot 1</h1><br>
+                        <model-viewer ar src="assets/AinSoph.glb" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        Minted by: POLY<br><b><br>
+                        Price: 4.102 ETH<br><br>
+                        Time Left: <div id="counter">1 hour 2 minutes 11 seconds</div></b><br><br>
+                        Vivamus felis lectus, efficitur vitae porttitor tempor, sodales id tortor. Aliquam tempus eleifend ex eget condimentum. 
+                        <div class="button" onclick="location.hash='lot?1'">View Lot</div>
+                    </div>
+                    <div class="box">
+                        <h1>Lot 2</h1><br>
+                        <model-viewer ar ios-src="assets/Astronaut.usdz" src="assets/Astronaut.glb" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                        Vivamus felis lectus, efficitur vitae porttitor tempor, sodales id tortor. Aliquam tempus eleifend ex eget condimentum. Donec ac dapibus augue. Donec ac suscipit tellus. Nam viverra sit amet tellus eu blandit. Proin sed sem quis arcu faucibus sodales ac condimentum lectus. Quisque lacinia vel turpis in feugiat. Maecenas hendrerit vulputate tempus. Nulla vel nulla varius, ultricies ligula quis, aliquam ligula. Curabitur scelerisque feugiat ligula, tristique dignissim risus efficitur non. Morbi vitae mi et nibh rutrum ultrices a a velit. Aliquam erat volutpat. Nulla in nulla vulputate, tincidunt risus quis, accumsan ipsum.
+                        <div class="button" onclick="location.hash='lot?2'">View Lot</div>
+                    </div>
+                    <div class="box">
+                        <h1>Lot 3</h1><br>
+                        <model-viewer ar ios-src="assets/Astronaut.usdz" src="assets/Astronaut.glb" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                        Vivamus felis lectus, efficitur vitae porttitor tempor, sodales id tortor. Aliquam tempus eleifend ex eget condimentum. Donec ac dapibus augue. Donec ac suscipit tellus. Nam viverra sit amet tellus eu blandit. Proin sed sem quis arcu faucibus sodales ac condimentum lectus. Quisque lacinia vel turpis in feugiat. Maecenas hendrerit vulputate tempus. Nulla vel nulla varius, ultricies ligula quis, aliquam ligula. Curabitur scelerisque feugiat ligula, tristique dignissim risus efficitur non. Morbi vitae mi et nibh rutrum ultrices a a velit. Aliquam erat volutpat. Nulla in nulla vulputate, tincidunt risus quis, accumsan ipsum.
+                        <div class="button" onclick="location.hash='lot?3'">View Lot</div>
+                    </div>
+                </div>
+            `
+        },
+        asset:async(a)=>{
+            var request = new XMLHttpRequest(); 
+            request.onreadystatechange = function() {
+                if (request.readyState === 4) {
+                    if(!request.response){
+                        return `Asset could not be found <div class='button' onclick='location.hash=""'>Home</div>`
+                    }
+                    let m=JSON.parse(request.response);
+                    console.log(m);
+                    let b="<br>";
+                    let name=m.name;
+                    let hash=a[1];
+                    let url=m["animation_url"];
+                    let iPrice=m.price||0;
+                    assets.selected=a[1];
+                    let auctionDetails;
+                    
+                    
+                    //let auction=JSON.parse(await illustMarket("r", n[1]));
+
+                    if(m["end_date"]){
+                        setTimeout(auction.loadDate,1);
+                        auctionDetails=`
+                            <div>
+                                <a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
+                                <div id="priceBox"></div>
+                                <div id="topBidder"></div>
+                                <div id="dateBox"></div>
+                                <div style="display:none" id="countdownBox"></div>
+                            
+                                
+                                Place your bid:<br>
+                                <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.200000000000000000' value='0.000000000000000000' /> ETH
+                                <div class="button w5" onclick="placeBid('${a[1]}')">Place Bid</div>
+                                
+                                <div id="userBid">${b}</div>
+                            </div>
+                        `
+                    }else{
+                        auctionDetails="This asset is not for sale"
+                    }
+    
+                    document.getElementById("assetBox").innerHTML= `
+                        <div id="lotBox">
+                            <h1 style="margin:0">${name}</h1>
+                            <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
+                            <div class="flex wrap w1">
+                                <div style="text-align:center">
+                                    <model-viewer ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
+                                    <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}"><b>Try On</b></a>
+                                </div>
+                                
+                                <div style="text-align:center">
+                                    ${auctionDetails}
+                                </div>
+
+                            </div>
+                            <div class="w1">
+                                ${m.description}<br><br>
+                                2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
+                                <br><br>
+                                View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
+                                    <div>Initial price: ${iPrice}</div>
+                                    <br>Single Edition
+                                <!--
+                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
+                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
+                                If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
+                            </div>
+                        </div>
+                        
+                    `
+                }
+            }
+            request.open("GET", `https://us-central1-illust.cloudfunctions.net/metadata/${a[1]}`);
+            request.send();
+            return `<div id="assetBox"></div>`
+        },
+        lot:async(n)=>{
+            try{
+                let b="<br>";
+                let name=assets[n[1]].name;
+                let hash=assets[n[1]].hash;
+                let iPrice=assets[n[1]].iPrice;
+                assets.selected=n[1];
+
+                try{
+                    b=`Your current bid: ${JSON.parse(account.info.bids[a])}<br>`
+                }catch(e){console.log(e)}
+                invoke("qq", n[1]);
+                account.load();
+                
+                return `
+                    <div id="lotBox">
+                        <h1 style="margin:0">Lot ${name}</h1>
+                        <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
+                        <div class="flex wrap w1">
+                            <div style="text-align:center">
+                                <model-viewer ar  ios-src="assets/models/${hash}.usdz" src="assets/models/${hash}.${assets[n[1]].ext}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
+                                <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}"><b>Try On</b></a>
+                            </div>
+                            <div>
+                                <a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
+                                <div id="priceBox"></div>
+                                <div id="topBidder"></div>
+                                <div id="dateBox"></div>
+                                <div style="display:none" id="countdownBox"></div>
+                            
+                                
+                                Place your bid:<br>
+                                <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.200000000000000000' value='0.000000000000000000' /> ETH
+                                <div class="button w5" onclick="placeBid('${n[1]}')">Place Bid</div>
+                                
+                                <div id="userBid">${b}</div>
+                            </div>
+                            
+                        </div>
+                        <div class="w1">
+                            Metal Face ${name} - 2020<br><br>
+                            2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
+                            <br><br>
+                            View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
+                                <div>Initial price: ${iPrice}</div>
+                                <br>Single Edition
+                            <!--
+                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
+                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
+                            If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
+                        </div>
+                    </div>
+                    
+                `
+            }catch(e){
+                console.log(e);
+                return elements.DOOM();
+            }
+        },
+        lot2:async(n)=>{
+            try{
+                let name=assets[n[1]].name;
+                let hash=assets[n[1]].hash;
+                let iPrice=assets[n[1]].iPrice;
+                assets.selected=n[1];
+                let auction=JSON.parse(await illustMarket("r", n[1]));
+                console.log(auction);
+                account.load();
+                //invoke("qq", n[1]);
+                return `
+                    <div id="lotBox">
+                        <h1 style="margin:0">Lot ${name}</h1>
+                        <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
+                        <div class="flex wrap w1">
+                            <div style="text-align:center">
+                                <model-viewer ar  ios-src="assets/models/${hash}.usdz" src="assets/models/${hash}.${assets[n[1]].ext}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
+                                <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}"><b>Try On</b></a>
+                            </div>
+                            <div>
+                                <a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
+                                <div id="priceBox">Current Price: ${Number(auction.topBid)}</div>
+                                <div id="topBidder"></div>
+                                <div id="dateBox"></div>
+                                <div style="display:none" id="countdownBox"></div>
+                            
+                                
+                                Place your bid:<br>
+                                <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.200000000000000000' value='0.000000000000000000' /> ETH
+                                <div class="button w5" onclick="illustMarket('bid', '${n[1]}')">Place Bid</div>
+                                
+                                <div id="userBid"></div>
+                            </div>
+                            
+                        </div>
+                        <div class="w1">
+                            Metal Face ${name} - 2020<br><br>
+                            2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
+                            <br><br>
+                            View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
+                                <div>Initial price: ${iPrice}</div>
+                                <br>Single Edition
+                            <!--
+                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
+                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
+                            If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
+                        </div>
+                    </div>
+                    
+                `
+            }catch(e){
+                console.log(e);
+                return elements.DOOM();
+            }
+        },
+        lotOld:async(n)=>{
+            try{
+                let b="";
+                let m="green";
+                auction.bid=90007;
+                let p=2.1;
+                let i=`
+                    Initial Price: 1.2000000 ETH<br><br>
+                    Auction closed<br>Sunday 25 OCT 08:00 PM (PST)<div id="date"></div></b><br><br>
+                `
+
+                if(n[1]=="MF-8"){
+                    m="blue";
+                    auction.bid=90008;
+                    p=2.2
+                }else if(n[1]=="test10"){
+                    m="sludge";
+                    auction.bid=9999;
+                    i=`
+                    Place your bid:<br>
+                    <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.000000000000000001' value='0.000000000000000000' /> ETH
+                    <div class="button w5" onclick="placeBid('${a}')">Place Bid</div>
+                    `
+                }
+                try{
+                    b=`Your current bid: ${account.info.bids[a]}`
+                }catch(e){}
+                invoke("qq", a);
+                return `
+                    <div id="lotBox">
+                        <div class="flex wrap">
+                        <div>
+                            <h1>Lot ${n[1]}</h1>
+                            <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
+                            <a>Minted by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><b><br>
+                            
+                            <div id="priceBox">Price: ${p} ETH</div>
+                            <div id="topBidder"></div><br>
+                            <div id="userBid">${b}</div><br>
+                            
+                            Run of Four<br><br>
+                            ${i}
+                        </div>
+                        <div style="text-align:center">
+                            <model-viewer ar  ios-src="assets/models/${m}.usdz" src="assets/models/${m}.glb" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%"></model-viewer>
+                            <a href="https://app.illust.space/ar/faces.html#${m}">Try On</a>
+                        </div>
+                        <div>
+                            Metal Face ${m} - 2020<br><br>
+                            Hand modeled & hand illustrated AR NFT. Hashed mesh. Limited mint of four - signed and numbered by MF DOOM.
+                            <br><br>
+                            View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6">Etherscan</a><!--
+                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
+                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
+                            If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our discord: https://discord.gg/gW6cdW 
+                        </div>
+                    </div>
+                    
+                `
+            }catch(e){
+                return elements.DOOM;
+            }
+        },
+        collections:()=>{
+            return elements.DOOM2();
+        },
+        collection:(n)=>{
+            if(n[1]=="DOOM"){
+                return elements.DOOM();
+            }else{
+                return `
+                    <div id="collectionBox">
+                        <h1>Collection ${n[1]}</h1>
+                        <br>
+                        <model-viewer ar ios-src="assets/models/Aur.usdz" src="assets/Astronaut.glb" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                        Vivamus felis lectus, efficitur vitae porttitor tempor, sodales id tortor. Aliquam tempus eleifend ex eget condimentum. Donec ac dapibus augue. Donec ac suscipit tellus. Nam viverra sit amet tellus eu blandit. Proin sed sem quis arcu faucibus sodales ac condimentum lectus. Quisque lacinia vel turpis in feugiat. Maecenas hendrerit vulputate tempus. Nulla vel nulla varius, ultricies ligula quis, aliquam ligula. Curabitur scelerisque feugiat ligula, tristique dignissim risus efficitur non. Morbi vitae mi et nibh rutrum ultrices a a velit. Aliquam erat volutpat. Nulla in nulla vulputate, tincidunt risus quis, accumsan ipsum.
+                    </div>
+                    
+                `
+            }
+        },
+        admin:async()=>{
+            return `
+                <h1>Admin Panel</h1>
+                <div class="box">
+                    Data Output:<br>
+                    <div id="data"></div>
+                </div>
+                <model-viewer style="margin:auto;height:30vh;position:relative" ar ios-src="assets/models/green.usdz" src="assets/models/green.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+
+                <div class="box">
+                    Data Toolset
+                    <div class="box">
+                        Mesh Hashing
+                        <input type="file" id="upload">
+                        <div class="button" onclick="hashMesh()">Hash a Mesh</div>
+                    </div>
+                </div>
+                <div class="box">
+                    Lot Auction Smart Contract
+                    <div class="flex">
+                        <div class="box">
+                            Create new lot<br>
+                            <input id="a" placeholder="asset" />
+                            <input id="i" placeholder="initialPrice" />
+                            <input id="inc" placeholder="increment" />
+                            <input id="closetime" placeholder="close time" />
+                            <div class="button" onclick="invoke('n');">Create Auction</div>
+                        </div>
+                        <div class="box">
+                            Bid on lot
+                            <input id="bidAmount" placeholder="bidAmount" />
+                            <input id="bidAsset" placeholder="bidAsset" />
+                            <div id="bidButton" class="button" onmousedown="invoke('b')">Place Bid</div>
+                            <div id="bidButton" class="button" onmousedown="invoke('b')">Place Bid</div>
+                        </div>
+                    </div>
+                    <div class="box">
+                        Lot status query
+                        <input id="lotID" placeholder="Lot ID" />
+                        <div class="button" onclick="invoke()">Get Lot Status</div>
+                        <div class="button" onclick="invoke()">Get Lot Status</div>
+                    </div>
+                </div>
+                <div class="box">
+                    ERC 720 Smart Contract
+                    <div class="flex">
+                        <div class="box">
+                            Create new asset<br>
+                            <input id="assetMintID" placeholder="assetID" />
+                            <input id="assetMintUser" placeholder="User to mint asset ID under" />
+                            <input id="recipient1" placeholder="Fee recipient 1" />
+                            <input id="recipient2" placeholder="Fee recipient 2" />
+                            <input id="split" placeholder="pecent / 100" />
+                            <div class="button" onclick="invokeERC('a');">Create Asset</div>
+                        </div>
+                        <div class="box">
+                            Check Assets in your account
+                            <div id="bidButton" class="button" onmousedown="invokeERC('b')">Check</div>
+                        </div>
+                    </div>
+                    <div class="box">
+                        Lot status query
+                        <input id="lotID" placeholder="Lot ID" />
+                        <div class="button" onclick="invoke()">Get Lot Status</div>
+                        <div class="button" onclick="invoke()">Get Lot Status</div>
+                    </div>
+                    
+                </div>
+                <div onclick="testFunction()" class="button">
+                 Test account creation
+                </div>
+                <div onclick="document.getElementByID('content').innerHTML=elements.DOOM2" class="button">
+                 Test account creation
+                </div>
+
+            `
         },
         404:()=>{
             "Page could not be loaded"
         }
     },
     header: `
-
+        <div id="ac" onclick="location.hash='account'">
+            <img src="assets/icons/account.svg" />
+        </div>
+        <div id="hd" onclick="location.hash=''">ILLUST.SPACE</div>
         <div id="hb" onclick="sidebar()">
             <div></div>
             <div></div>
             <div></div>
         </div>
-        <div id="hd" onclick="location.hash=''">ILLUST.SPACE</div>
-        <div id="ac" onclick="account()">
-            <img src="assets/icons/account.svg" />
-        </div>
-        <div class="br"></div>
+        <div class="br" style="margin:1%"></div>
     `,
     sidebar:`
-        <div>Home</div>
-        <div>Account</div>
-        <div>Explore</div>
-        <div>Upload</div>
+        <div onclick=""><a href="https://illust.space">Exhibitions</a></div>
+        <div><a href="https://illust.space/about">About</a></div>
 
         <div class="br"></div>
 
-        <div>Contact</div>
-        <div>About</div>
+        <div onclick="location.hash='';sidebar(1);">Auctions</div>
+        <div onclick="location.hash='account';sidebar(1);">Account</div>
+
+        <div class="br"></div>
+        
+        <div onclick=""><a href="https://illust.space/faq">FAQ</a></div>
+        <div onclick=""><a href="https://illust.space/privacy-policy">Privacy</a></div>
+        <div><a href="https://illust.space/user-agreement">User Agreement</a></div>
+        <div onclick=""><a href="https://illust.space/terms-of-service">Terms of Service</a></div>
+        <div><a href="https://illust.space/contact">Contact</a></div>
     `,
     footer:`
     ©copyleft 2020
     `,
-    loading: ()=>{
+    createAccount:()=>{
+        try{
+            return `
+                <div class="popup">
+                    Welcome to Illust Space:<br>
+                    Please choose a name to get started<br><br>
+                    <input id="usernamei" placeholder="username"></input>
+
+                    <input id="firstname" placeholder="first name"></input>
+                    <input id="lastname" placeholder="last name"></input>
+
+                    <input id="emaili" placeholder="e-mail"></input>
+                    <textarea id="bioi" placeholder="bio (optional)"></textarea><br>
+                    <input type="checkbox" id="verifyTOS" style="width:min-content;margin:8px"/ > I agree to the <a href="https://illust.space/terms-of-service">Terms of Service</a>, the <a href="https://illust.space/privacy-policy">Privacy Policy</a>, and the <a href="https://illust.space/user-agreement">User Agreement</a> <br>
+                    <input type="checkbox" id="verifyCom" style="width:min-content;margin:8px"/ > Yes, I would like to receive email communications from Illust.Space</a> 
+                    <br>Email will be used to notify auction winners.
+                    <div class="button" onclick="account.create()">Create Account</div>
+                    <a onclick="account.logout()">Connect through different method</a>
+                </div>
+            `
+        }catch(e){
+            return elements.connect()
+        }
+    },
+    placeBid:async()=>{
+        return `
+            <div class="popup">
+                <h1>Place Bid</h1>
+                <div class="box">
+                    Data Output:<br>
+                    <div id="data"></div>
+                </div>
+                <div class="box">
+                    Data Toolset
+                    <div class="box">
+                        Mesh Hashing
+                        <input type="file" id="upload">
+                        <div class="button" onclick="hashMesh()">Hash a Mesh</div>
+                    </div>
+                </div>
+                <div class="box">
+                    Lot Auction Smart Contract
+                    <div class="flex">
+                        <div class="box">
+                            Create new lot<br>
+                            <input id="a" placeholder="asset" />
+                            <input id="i" placeholder="initialPrice" />
+                            <input id="inc" placeholder="increment" />
+                            <div class="button" onclick="invoke('n');">Create Auction</div>
+                        </div>
+                        <div class="box">
+                            Bid on lot
+                            <input id="bidAmount" placeholder="bidAmount" />
+                            <input id="bidAsset" placeholder="bidAsset" />
+                            <div id="bidButton" class="button" onmousedown="invoke('b')">Place Bid</div>
+                            <div id="bidButton" class="button" onmousedown="invoke('b')">Place Bid</div>
+                        </div>
+                    </div>
+                    <div class="box">
+                        Lot status query
+                        <input id="lotID" placeholder="Lot ID" />
+                        <div class="button" onclick="invoke()">Get Lot Status</div>
+                        <div class="button" onclick="invoke()">Get Lot Status</div>
+                    </div>
+                    
+                </div>
+                <div class="box">
+                    ERC 720 Smart Contract
+                    <div class="flex">
+                        <div class="box">
+                            Create new asset<br>
+                            <input id="assetMintID" placeholder="assetID" />
+                            <input id="assetMintUser" placeholder="User to mint asset ID under" />
+                            <input id="recipient1" placeholder="Fee recipient 1" />
+                            <input id="recipient2" placeholder="Fee recipient 2" />
+                            <input id="split" placeholder="pecent / 100" />
+                            <div class="button" onclick="invokeERC('a');">Create Asset</div>
+                        </div>
+                        <div class="box">
+                            Check Assets in your account
+                            <div id="bidButton" class="button" onmousedown="invokeERC('b')">Check</div>
+                        </div>
+                    </div>
+                    <div class="box">
+                        Lot status query
+                        <input id="lotID" placeholder="Lot ID" />
+                        <div class="button" onclick="invoke()">Get Lot Status</div>
+                        <div class="button" onclick="invoke()">Get Lot Status</div>
+                    </div>
+                    
+                </div>
+            </div>
+        `
+    },
+    account:async()=>{
+        let r;
+        //await account.load();
+            if(provider&&provider.provider&&provider.provider.selectedAddress!=null&&provider.provider.selectedAddress!=undefined){
+                //console.log(provider.provider.selectedAddress);
+                let a;
+                let b;
+                if(account.info&&account.info.username){
+                    console.log("Got Acc info", account.info);
+                    a= await elements.profileInfo();
+                    b=account.info.username; 
+                }else{
+                    //connectAccount(1);
+                    //await account.load();
+                    console.log("Loading Acc info");
+                    await account.login();
+                    a= await elements.profileInfo();
+                }
+                r=`
+                    <div class="flex">
+                        <div id="accountContent" style="flex:4;padding:16px;">
+                            ${a}
+                        </div>
+                        <div id="sidebar2">
+                            <img src="assets/icons/account.svg" style="width:90%;padding:0 3%; margin: 0 0 16px;"/>
+                            <b>@${b||"NO USER"}</b><br><br>
+                            <div id="pr" onclick="account.select('pr');account.information()">Profile<br><br></div>
+                            <div id="vw" onclick="account.select(3);account.wallet();">View Wallet<br><br></div>
+                            <div id="cl" onclick="account.select(4);document.getElementById('accountContent').innerHTML=elements.collection()">Collection<br><br></div>
+                            <div id="ep" onclick="account.select(5);account.edit()">Edit Profile<br><br></div>
+                            <div id="so" onclick="account.select(6);account.logout()">Sign Out<br><br></div>
+
+                        </div>
+                    </div>
+                `;
+            }else{
+                r=elements.connect();
+
+            }
+        // }catch(e){
+        //     r=elements.connect();
+        //     console.log(e);
+        // }
+        return r;
+    },
+    profileInfo:async()=>{
+        try{
+            let b=0;
+            let e;
+            let fn;
+            let ln;
+            try{
+                switch(window.ethereum.chainId){
+                    case "0x1":
+                        n="Main Ethereum Network"
+                        break
+                    case "0x3":
+                        n="Ropsten Ethereum Test Network"
+                        break
+                    case "0x4":
+                        n="Rinkeby Ethereum Test Network"
+                        break
+                    case "0x5":
+                        n="Goerli Ethereum Network"
+                        break
+                    case "0x42":
+                        n="Kovan Ethereum Network"
+                        break
+                    default:
+                        n="No provider connected"
+                }
+                b=await web3.eth.getBalance(provider.provider.selectedAddress);
+            }catch(e){
+                console.log(e);
+            }
+            if(account.info){
+                b=account.info.username;
+                e=account.info.email;
+                fn=account.info.firstname;
+                ln=account.info.lastname;
+            }
+            let c=elements.collection();
+            return `
+                <h1 style="text-align:left">ACCOUNT INFO</h1>
+                <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
+                <div class="flex wrap" style="width:62vw">
+                    <div>
+
+                        <div style="text-align:left">
+                            Username: <b>${b||"NO USER"}</b><br><br>
+                            Email: ${e}<br><br>
+                            Name: ${fn} ${ln}<br><br>
+                            Bio:
+                            <br><br>${account.info.bio||"Welcome to my page, this is my bio"}
+                        </div>
+                    </div>
+                    <div>
+                        <b style="text-decoration: underline;">Collection:</b>
+                        <br><br>${c}
+                    </div>
+                </div>
+
+            `;
+        }catch(e){
+            console.log(e);
+            return `Account info could not be located`;
+
+        }
+    },
+    editProfile:async()=>{
+        try{
+            let b=0;
+            let e;
+            let fn;
+            let ln;
+            try{
+                switch(window.ethereum.chainId){
+                    case "0x1":
+                        n="Main Ethereum Network"
+                        break
+                    case "0x3":
+                        n="Ropsten Ethereum Test Network"
+                        break
+                    case "0x4":
+                        n="Rinkeby Ethereum Test Network"
+                        break
+                    case "0x5":
+                        n="Goerli Ethereum Network"
+                        break
+                    case "0x42":
+                        n="Kovan Ethereum Network"
+                        break
+                    default:
+                        n="No provider connected"
+                }
+                b=await web3.eth.getBalance(provider.provider.selectedAddress);
+            }catch(e){
+                console.log(e);
+            }
+            if(account.info){
+                b=account.info.username;
+                e=account.info.email;
+                fn=account.info.firstname;
+                ln=account.info.lastname;
+            }
+            let c=elements.collection();
+            return `
+                <h1 style="text-align:left">ACCOUNT INFO</h1>
+                <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
+                <div class="flex" style="width:100%">
+                    <div>
+
+                        <div style="text-align:left">
+                            Username: <input id="usernamei" value='${b||"NO USER"}' /><br><br>
+                            Email: <input id="emaili" value='${e}' /><br><br>
+                            Name: <input id="firstname" value='${fn}' / > <input id="lastname" value='${ln}' /><br><br>
+                            Bio:<br>
+                            <input id='bioi' value='${account.info.bio||"Welcome to my page, this is my bio"}' />
+                        </div>
+                    </div>
+                    <div>
+                        <b style="text-decoration: underline;">Collection:</b>
+                        <br><br>${c}
+                    </div>
+                </div>
+                <div class="button" onclick="account.create(1);">Update Account Info</div>
+
+            `;
+        }catch(e){
+            console.log(e);
+            return `Account info could not be located`;
+
+        }
+    },
+    walletInfo:async()=>{
+        try{
+            setTimeout(()=>{new QRCode(document.getElementById("qrcode"), provider.provider.selectedAddress)}, 1000);
+            setTimeout(()=>{account.getBal()}, 100);
+            let b="";
+            for(i in account.info.bids){
+                console.log(i, account.info.bids[i]);
+                b+=`Bids:<br><a onclick="location.hash='lot?${i}'">${i}</a> ${account.info.bids[i]}<br>`;
+            }
+            return `
+                <h1>WALLET INFO</h1>
+                Wallet Address: <br><b style="user-select:all;" onclick="copyText('${provider.provider.selectedAddress}')">${provider.provider.selectedAddress}</b><br><br>
+                <br><div id="balBox"></div><br><br>
+                <div id="bidList">${b}</div>
+                Wallet ENS Name: <br>None Claimed<br><br>
+                Network: <br>${n}<br><br>
+                Provider: <br>${provider.connection.url}<br><br>
+                QR code: <br><div id="qrcode"></div><br><br>
+            `;
+        }catch(e){
+            console.log(e);
+            return `Account info could not be located`;
+
+        }
+    },
+    loading: (m)=>{
+        //let x=m?m:'';
         return `
             <div id="loader">
-            <img src="images/loader2.gif"></img>
+            <img src="images/loader.gif"></img>
+            </div>
+        `
+    },
+    collection:()=>{
+        if(account.info.collection){
+            let r="<div class='flex wrap'>"
+            
+            for(i in account.info.collection){
+                r+="<div>"
+                r+=account.info.collection[i];
+                r+=`<model-viewer style="margin:auto;height:30vh;position:relative" ar ios-src="assets/models/${i}.usdz" src="assets/models/${i}.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>`;
+                //r+=`View on <a href="https://etherscan.io/address/0x965d0Efd2560516FC2076Ee2C1dea478b82841B9#tokentxnsErc721">Etherscan</a></div>`;
+                r+=`<a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${i}"><b>Try On</b></a>`
+                r+="</div>"
+                
+            }
+            r+="</div>"
+            return r;
+        }
+        else{
+            return `
+                You have no collection:<br>
+                <div onclick="location.hash=''"><a style="color:var(--color4);">Start Collecting</a></div>
+            `
+        }
+    },
+    auction:()=>{
+        return `
+            You currently have no lots up for auction:<br>
+            <div style="color:var(--color4);">Create new lot</div>
+        `
+    },
+    connect:()=>{
+        let r;
+        r=`
+            <h1 style="margin:64px 1% 0">Connect</h1>   
+            <div class="br" id="connectionMethod" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
+            <p style="font-size:12px">Illust Space, a web3.0 application, uses a crypto wallet for buying, selling, and trading augmented reality art. Your account is tied to your wallet. Please select one of the three options below: Torus (on the left), an existing Web3.0 Provider (middle), or an existing Private Key. Torus is an easy to use service for creating your first crypto wallet using an existing email, facebook account, or other online authentication services. Select Web3.0 if you already have a provider on your browser such as MetaMask or Coinbase Wallet; Illust Space does not have access to your private keys, please keep your private key information to yourself as this is highly sensitive information.    
+            <div class="flex">
+                    <div onclick="localStorage.setItem('provider','torus');account.load();"><img src="assets/torus.svg" /><div class="br"></div><b id="torusBox">Connect with Torus</b></div>
+                    <div onclick="localStorage.setItem('provider','web3');account.load();clearInterval(torInt);changePage();"><img src="assets/metamask.png" /><div class="br"></div><b>Connect with Web3 Provider</b><br><br>
+        `
+        if(window.ethereum){
+            r+= "<p style='font-size:10px'>Web3 Browser Detected</p>";
+        }else{
+            r+= "<p style='font-size:10px'>No Web3 Browser Detected</p>";
+        }
+        r+=`
+                    </div>
+                    <!--<div onclick="alert('This method of connection is not currently available')"><img src="assets/key.svg" /><div class="br"></div><b>Connect with key</b></div>-->
+                </div>
+            `
+        torInt = setInterval(changeAuth, 2000);
+        return r;
+    },
+    DOOM:()=>{
+        
+        return `
+            <h1 style="margin:64px 1% 0">MF DOOM COLLECTION</h1>   
+            <div class="br" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
+            <br>
+            <div class="flex w1" style="font-size:80%;z-index:4">
+                <div>
+                    <h2>Collection</h2>
+                    MF DOOM Halloween Collection
+                </div>
+                <div>
+                    <h2>What</h2>
+                    Exclusive MF DOOM AR NFTs
+                </div>
+                <div>
+                    <h2>Launch</h2>
+                    October 23rd 2020
+                </div>
+                <div>
+                    <h2>Auction</h2>
+                    Limited Run NFT AR Pieces
+                </div>
+            </div>
+            <div class="w1" style="background-image:url('images/doom2.png'); height:50vw; margin:-10vw 0 -15vw 0;background-size:40%;background-repeat:no-repeat;background-position:50% 0"></div>
+            <div class="flex  wrap w1">
+                <div class="flex wrap w1">
+                    <div style="">
+                        <h1>Lot 90007</h1>
+                        <div class="br" style="float:left;width:64px;"></div>
+            
+
+                        <model-viewer ar ios-src="assets/models/green.usdz" src="assets/models/green.glb" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+
+                        <div class="button w5" onclick="location.hash='lot?90007'">Place Bid</div>
+                        
+                    </div>
+                    <div>
+                        <h1>Lot 90008</h1>
+                        <div class="br" style="float:left;width:64px;"></div>
+
+                        <model-viewer ar ios-src="assets/models/blue.usdz" src="assets/models/blue.glb" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        <div class="button w5" onclick="location.hash='lot?90008'">Place Bid</div>
+                        
+                    </div>
+                </div>
+                <div>
+                    <h1>MF DOOM</h1>
+                    Halloween Collection Volume One<br><br>
+
+                Till the end of days he will be the ill Doomsayer… The days are strung up on that cross-quarter half light, Samhain, All souls - Halloween. And as the darkness draws in and the evenings give way to fire-spit crackle; long shadowed children (perhaps wearing masks on top of masks) search for plague free treats. In a period of seasonal shift, the prophet of doom always sounds louder, perhaps it is the cold slowing atoms, amplifying rhymes - perhaps it really is the end times. Time will tell. But a mask is suddenly far more desirable and if the streets are infected we can provide a panacea. Drawing on the golden age comic inspiration of the original Metal Face, the first Halloween auction consists of two extremely limited hand crafted masks, redolent of the original Dr (he of namesake and tentacle) they reflect the two aspects - shadow and growth. Hand drawn textures conjure comic pages, upturned eyes assure you that they are still something that the baddest villain of them all would wear apocalypse or not.
+                    </div>
+            </div>
+        `
+    },
+    DOOM2:()=>{
+        return `
+            <h1 style="margin:64px 1% 0">MF DOOM COLLECTION 2</h1>   
+            <div class="br" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
+            <br>
+            <div class="flex w1" style="font-size:80%;z-index:4">
+                <div>
+                    <h2>Collection</h2>
+                    MF DOOM Halloween Collection
+                </div>
+                <div>
+                    <h2>What</h2>
+                    Exclusive MF DOOM AR NFTs
+                </div>
+                <div>
+                    <h2>Auction closes</h2>
+                    October 30th 2020 6:00pm PDT
+                </div>
+                <div>
+                    <h2>Auction</h2>
+                    Limited Run NFT AR Pieces
+                </div>
+            </div>
+            <div class="w1">
+                <div class="w1" style="background-image:url('images/doom2.png'); height:50vw; margin:-11vw 0 -20vw;background-size:40%;background-repeat:no-repeat;background-position:50% 0"></div>
+
+                <div class="flex wrap w1" style="margin-bottom:180px;">
+                    <div>
+                        <h1>Lot MF-09</h1>
+                        <div class="br" style="float:left;width:64px;"></div>
+
+                        <model-viewer ar ios-src="assets/models/15656630424036753581450935940596632215884383929372546170587529153151943392229.usdz" src="assets/models/15656630424036753581450935940596632215884383929372546170587529153151943392229.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                        <div class="button w5" onclick="location.hash='lot?609'">Place Bid</div>
+                        
+                    </div>
+                    <div>
+                        <h1>Lot MF-10</h1>
+                        <div class="br" style="float:left;width:64px;"></div>
+                        <model-viewer ar ios-src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.usdz" src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+                        <div class="button w5" onclick="location.hash='lot?610'">Place Bid</div>
+                        
+                    </div>
+                    <div style="">
+                        <h1>Lot MF-11</h1>
+                        <div class="br" style="float:left;width:64px;"></div>
+            
+
+                        <model-viewer ar ios-src="assets/models/8456350751317975846800924683986100177337207567287562046240586730923411985742.usdz" src="assets/models/8456350751317975846800924683986100177337207567287562046240586730923411985742.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+
+                        <div class="button w5" onclick="location.hash='lot?611'">Place Bid</div>
+                        
+                    </div>
+                </div>
+                <div>
+                    <h1>MF DOOM</h1>
+                    Halloween Collection Volume Two<br><br>
+
+                Till the end of days he will be the ill Doomsayer… The days are strung up on that cross-quarter half light, Samhain, All souls - Halloween. And as the darkness draws in and the evenings give way to fire-spit crackle; long shadowed children (perhaps wearing masks on top of masks) search for plague free treats. In a period of seasonal shift, the prophet of doom always sounds louder, perhaps it is the cold slowing atoms, amplifying rhymes - perhaps it really is the end times. Time will tell. But a mask is suddenly far more desirable and if the streets are infected we can provide a panacea. Drawing on the golden age comic inspiration of the original Metal Face, the first Halloween auction consists of two extremely limited hand crafted masks, redolent of the original Dr (he of namesake and tentacle) they reflect the two aspects - shadow and growth. Hand drawn textures conjure comic pages, upturned eyes assure you that they are still something that the baddest villain of them all would wear apocalypse or not.
+                    </div>
             </div>
         `
     },

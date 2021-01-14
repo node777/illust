@@ -1,0 +1,153 @@
+    <head>
+        <title>DOOMSDAY</title>
+        <link rel="stylesheet" href="CSS/dreams.css" />
+        <link rel="stylesheet" href="CSS/splash.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Piazzolla:wght@300&display=swap" rel="stylesheet">
+		<link rel="icon" href="images/soul.png" />
+    </head>
+    <body id="doomsday">
+		<div id="overlay" onclick="sidebar(1)"></div>
+        <div id="hb" onclick="sidebar()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+		<div id="sidebar">
+            <div onclick=""><a href="https://illust.space">Exhibitions</a></div>
+            <div><a href="https://illust.space/about">About</a></div>
+    
+            <div class="br"></div>
+    
+            <div>Auctions (Coming Soon)</div>
+            <div><a href="https://illust.space/about">Account</a></div>
+    
+            <div class="br"></div>
+            
+            <div onclick=""><a href="https://illust.space/">FAQ</a></div>
+            <div onclick=""><a href="https://illust.space/privacy-policy">Privacy</a></div>
+            <div><a href="https://illust.space/user-agreement">User Agreement</a></div>
+            <div onclick=""><a href="https://illust.space/terms-of-service">Terms of Service</a></div>
+            <div><a href="https://illust.space/contact">Contact</a></div>
+        </div>
+        <div id="home">
+            <h1 id="heading-style">DOOMSDAY DROP</h1>
+            <div id="time">
+                <div class="frame">DAYS</div>
+                <div class="frame">HOURS</div>
+                <div class="frame">MINS</div>
+                <div class="frame">SEC</div>
+            </div>
+            <div id="clock">
+                <div class="number"><div>0</div></div>
+                <div class="number"><div>0</div></div>
+                <div class="number"><div>:</div></div>
+                <div class="number"><div>0</div></div>
+                <div class="number"><div>0</div></div>
+                <div class="number"><div>:</div></div>
+                <div class="number"><div>0</div></div>
+                <div class="number"><div>0</div></div>
+                <div class="number"><div>:</div></div>
+                <div class="number"><div>0</div></div>
+                <div class="number"><div>0</div></div>
+            </div>
+            <div class="collector">
+                
+                <p>Join us for the world's first augmented reality NFT auction from the legendary super villain of Hip-Hop, MF DOOM. With limited time and limited supply, drop your email to learn about how you can participate.</p>
+
+                <div id="mc_embed_signup">
+                <form action="https://illustagency.us4.list-manage.com/subscribe/post?u=c6f33ff36317a1dd23746cc23&amp;id=d8a9f22827" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+                    <div id="mc_embed_signup_scroll">
+                <label for="mce-EMAIL">SIGN UP FOR UPDATES</label><br>
+                <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required><br>
+                    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_c6f33ff36317a1dd23746cc23_d8a9f22827" tabindex="-1" value=""></div>
+                    <div><input type="submit" value="SUBSCRIBE" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+                    </div>
+                </form>
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+
+        <script src="scripts/brain.js" ></script>
+        <script src="scripts/elements.js" ></script>
+        <script>
+                var countDownDate = new Date(
+                "Oct 23, 2020 10:00:00 GMT-0700"
+                ).getTime(); /* event started date and time  */
+                var last = "00:00:00:00";
+
+                var x = setInterval(function () {
+                var now = new Date().getTime(); /* now date and time */
+
+                var distance = countDownDate - now;
+
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                var nowon =
+                    ("0" + days).slice(-2) +
+                    ":" +
+                    ("0" + hours).slice(-2) +
+                    ":" +
+                    ("0" + minutes).slice(-2) +
+                    ":" +
+                    ("0" + seconds).slice(-2);
+
+                console.log(last + " " + nowon);
+                animatetime(last, nowon);
+                last = nowon;
+
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("demo").innerHTML = "EXPIRED";
+                }
+                }, 1000);
+                
+                function animatetime(last, nowon) {
+                for (var i = 0; i < nowon.length; i++) {
+                    if (last[i] != nowon[i]) {
+                    animate(i, nowon[i]);
+                    }
+                }
+                }
+                
+                function animate(index, number) {
+                var element = document.getElementsByClassName("number")[index];
+                var second = element.lastElementChild.cloneNode(true);
+                second.innerHTML = number;
+                element.appendChild(second);
+                element.classList.add("move");
+                setTimeout(function () {
+                    element.classList.remove("move");
+                }, 500);
+                setTimeout(function () {
+                    element.removeChild(element.firstElementChild);
+                }, 500);
+                }
+
+
+        </script>
+<script src="/__/firebase/7.23.0/firebase-app.js"></script>
+
+<script src="/__/firebase/7.23.0/firebase-analytics.js"></script>
+
+<script src="/__/firebase/init.js"></script>
+<script src="https://github.com/MikeMcl/bignumber.js/blob/master/bignumber.min.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149920927-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-149920927-2');
+</script>
+
+    </body>
+</html>

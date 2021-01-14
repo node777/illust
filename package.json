@@ -1,29 +1,25 @@
 {
-  "name": "illust",
+  "name": "hydra",
   "version": "1.0.0",
-  "description": "Digital Space Station",
-  "main": "illust.js",
-  "dependencies": {
-    "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "express-fileupload": "^1.1.7-alpha.4",
-    "lodash": "^4.17.19",
-    "morgan": "^1.10.0"
-  },
-  "devDependencies": {},
+  "description": "Enterprise Blockchain",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "master"
-  },
   "keywords": [
-    "Illust",
-    "3d",
-    "AR"
+    "hydra",
+    "blockchain",
+    "database",
+    "server",
+    "serverless",
+    "enterprise"
   ],
   "author": "Sabin Hertz",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@wasmer/wasi": "^0.12.0",
+    "body-parser": "^1.19.0",
+    "ethers": "^4.0.47",
+    "express": "^4.17.1"
+  }
 }

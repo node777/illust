@@ -5,7 +5,7 @@ var modelControl={
     modelList:{},
     display: function display(s){
         console.log(modelControl.modelList)
-        this.mv.src="assets/models/"+Object.keys(modelControl.modelList)[s]+".gltf";
+        this.mv.src="assets/models/"+Object.keys(modelControl.modelList)[s]+"/scene.gltf";
         /*
         this.mv.alt=models[s].alt;
         this.mv.setAttribute("ios-src", models[s].ios);

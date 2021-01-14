@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>Torus Test</title>
+        <script src="https://unpkg.com/@toruslabs/torus-embed"></script>
+
+    </head>
+    <body>
+        This is a torus test
+        <script>
+            (async ()=>{
+                const torus = new Torus();
+                await torus.init();
+                await torus.login(); // await torus.ethereum.enable()
+                const web3 = new Web3(torus.provider);
+            })();
+        </script>
+    </body>
+</html>

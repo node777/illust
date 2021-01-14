@@ -1,0 +1,286 @@
+{
+    "asset": {
+        "version": "2.0",
+        "generator": "Open Asset Import Library (assimp v5.0.5eb040c7)"
+    },
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 47234,
+            "type": "VEC3",
+            "max": [
+                16.56987190246582,
+                168.54908752441407,
+                20.090713500976564
+            ],
+            "min": [
+                -48.05368423461914,
+                1.0401264429092408,
+                -18.60503387451172
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 47234,
+            "type": "VEC3",
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 283392,
+            "type": "SCALAR",
+            "max": [
+                47233
+            ],
+            "min": [
+                0
+            ]
+        },
+        {
+            "bufferView": 3,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 902,
+            "type": "VEC3",
+            "max": [
+                18.983875274658204,
+                18.983875274658204,
+                18.983875274658204
+            ],
+            "min": [
+                -18.983875274658204,
+                -18.983875274658204,
+                -18.983875274658204
+            ]
+        },
+        {
+            "bufferView": 4,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 902,
+            "type": "VEC3",
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ]
+        },
+        {
+            "bufferView": 5,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 4968,
+            "type": "SCALAR",
+            "max": [
+                901
+            ],
+            "min": [
+                0
+            ]
+        }
+    ],
+    "buffers": [
+        {
+            "byteLength": 2308704,
+            "uri": "result.bin"
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 566808,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 566808,
+            "byteLength": 566808,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 1133616,
+            "byteLength": 1133568,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 2267184,
+            "byteLength": 10824,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 2278008,
+            "byteLength": 10824,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 2288832,
+            "byteLength": 19872,
+            "target": 34963
+        }
+    ],
+    "images": [
+        {
+            "uri": "../IllustSpace/tex/Eye2Color.png"
+        },
+        {
+            "uri": "../IllustSpace/tex/Eye2Normal.png"
+        },
+        {
+            "uri": "../IllustSpace/tex/DotColor.png"
+        }
+    ],
+    "materials": [
+        {
+            "name": "Mat",
+            "pbrMetallicRoughness": {
+                "baseColorTexture": {
+                    "index": 0
+                },
+                "baseColorFactor": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.9642229080200195
+            },
+            "normalTexture": {
+                "index": 1
+            }
+        },
+        {
+            "name": "Mat",
+            "pbrMetallicRoughness": {
+                "baseColorTexture": {
+                    "index": 2
+                },
+                "baseColorFactor": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.9642229080200195
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "Eye",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": 0,
+                    "indices": 2,
+                    "attributes": {
+                        "POSITION": 0,
+                        "NORMAL": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Oil_Tank",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": 1,
+                    "indices": 5,
+                    "attributes": {
+                        "POSITION": 3,
+                        "NORMAL": 4
+                    }
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "name": "RootNode",
+            "children": [
+                1,
+                2
+            ]
+        },
+        {
+            "name": "Eye",
+            "mesh": 0
+        },
+        {
+            "name": "Oil_Tank",
+            "matrix": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                -4.371138828673793e-8,
+                1.0,
+                0.0,
+                0.0,
+                -1.0,
+                -4.371138828673793e-8,
+                0.0,
+                -17.011096954345704,
+                207.68896484375,
+                -1.2717281519308496e-14,
+                1.0
+            ],
+            "mesh": 1
+        }
+    ],
+    "samplers": [
+        {},
+        {},
+        {}
+    ],
+    "scenes": [
+        {
+            "nodes": [
+                0
+            ]
+        }
+    ],
+    "textures": [
+        {
+            "source": 0,
+            "sampler": 0
+        },
+        {
+            "source": 1,
+            "sampler": 1
+        },
+        {
+            "source": 2,
+            "sampler": 2
+        }
+    ],
+    "scene": 0
+}

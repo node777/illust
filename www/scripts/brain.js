@@ -1,49 +1,523 @@
+const { auctions } = require("../../functions");
+
 var formData;
 var files;
 let provider;
+var signer
+let currentAuth=0;
+let torInt;
+var torus;
+var assets={
+    selected:0,
+    upload:async()=>{
+        
+        let fr = new FileReader();
+        const selectedFile = document.getElementById('assetInput').files[0];
+        console.log(selectedFile);
+        fr.readAsArrayBuffer(selectedFile);
+        //let a=new Int8Array(selectedFile);
+        //console.log(h);
+        fr.onload = async function(event) {
+            if(location.hash=="#editAssets"){
+                console.log(event.target.result);
+                
+                let a=new Int8Array(event.target.result);
+                let h=ethers.utils.sha256(a);
+                let n=ethers.BigNumber.from(h);
+                document.getElementById("assetMintID").value=n;
+                document.getElementById("asset_id").value=n;
+            }
+        }
+    },
+    "bajibbly":{
+        hash:"8456350751317975846800924683986100177337207567287562046240586730923411985742",
+        name:"fewfgwegwergrgwer",
+        iPrice:1.2,
+        ext:"gltf"
+    },
+    90007:{
+        hash:"green",
+        name:"MF-7",
+        iPrice:1.2,
+        ext:"gltf"
+    },
+    90008:{
+        hash:"blue",
+        name:"MF-8",
+        iPrice:1.2,
+        ext:"gltf"
+    },
+    999:{
+        hash:"blacksludge",
+        name:"MF-BLACKSLUDGE",
+        iPrice:1.2,
+        ext:"gltf"
+    },
+    609:{
+        hash:"15656630424036753581450935940596632215884383929372546170587529153151943392229",
+        name:"MF-09",
+        iPrice:"4.0",
+        ext:"gltf",
+        override:{
+            bidder:"metalfingers",
+            bid:4.6
+        }
+    },
+    610:{
+        hash:"70937556211959927769088791688503419832872233678974511813637293239899188185264",
+        name:"MF-10",
+        iPrice:"4.0",
+        ext:"gltf",
+        override:{
+            bidder:"Betosk8s",
+            bid:4.4
+        }
+    },
+    611:{
+        hash:"8456350751317975846800924683986100177337207567287562046240586730923411985742",
+        name:"MF-11",
+        iPrice:"6.2",
+        ext:"gltf",
+        override:{
+            bidder:"kingvanilli",
+            bid:9.1
+        }
+    }
+}
+var account={
+    info:{
+    },
+    sign:async(msg)=>{
+      //if web3
+      if(localStorage.provider=="web3"){
+        try{
+            signer=provider.getSigner();
+          let signature = await signer.signMessage(msg);
+          console.log(signature);
+          return signature;
+        }
+        catch(e){
+          console.log(e);
+          //alert(`Could not sign message \n Got Error ${e}`)
+          location.reload();
+        }
+      }
+      else if(localStorage.provider=="torus"){
+        try{
+          // let m=Uint8Array.from(msg);
+          // console.log(m, m.length);
+          // var a = await web3.eth.getAccounts();
+          // let signature = await web3.eth.sign(msg, a);
+          // console.log(signature);
+          let signature = await web3.eth.personal.sign(msg, web3.currentProvider.selectedAddress);
+          return signature;
+        }
+        catch(e){
+          console.log(e);
+          //alert(`Could not sign message \n Got Error ${e}`)
+          location.reload();
+        }
+      }
+      else{
+        return "Invalid Sig"
+      }
+    },
+    login:async()=>{
+        if(account.info=={}){
+            document.getElementById("content").innerHTML=elements.loading();
+        }else{
+            if(localStorage.userInfo){
+                let d=JSON.parse(localStorage.userInfo);
+                account.info={
+                    username:d.username,
+                    firstname:d.firstname,
+                    lastname:d.lastname,
+                    pronoun:d.pronoun,
+                    email:d.email,
+                    collection:d.collection,
+                    bio:d.bio,
+                    bids:{}
+                } 
+                
+                await changePage();
+                account.information();
+                console.log(document.getElementById("content").innerHTML)
+            }else{
+                //if(){}
+                await account.load();
+                let sig=await account.sign("illust login");
+                var request = new XMLHttpRequest(); 
+                request.onreadystatechange = function() {
+                    if (request.readyState === 4) {
+                        let m=request.response;
+                        console.log(m);
+                        var loginRequest = new XMLHttpRequest(); 
+                        loginRequest.onreadystatechange = async function(){
+                            try{
+                                let d=JSON.parse(loginRequest.response);
+                                console.log(loginRequest.response);
+                                localStorage.userInfo=await loginRequest.response;
+                                account.login();
+                            }catch(e){
+                                console.log(loginRequest.response)
+                            }
+                        }
+                        loginRequest.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}/${sig}`);
+                        loginRequest.send();
+                    }
+                }
+                request.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}`);
+                request.send();
+                
+            }
+        }
+    },
+    load:async ()=>{
+        if(localStorage.provider=="web3"){
+            document.getElementById("content").innerHTML="Please login to web3 provider:<br>"+elements.loading();
+            await window.ethereum.enable();
+            
+            provider = new ethers.providers.Web3Provider(web3.currentProvider);            
+            console.log(provider);
+            document.getElementById("content").innerHTML=elements.loading();
+        }else if(localStorage.provider=="torus"){
+            if(provider){}else{
+                document.getElementById("content").innerHTML=elements.loading();
+                console.log();
+                torus = new Torus();
+                await torus.init();
+                await torus.login();
+                provider = new ethers.providers.Web3Provider(torus.provider);
+                web3 = new Web3(torus.provider);
+                provider.provider.selectedAddress=torus.provider.selectedAddress;
+                signer = await provider.getSigner();
+                
+                //await account.login();
+                changePage();
+            }
+
+        }else if(location.hash=="#account"||location.hash=="account"){
+            document.getElementById("content").innerHTML=elements.connect();   
+        }
+        
+        if(provider){
+
+        }else{
+            
+        }
+    },
+    getBal:async()=>{
+        document.getElementById('balBox').innerHTML="Balance: "+ethers.utils.formatEther(await provider.getBalance(provider.provider.selectedAddress));
+    },
+    getData:()=>{
+        //ref databse
+        try{
+            let a = provider.provider.selectedAddress;
+            console.log(a);
+            var userRef = firebase.database().ref('users/' + a);
+            userRef.once('value', async function(snapshot){
+                let d=snapshot.val();
+                console.log(d);
+                console.log(snapshot.val());
+                if(d!==null){
+                    //location.hash="account";
+                    //await changePage();
+                    let bb=Object(d.bids);
+                    account.info={
+                        username:d.username,
+                        firstname:d.firstname,
+                        lastname:d.lastname,
+                        pronoun:d.pronoun,
+                        email:d.email,
+                        collection:d.collection,
+                        bio:d.bio,
+                        bids:{}
+                    }
+                    console.log(d.bids);
+                    for(b in d.bids){
+                        account.info.bids[b]=d.bids[b];
+                    }
+                    console.log(account.info);
+                    if(document.getElementById("account")){
+                        console.log(provider.provider.selectedAddress);
+                        document.getElementById("content").innerHTML=await elements.account();
+                    }
+                    else if(document.getElementById("lot")){
+                        //set user bid
+                        try{
+                            console.log(account.info);
+                            if(account.info.bids[assets.selected]!=undefined){
+                                console.log(account.info.bids[a])
+                                document.getElementById("userBid").innerHTML=`Your current bid: ${account.info.bids[assets.selected]}<br><br>`
+                            }
+                        }catch(e){console.log(e)}
+                    }
+                    console.log(account.info);
+                }else if(document.getElementById("account")){
+                    document.getElementById("content").innerHTML=elements.createAccount();       
+                }
+            });
+        }catch(e)
+        {console.log(e)}
+        
+    },
+    logout:async()=>{
+        provider=undefined;
+        localStorage.clear();
+        account.info=undefined;
+        try{
+            torus?await torus.logout():()=>{};
+        }catch(e){
+            console.log(e);
+        }
+        location.reload();
+
+    },
+    information:async()=>{
+        if(document.getElementById('accountContent')){
+            let m=await elements.profileInfo();
+            document.getElementById('accountContent').innerHTML=m;
+        }
+    },
+    wallet:async()=>{
+        let m=await elements.walletInfo();
+        console.log(m);
+        document.getElementById('accountContent').innerHTML=m;
+    },
+    edit:async()=>{
+        let m=await elements.editProfile();
+        document.getElementById('accountContent').innerHTML=m;
+    },
+    select:(r)=>{
+        try{
+            document.getElementById('pr').style="";
+            document.getElementById('vw').style="";
+            document.getElementById('cl').style="";
+            document.getElementById('ep').style="";
+            document.getElementById('so').style="";
+            document.getElementById(`${r}`).style="color:var(--color4);";
+        }catch(e){
+            console.log(e);
+        }
+    },
+    create:(a)=>{
+        if(a==1||(document.getElementById("verifyTOS")&&document.getElementById("verifyTOS").checked==true)){
+            account.info.username=document.getElementById("usernamei").value;
+            account.info.firstname=document.getElementById("firstname").value;
+            account.info.lastname=document.getElementById("lastname").value;
+            account.info.email=document.getElementById("emaili").value;
+            account.info.bio=document.getElementById("bioi").value;
+            
+            changePage();
+            firebase.database().ref('users/' + provider.provider.selectedAddress+"/username").set(account.info.username);
+            firebase.database().ref('users/' + provider.provider.selectedAddress+"/firstname").set(account.info.firstname);
+            firebase.database().ref('users/' + provider.provider.selectedAddress+"/lastname").set(account.info.lastname);
+            firebase.database().ref('users/' + provider.provider.selectedAddress+"/email").set(account.info.email);
+            firebase.database().ref('users/' + provider.provider.selectedAddress+"/bio").set(account.info.bio);
+            
+        }else{
+            console.log(document.getElementById("verifyTOS").value);
+            alert("Please agree to the Terms of Service");
+        }
+    }
+}
+
+var auction={
+    "loadDate":()=>{
+        var utcSeconds = result[4].toNumber();
+        var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+        d.setUTCSeconds(utcSeconds);
+        document.getElementById("dateBox").innerHTML=`Close time: ${d}<br><br />`;
+    },
+    "listAsset":()=>{
+        document.getElementById("varBox").innerHTML+=`End date <input id="asset_end" value='${document.getElementById("end_date_input").value}'></input> Initial Price <input id="asset_price" value='${document.getElementById("price_input").value}'></input>`
+    },
+    "beginAuction":()=>{
+        assetData["end_date"]=document.getElementById("auction_close").value;
+        document.getElementById("varBox").innerHTML+=`end_date:<input id="asset_end_date" value='${document.getElementById("auction_close").value}'></input>`
+        assetData["starting_bid"]=document.getElementById("auction_starting_bid").value;
+        document.getElementById("varBox").innerHTML+=`starting_bid:<input id="asset_starting_bid" value='${document.getElementById("auction_starting_bid").value}'></input>`
+    }
+}
+
+
+// firebase.initializeApp({
+//     apiKey: "AIzaSyCfNihdvP4epfuQFdcCRYoIdGIYlonTaPY",
+//     authDomain: "illust-b87a1.firebaseapp.com",
+//     databaseURL: "https://illust-b87a1.firebaseio.com",
+//     projectId: "illust",
+//     measurementId: "G-VBJ7RSFPZL"
+//   });
+var database = firebase.database();
+//firebase.functions().useFunctionsEmulator("http://localhost:5001");
+
+var functions = firebase.functions();
+
 function sidebar(l){
     if(l){
         document.getElementById("sidebar").style="";
         document.getElementById("overlay").style="";
     }else{
-        document.getElementById("sidebar").style="width:310px";
+        if(document.body.id=="doomsday"&&window.innerHeight > window.innerWidth){
+            document.getElementById("sidebar").style="width:60%";
+        }else{
+            document.getElementById("sidebar").style="width:310px";
+        }
         document.getElementById("overlay").style="display:initial;opacity:40%";
     }
 }
-async function account(){
-    if(provider){
-    }else{
-        await window.ethereum.enable();
-        let provider = await new ethers.providers.Web3Provider(web3.currentProvider);
-    }
-    location.hash="account";
-    
-}
-function connectAccount(){
-    if(provider){
-    }
-    else{
 
-        window.ethereum.enable();
-        provider = new ethers.providers.Web3Provider(web3.currentProvider);
+async function connectTorus(){
+    localStorage.setItem("provider","torus");
+    document.getElementById("content").innerHTML='Connecting to Account'+elements.loading()+`<div class='button' onclick='changePage();'>Back</div>`;
+    // await torus.ethereum.enable()
+    //const web3 = new Web3(torus.provider);
+    await account.load();
+    console.log(provider);
+
+}
+function connectAccount(q){
+    document.getElementById("content").innerHTML=`Connecting to Web3 Provider${elements.loading()}`;
+    if(q){
+        try{
+            localStorage.setItem("provider","web3");
+            window.ethereum.enable();
+            provider = new ethers.providers.Web3Provider(web3.currentProvider);
+            changePage();
+        }catch(e){
+            console.log(e);
+        }
+    
     }
     
+    try{
+        if(provider&&provider.provider&&provider.provider.selectedAddress!=null&&provider.provider.selectedAddress!=undefined){
+            //console.log(provider.provider.selectedAddress);
+            var userRef = firebase.database().ref('users/' + provider.provider.selectedAddress);
+            userRef.on('value', async function(snapshot) {
+                let d=snapshot.val();
+                console.log(d);
+                console.log(snapshot.val());
+                if(d!==null){
+                    //location.hash="account";
+                    //await changePage();
+                    account.info={
+                        username:d.username,
+                        firstname:d.firstname,
+                        lastname:d.lastname,
+                        pronoun:d.pronoun,
+                        email:d.email,
+                        collection:d.collection,
+                        bio:d.bio,
+                        bids:d.bids
+                    }
+                    document.getElementById("content").innerHTML=await elements.account();
+                    console.log(account.info);
+                }
+                else if(provider&&provider.provider.selectedAddress){
+                    document.getElementById("content").innerHTML=elements.createAccount();
+                }
+            });
+        }
+    }catch(e){
+        console.log(e);
+    }
+}
+async function placeBid(a){
+    try{
+        await account.load();
+        /*
+        console.log(a);
+        firebase.functions().useFunctionsEmulator("http://localhost:5001");
+        var addBid = firebase.functions().httpsCallable('placeBid');
+        addBid(
+            {
+                "user": provider.provider.selectedAddress,
+                "amount":document.getElementById("bidAmount").value,
+                "asset": a
+            }
+        ).then(function(result) {
+        // Read result of the Cloud Function.
+        console.log("data");
+        //var sanitizedMessage = result.data.text;
+        console.log(result);
+        }).catch(function(error) {
+            // Getting the Error details.
+            var code = error.code;
+            var message = error.message;
+            var details = error.details;
+            // ...
+            console.log(error);
+        });
+            */
+        invoke('b', a).then((result)=>{
+            let am=document.getElementById("bidAmount").value.toString();
+            console.log(result,a,am);
+            firebase.database().ref('users/' + provider.provider.selectedAddress+"/bids/"+a).set(am);
+        });
+        //account.info.bids[a]=(document.getElementById("bidAmount").value);
+    }catch(e){
+        //alert("Could not execute bid, make sure your wallet is populated, the auction is live, and your bid price is high enough");
+        console.log(e);
+    }
+}
+function changeAuth(){
+    let m;
+    if(document.getElementById('torusBox')){
+        currentAuth++;
+        if(currentAuth==1)
+            m="E-Mail";
+        else if(currentAuth==2)
+            m="Google";
+        else if(currentAuth==3)
+            m="Facebook";
+        else if(currentAuth==4)
+            m="Reddit";
+        else if(currentAuth==5)
+            m="Github";
+        else if(currentAuth==6)
+            m="Apple";
+        else if(currentAuth==7){
+            m="Twitter";
+            currentAuth=0;
+        }
+        document.getElementById('torusBox').innerHTML='Connect with '+m;
+    }else{
+        clearInterval(torInt);
+    }
+}
+function hashMesh(){
+    document.getElementById('upload').click();
+    document.getElementById('upload').addEventListener('change', readFileAsString);
 }
 function upload(){
     document.getElementById('upload').click();
     document.getElementById('upload').addEventListener('change', readFileAsString);
 }
-function readFileAsString(f) {
-    console.log(f);
+async function readFileAsString(f) {
     files = this.files;
+    console.log(this.files);
     if (files.length === 0) {
         console.log('No file is selected');
         return;
     }
 
     formData = new FormData();
-
-    uploadPopup();
+    if(location.hash=="#admin"){
+        var reader = new FileReader();
+        let p9 = reader.readAsText(files[0]);
+        // Closure to capture the file information.
+        
+        console.log(p9, files[0].stream);
+        reader.onload = (function(theFile) {
+              console.log( theFile );
+          })(f);
+    
+        let h = await web3.utils.sha3(f);
+        document.getElementById("data").innerHTML=h;
+    }else{
+        uploadPopup();
+    }
 }
 function uploadPopup(){
 
@@ -73,12 +547,39 @@ function uploadPopup(){
 function explore(){
 
 }
+
+var assetData={}
+function addAsset(){
+    location.hash=`editAsset?${document.getElementById("asset_id").value}`
+}
+async function editAsset(a){
+    for(v in assetData){
+        console.log(`asset_${v}`)
+        assetData[v]=document.getElementById(`asset_${v}`).value;
+    }
+    let s = await account.sign("update asset");
+    var request = new XMLHttpRequest(); 
+    request.onreadystatechange = function() {
+        if (request.readyState === 4) {
+        }
+    }
+    request.open("POST", `https://us-central1-illust.cloudfunctions.net/metadata/edit/${a}/${s}`);
+    request.send(JSON.stringify(assetData));
+    alert(`Asset ${a} saved sccessfully`);
+
+}
+function addField(){
+    assetData[document.getElementById("fieldName").value]=""
+    document.getElementById("varBox").innerHTML+=`${document.getElementById("fieldName").value}<input id="asset_${document.getElementById("fieldName").value}" placeholder='${document.getElementById("fieldName").value} data'></input>`
+}
+
 function displayCamera(){
     document.getElementById("content").innerHTML = `<input id="cameraLoader" type="file" accept="image/*">`
     document.getElementById("cameraLoader").click;
 }
 function register(){
     let d={"Name": document.getElementById("name").value, "Author": document.getElementById("author").value, "Licence":document.getElementById("licence").value};
+    console.log(files[0]);
     formData.append("model", files[0]);
     formData.append("info", JSON.stringify(d));
     var request = new XMLHttpRequest(); 
@@ -93,10 +594,1021 @@ function register(){
     document.getElementById("uPopup").style="display:none;";
     
 }
+function copyText(t){
 
-window.ethereum.on('accountsChanged', function (accounts) {
-    changePage();
-});
-window.ethereum.on('networkChanged', function (accounts) {
-    changePage();
-});
+    this.select();this.setSelectionRange(0, 99999);document.execCommand("copy");alert("Copied the text: " + this.innerHTML);
+}
+async function invokeERC(w){
+    var abi = [
+        {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "approved",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Approval",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "operator",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "bool",
+                    "name": "approved",
+                    "type": "bool"
+                }
+            ],
+            "name": "ApprovalForAll",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "from",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Transfer",
+            "type": "event"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address payable",
+                    "name": "user",
+                    "type": "address"
+                }
+            ],
+            "name": "addToWhitelist",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "approve",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                }
+            ],
+            "name": "balanceOf",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "baseURI",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getApproved",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "operator",
+                    "type": "address"
+                }
+            ],
+            "name": "isApprovedForAll",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "tokenID",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "user",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "royaltyReciever1",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "royaltyReciever2",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint8",
+                    "name": "split",
+                    "type": "uint8"
+                }
+            ],
+            "name": "mintAsset",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "name",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "ownerOf",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "piecelist",
+            "outputs": [
+                {
+                    "internalType": "address payable",
+                    "name": "minter",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "royaltyReciever1",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "royaltyReciever2",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint8",
+                    "name": "split",
+                    "type": "uint8"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address payable",
+                    "name": "user",
+                    "type": "address"
+                }
+            ],
+            "name": "removeFromWhitelist",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "from",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "safeTransferFrom",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "from",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "bytes",
+                    "name": "_data",
+                    "type": "bytes"
+                }
+            ],
+            "name": "safeTransferFrom",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "operator",
+                    "type": "address"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "approved",
+                    "type": "bool"
+                }
+            ],
+            "name": "setApprovalForAll",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setTokenPrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "_tokenURI",
+                    "type": "string"
+                }
+            ],
+            "name": "setTokenURI",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "bytes4",
+                    "name": "interfaceId",
+                    "type": "bytes4"
+                }
+            ],
+            "name": "supportsInterface",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "symbol",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "index",
+                    "type": "uint256"
+                }
+            ],
+            "name": "tokenByIndex",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "index",
+                    "type": "uint256"
+                }
+            ],
+            "name": "tokenOfOwnerByIndex",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "tokenURI",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "totalSupply",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "from",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "transferFrom",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        }
+    ];
+    var address = '0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6';
+    var contract = new ethers.Contract(address, abi, provider);
+    if(w=="a"){
+        let provider = new ethers.providers.Web3Provider(web3.currentProvider);
+        let signer = await provider.getSigner();
+        contract=await contract.connect(signer);
+        let assetId=new ethers.BigNumber.from(document.getElementById("assetMintID").value);
+        console.log(assetId, assetId.toString(), assetId.to);
+        var sendPromise = contract.mintAsset(assetId.toString(), ethers.utils.getAddress(document.getElementById("assetMintUser").value), ethers.utils.getAddress(document.getElementById("recipient1").value), ethers.utils.getAddress(document.getElementById("recipient2").value), Number(document.getElementById("split").value));
+        console.log(sendPromise)
+        sendPromise.then(function(transaction) {
+            document.getElementById("data").innerHTML=(transaction);
+        });
+    }
+    if(w=="r"){
+        connectTorus();
+        let signer = provider.getSigner();
+        contract=await contract.connect(signer);
+        //let assetId=new ethers.BigNumber.from(document.getElementById("assetMintID").value);
+        //console.log(assetId, assetId.toString(), assetId.to);
+        var sendPromise = contract.setApprovalForAll("0x7cca737DC640eC07943aA32736E834eCa9E4C4eC", 1);
+        console.log(sendPromise)
+        sendPromise.then(function(transaction) {
+            document.getElementById("data").innerHTML=(transaction);
+        });
+    }
+    else if(w=="b"){
+        let provider = new ethers.providers.Web3Provider(web3.currentProvider);
+        let signer = provider.getSigner();
+        contract=contract.connect(signer);
+        var sendPromise = contract.balanceOf(ethers.utils.getAddress("0xDc4c460577951Df59161467C2E4Ea41078c8D184", true));
+        console.log(ethers.utils.getAddress("0xDc4c460577951Df59161467C2E4Ea41078c8D184", true));
+        sendPromise.then(function(transaction) {
+            document.getElementById("data").innerHTML=(transaction);
+        });        
+    }
+}
+async function invoke(w, m){
+
+    var abi = [
+        {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Auctions",
+            "outputs": [
+                {
+                    "internalType": "address payable",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "topBidder",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "inc",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "closeTime",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "asset",
+                    "type": "uint256"
+                }
+            ],
+            "name": "placeBid",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "asset",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "initialPrice",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "increment",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "closeTime",
+                    "type": "uint256"
+                }
+            ],
+            "name": "startAuction",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }
+    ];
+   
+    var address = '0x82e412e5ebF4b323f1CDE727932f8F38cd61496a';
+   
+    var contract = new ethers.Contract(address, abi, provider);
+    if(w=="n"){
+        provider = new ethers.providers.Web3Provider(web3.currentProvider);
+        let signer = provider.getSigner();
+        contract=contract.connect(signer);
+        var sendPromise = contract.startAuction(document.getElementById("a").value,document.getElementById("i").value,document.getElementById("inc").value, Number(document.getElementById("closetime").value));
+        sendPromise.then(function(transaction) {
+            document.getElementById("data").innerHTML=(transaction);
+        });
+        
+    }else if(w=="b"){
+        account.load();
+        let signer = provider.getSigner();
+        contract=contract.connect(signer);
+        let b =ethers.utils.parseEther(Number(document.getElementById("bidAmount").value).toFixed(17));
+        console.log(b);
+        let a =document.getElementById("bidAsset")?document.getElementById("bidAsset").value:m;
+        console.log(b,a);
+        if(b==""){
+            alert("Please enter bid value");
+        }else{
+            try{
+                var sendPromise = contract.placeBid(b,a);
+                await sendPromise;
+                alert(`Thank you for Bidding (${document.getElementById("bidAmount").value} ETH). Please note, your bid will be confirmed as soon as the Ethereum network has updated. If bid is not confirmed, gas will be returned to your wallet.`);
+            }catch(e){
+                console.log(e);
+                alert("Could not execute bid. Smart contract rejected transaction, make sure your wallet has enough ETH, and you are bidding high enough");
+            }
+        }
+        
+    }else if(w=="qq"){
+        provider=ethers.getDefaultProvider(1);
+        contract = new ethers.Contract(address, abi, provider);
+        //let a=Number(document.getElementById("lotID").value);
+        var callPromise = contract.Auctions(m);
+        callPromise.then(function(result) {
+            console.log(ethers.utils.getAddress(result[1]));
+
+            document.getElementById("topBidder").innerHTML=`Top bidder: ${result[1]}<br /><br />`;
+            //set price
+            let bidPrice=ethers.utils.formatEther(ethers.BigNumber.from(result[2]));
+
+            //set min
+            let min=ethers.utils.formatEther((result[3]).add(result[2]));
+
+            if(assets[m].override){
+                document.getElementById("topBidder").innerHTML=`Top bidder: ${assets[m].override.bidder}<br /><br />`;
+                document.getElementById("bidAmount").value=`${assets[m].override.bid+0.20000000001}`;
+                document.getElementById("priceBox").innerHTML=`<b>Current Bid: ${assets[m].override.bid} ETH</b><br><br>`;
+                
+            }else{
+                //console.log(min);
+                document.getElementById("bidAmount").value=`${min}`;
+                //get top bidder
+                var userRef = firebase.database().ref('users/' + ethers.utils.getAddress(result[1]));
+                userRef.once('value', async function(snapshot){
+                    let d=snapshot.val();
+                    //console.log(d);
+                    if(d!=null){
+                        document.getElementById("topBidder").innerHTML=`Top bidder: ${d.username}<br><br>`;
+                    }else{
+                        
+                        var userRef2 = firebase.database().ref('users/' + String(ethers.utils.getAddress(result[1]).toLowerCase()));
+                        userRef2.once('value', async function(ss){
+                            let p=ss.val();
+                            //console.log(p.username);
+                            if(p!=null){
+                                document.getElementById("topBidder").innerHTML=`Top bidder: ${p.username}<br><br>`;
+                            }
+                        });
+                    }
+                });
+                document.getElementById("priceBox").innerHTML=`<b>Current Bid: ${bidPrice} ETH</b><br><br>`;
+                
+            }
+            try{
+                //console.log(result, result[2], result[3]);
+                //document.getElementById("data")?document.getElementById("data").innerHTML=`Owner: ${result[0]}<br />`:()=>{};
+
+                //document.getElementById("data").innerHTML+=`Increment: ${result[3]}<br />`
+                
+                
+                //get conversion
+                /*
+                let xhr = new XMLHttpRequest();
+                xhr.open("GET", "https://api.etherscan.io/api?module=stats&action=ethprice&apikey=EXENZEEKAYXD1MMA27F7A2GX1UVKPBEEZV")
+                xhr.send();
+                xhr.onload = function() {
+                    assets.one=JSON.parse(xhr.response).result.ethusd;
+                    document.getElementById("priceBox").innerHTML+=`(${(bidPrice*Number(assets.one)).toFixed(2)} USD)`;
+                  };
+                */
+                
+                
+                //set date
+                var utcSeconds = result[4].toNumber();
+                var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+                d.setUTCSeconds(utcSeconds);
+                document.getElementById("dateBox").innerHTML=`Close time: ${d}<br><br />`;
+
+                var today = new Date();
+                assets.countdown=(Date.parse(d)/1000)-(Date.parse(today)/1000);
+                console.log(Date.parse(d), Date.parse(today), assets.countdown);
+                clearInterval(assets.time);
+                assets.time=setInterval(()=>{
+                    try{
+                    assets.countdown--;
+                    document.getElementById("countdownBox").innerHTML=`${Math.floor(assets.countdown/3600)} Hours ${Math.floor(assets.countdown/60)%60} Minutes ${assets.countdown%60} Seconds <br><br />`;
+                    }catch(e){
+                        clearInterval(assets.time);
+                    }
+                },1000);
+                document.getElementById("countdownBox").innerHTML=`${assets.countdown}<br><br />`;
+            }catch(e){
+                console.log(result, e);
+            }
+        });
+    }
+}
+async function invokeCos(w, m){
+
+    var abi = [
+        {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address payable",
+                    "name": "recipient2",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "recipient1Amount",
+                    "type": "uint256"
+                }
+            ],
+            "name": "closeCollection",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "asset",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "winner",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "tokenContract",
+                    "type": "address"
+                }
+            ],
+            "name": "listAsset",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "asset",
+                    "type": "uint256"
+                }
+            ],
+            "name": "pay",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "winnigBids",
+            "outputs": [
+                {
+                    "internalType": "address payable",
+                    "name": "winner",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address",
+                    "name": "token",
+                    "type": "address"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "complete",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ];
+   
+    var address = '0x7cca737DC640eC07943aA32736E834eCa9E4C4eC';
+   
+    var contract = new ethers.Contract(address, abi, provider);
+    
+    if(w=="r"){
+        await account.load();
+        
+        let signer = provider.getSigner();
+        contract=contract.connect(signer);
+        var sendPromise = contract.startAuction(document.getElementById("a").value,document.getElementById("i").value,document.getElementById("inc").value, Number(document.getElementById("closetime").value));
+        sendPromise.then(function(transaction) {
+            document.getElementById("itemWinner").innerHTML=(transaction);
+        });
+        
+    }else if(w=="b"){
+        let signer = provider.getSigner();
+        contract=contract.connect(signer);
+        var sendPromise = contract.winnigBids(ethers.BigNumber.from(m));
+        sendPromise.then(function(r) {
+            console.log(r);
+            document.getElementById("itemData").innerHTML=`
+                Winning address: ${r[0]}<br />
+                Token Owner: ${r[1]} (DOOM)<br />
+                Winning Bid: ${ethers.utils.formatEther(r[2])}<br />
+                Token contract: ${r[3]}<br />
+                ${r[4]?"completed":"Not yet claimed"}
+            `;
+        });
+        
+    }else if(w=="qq"){
+
+        await account.load();
+        let signer = provider.getSigner();
+        contract=contract.connect(signer);
+        var sendPromise = contract.winnigBids(ethers.BigNumber.from(m));
+        let r = await sendPromise;
+        let v=r[2];
+        console.log(m, v);
+        var payPromise = contract.pay(ethers.BigNumber.from(m), {
+            gasLimit: 420000,
+            value: v
+        });
+        payPromise.then(function(pr) {
+            console.log(pr);
+            alert("Thank you for claiming this item, it will appear in your wallet shortly");
+            location.hash="account";
+        });
+    }
+}
+if(window.ethereum){
+    window.ethereum.on('accountsChanged', function (accounts) {
+        changePage();
+    });
+    window.ethereum.on('networkChanged', function (accounts) {
+        changePage();
+    });
+}
+async function testFunction(){
+    window.ethereum.enable();
+    provider = new ethers.providers.Web3Provider(web3.currentProvider);
+    //await connectAccount();
+    var addMessage = firebase.functions().httpsCallable('editUser');
+    
+    let signer = await provider.getSigner();
+    let m={
+        "text": "sometext",
+        "moretext": "more text"
+    }
+    addMessage({
+        message:m,
+        signature:await signer.signMessage(JSON.stringify(m))
+    }).then(function(result) {
+      // Read result of the Cloud Function.
+      console.log("data");
+      //var sanitizedMessage = result.data.text;
+      console.log(result);
+    }).catch(function(error) {
+      // Getting the Error details.+
+
+      var code = error.code;
+      var message = error.message;
+      var details = error.details;
+      // ...
+      console.log(error);
+    });
+}
+async function illustMarket(i, p){
+    if(i=="create"){
+        var ip=hydra.chains[0]+"/invoke/create";
+        var d=p;
+        await hydra.post(ip, d);
+    }else if(i=="r"){
+        var u =hydra.chains[0]+"/query/read/"+p;
+        console.log(hydra.get(u));
+        return await hydra.get(u);
+    }else if(i=="bid"){
+        var u =hydra.chains[0]+"/invoke/bid";
+        var d=p+":"+document.getElementById("bidAmount").value;
+        let i = await hydra.post(u, d);
+    }
+}

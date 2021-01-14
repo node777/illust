@@ -3,8 +3,9 @@ const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const unzipper = require('unzipper');
 const _ = require('lodash');
-
+const fs = require("fs");
 const crypto =require('crypto');
 
 const app = express();
@@ -25,7 +26,7 @@ app.get('/models', (req, res) => {
   return res.send(JSON.stringify(hashList));
 });
 app.get('/models/:model', (req, res) => {
-  res.sendFile(__dirname + `/www/assets/models/${req.params.model}.gltf`);
+  res.sendFile(__dirname + `/www/assets/models/${req.params.model}/scene.gltf`);
 });
 app.post('/upload', async (req, res) => {
   console.log(req.files);
@@ -48,8 +49,9 @@ app.post('/upload', async (req, res) => {
 
           //Use the mv() method to place the file in upload directory 
           hashList[ha]={info};
-          m.mv('./www/assets/models/' + ha +'.gltf');
-
+          //m.mv('./www/assets/models/' + ha +'.gltf');
+          fs.createReadStream(m)
+          .pipe(unzipper.Extract({ path: `./www/assets/models/${ha}` }));
           //send response
           res.send({
               status: true,

@@ -1,14 +1,5 @@
 {
   "projects": {
-    "default": "groundup-158209"
-  },
-  "targets": {
-    "groundup-158209": {
-      "hosting": {
-        "illust": [
-          "illust"
-        ]
-      }
-    }
+    "default": "illust"
   }
 }

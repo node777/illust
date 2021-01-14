@@ -1,11 +1,13 @@
 @charset "utf-8";
+#maskTransfer{
 
+}
 :root {
-	--color1: #d2d1dc;
+	--color1: #ffffff;
 	--color2: #181818;
 	--color3: #242424;
-	--color4: #e4c30d;
-	--color4: #859142;
+	--color4: #85782e;
+	--color5: #859142;
   }
 body {
 	color: var(--color1);
@@ -13,15 +15,17 @@ body {
 	margin: 0;
 	display: flex;
     flex-wrap: wrap;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Poppins', sans-serif;
     /*font-variant: small-caps;*/
     letter-spacing: 2px;
 
+    font-weight: 300;
 	-webkit-user-select: none;  /* Chrome all / Safari all */
 	-moz-user-select: none;     /* Firefox all */
 	-ms-user-select: none;      /* IE 10+ */
 	user-select: none;      
 }
+input, textarea, button, select, a, div { -webkit-tap-highlight-color: rgba(0,0,0,0); }
 body > *{
     width: 100%;
 }
@@ -30,16 +34,25 @@ body > *{
     width: min-content;
 }
 input{
-    display: none;
 }
 model-viewer{
     position: absolute;
     height:80%;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 #header{
     top:0;
-    padding: 5%;
-    height:64px;
+    z-index: 5;
+    padding: 5% 5% 0;
     font-family: 'Oswald', sans-serif;
     font-size: 20px;
     letter-spacing: 1px;
@@ -47,6 +60,22 @@ model-viewer{
 }
 #header>*{
 float: left;
+}
+#account .flex div{
+    cursor: pointer;
+    text-align: center;
+}
+#account .flex div .br{
+    margin: 15%;
+    width: 70%;
+}
+#account .flex img{
+
+    height: 12vw;
+    margin: 64px auto 32px;
+}
+#accountContent{
+    text-align: left;
 }
 #hd{
     margin: 9px 24px 24px 24px;
@@ -85,13 +114,65 @@ float: left;
 }
 #content{
     top:96px;
-    bottom:32px;
+    padding-bottom:64px;
 }
 #footer{
-    display: flex;
+    display: none;
     bottom: 0px;
     height: 32px;
     padding: 0 32px;
+}
+
+/*page specific*/
+#lotBox{
+    padding: 5%;
+    word-break: break-word;
+}
+#lotBox>.button{
+    padding:16px;
+}
+#lotBox>*{
+    padding: 5%;
+}
+#lotBox model-viewer{
+    width: 200;
+    height: auto;
+    position: relative;
+    height: 300;
+    float: left;
+}
+#collectionBox{
+    word-break: break-word;
+    padding: 5%;
+}
+#assetList .box{
+    padding: 32px 32px 0;
+}
+#assetList model-viewer{
+    height:190px;
+}
+h1{
+    font-weight: 700;
+    margin-top: 0;
+}
+h2{
+    
+    font-family: 'Montserrat', sans-serif;
+}
+#collectionBox>*{
+    padding: 5%;
+}
+#collectionBox model-viewer{
+    width: 200;
+    height: auto;
+    position: relative;
+    height: 300;
+    float: left;
+}
+
+/*UI*/
+#data{
+    user-select: initial;
 }
 #modelSelect{
     position: absolute;
@@ -150,29 +231,38 @@ float: left;
     z-index: 20;
 
 }
-#uPopup{
+.popup{
+    padding: 5%;
+    font-size: 16px;
 	color: var(--color1);
-	background-color: var(--color1);
+	background-color: var(--color2);
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
+    height: 100%;
+    z-index: 6;
 }
-#uPopup>div{
-    position: absolute;
-    top: 5%;
-    bottom: 5%;
-    left: 5%;
-    right: 5%;
+.popup>div{
     background-color: var(--color2);
-    padding: 0 5%;
+    padding: 16px;
+    font-size: 18px;
+    margin: 32px auto;
+    width: 50%;
 }
-#uPopup input{
+.popup a{
+    color: var(--color4);
+}
+input, .popup textarea{
     display: initial;
-    font-family: 'Montserrat', sans-serif;
-    margin: 3% 10%;
-    width: 80%;
+    background-color: var(--color2);
+    color: var(--color1);
+    margin: 3% 25%;
+    width: 50%;
+    font-size: 22px;
+    border:0px;
+    border-bottom: 2px solid var(--color1);
 }
 #overlay{
     position: fixed;
@@ -182,10 +272,31 @@ float: left;
     opacity: 0;
     background-color: var(--color2);
 }
+#content{
+    padding: 0 5% 5%;
+}
+#connectAccount .box{
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+}
+#connectAccount input{
+    font-size: 24px;
+    padding: 4px;
+    border: 2px solid var(--color1);
+    font-family: 'Montserrat';
+}
+#connectAccount{
+    max-width: 600px;
+    margin: auto;
+    padding: 5%;
+} 
 select{
     background-color: var(--color1);
     font-family: 'Montserrat', sans-serif;
 }
+
 .pad{
     padding: 0 6%;
 }
@@ -195,30 +306,52 @@ select{
 .mobile img{
     width: 100%;
 }
+.box{
+    background-color: var(--color1);
+    color: var(--color2);
+    border: 2px solid var(--color2);
+    margin:5px;
+    padding: 5px;
+    overflow: auto;
+}
+.box input{
+    display: initial;
+    color: var(--color1);
+    background-color: var(--color2);
+    border-color: var(--color1);
+    margin: 0 5%;
+    width: 89.8%;
+}
 .button{
+    color: var(--color1);
+    background-color: var(--color2);
     cursor: pointer;
     border: 2px solid var(--color1);
     justify-content: center;
     align-content: center;
     text-align: center;
     padding: 16px;
-    margin: 50px 10%;
+    margin: 50px auto;
+}
+#lot .button{
+    color: var(--color2);
+    background-color: var(--color1);
+
 }
 .button:hover{
     color: var(--color4);
 }
 a:link {
+    color: var(--color4);
     text-decoration: none;
 }
 
 a:visited {
+    color: var(--color4);
     text-decoration: none;
 }
-a:link {
-    color: #FFFFFF;
-}
 a:visited {
-    color: #FFFFFF;
+    color: var(--color4);
 }
 a:hover {
     color: var(--color4);
@@ -226,13 +359,20 @@ a:hover {
 a:active {
 	color: var(--color5);
 }
-
+#sidebar>a, #sidebar a:visited, #sidebar a:link{
+    color: var(--color2);
+}
 /*mobile*/
 
-@media (orientation: portrait) {
-    .mobile{
-        display: initial;
-    }
+#sidebar2 div{
+    margin: 10px 0;
+    cursor: pointer;
+}
+#sidebar2 div:hover{
+    color: var(--color4);
+}
+#sidebar2 .br{
+    margin: 16px 0;
 }
 #sidebar{
     background-color: var(--color1);
@@ -242,6 +382,7 @@ a:active {
     height:100%;
     width:0;
     z-index: 12;
+    left: 0;
 }
 #sidebar div{
 
@@ -251,4 +392,49 @@ a:active {
 #sidebar .br{
     width: auto;
     background-color: var(--color2);
+}
+.flex{
+    display: flex;
+}
+.flex>*{
+    flex: 1;
+}
+.w1{
+    width: 100%;
+}
+.w5{
+    width: 50%;
+}
+@media (orientation: portrait) {
+    .mobile{
+        display: initial;
+    }
+    
+    .popup input, .popup textarea{
+        width: 80%;
+        margin: 3% 10%;
+    }
+    .wrap{
+        flex-wrap:wrap;
+    }
+    .wrap>*{
+        flex-basis: 100%;
+    }
+    .wrap model-viewer {
+    }
+    h2{
+        font-size: 13px;
+    }
+    body{
+        font-size: 12px;
+    }
+}
+#collection #footer{
+    display: none;
+}
+#account .flex img:hover{
+    filter: brightness(0.5);
+}
+#account input{
+    display: initial;
 }
