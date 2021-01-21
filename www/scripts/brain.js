@@ -1,5 +1,3 @@
-const { auctions } = require("../../functions");
-
 var formData;
 var files;
 let provider;
@@ -89,6 +87,7 @@ var account={
     },
     sign:async(msg)=>{
       //if web3
+      console.trace("Signing message")
       if(localStorage.provider=="web3"){
         try{
             signer=provider.getSigner();
@@ -123,65 +122,79 @@ var account={
       }
     },
     login:async()=>{
-        if(account.info=={}){
-            document.getElementById("content").innerHTML=elements.loading();
+        console.trace("logging in");
+        // if(account.info!={}){
+        //     console.log("already logged in")
+        // }
+        
+        await account.load();
+        if(localStorage.userInfo){
+            let d=JSON.parse(localStorage.userInfo);
+            account.info={
+                username:d.username,
+                firstname:d.firstname,
+                lastname:d.lastname,
+                pronoun:d.pronoun,
+                email:d.email,
+                collection:d.collection,
+                bio:d.bio,
+                bids:{}
+            } 
+            console.log(account.info)
+            await changePage();
+            account.information();
+            //console.log(document.getElementById("content").innerHTML)
         }else{
-            if(localStorage.userInfo){
-                let d=JSON.parse(localStorage.userInfo);
-                account.info={
-                    username:d.username,
-                    firstname:d.firstname,
-                    lastname:d.lastname,
-                    pronoun:d.pronoun,
-                    email:d.email,
-                    collection:d.collection,
-                    bio:d.bio,
-                    bids:{}
-                } 
-                
-                await changePage();
-                account.information();
-                console.log(document.getElementById("content").innerHTML)
-            }else{
-                //if(){}
-                await account.load();
-                let sig=await account.sign("illust login");
-                var request = new XMLHttpRequest(); 
-                request.onreadystatechange = function() {
-                    if (request.readyState === 4) {
-                        let m=request.response;
-                        console.log(m);
-                        var loginRequest = new XMLHttpRequest(); 
-                        loginRequest.onreadystatechange = async function(){
+            var request = new XMLHttpRequest(); 
+            request.onreadystatechange = async function() {
+                if (request.readyState === 4) {
+                    let m=request.response;
+                    console.log(m);
+
+                    let sig=await account.sign("illust login");
+                    
+                    var loginRequest = new XMLHttpRequest(); 
+                    loginRequest.onreadystatechange = async function(){
+                        if(request.readyState === 4){
+                            console.log(loginRequest.response);
                             try{
-                                let d=JSON.parse(loginRequest.response);
                                 console.log(loginRequest.response);
-                                localStorage.userInfo=await loginRequest.response;
-                                account.login();
+                                if(loginRequest.response=="no account"){
+                                    console.log(request.response)
+                                    document.getElementById("content").innerHTML=elements.createAccount();
+
+                                }else if(loginRequest.response!=""&&loginRequest.response!="Could not verify signature"){
+                                    localStorage.userInfo=loginRequest.response;
+                                    account.login();
+                                }else{console.log(request.response)}
                             }catch(e){
-                                console.log(loginRequest.response)
+                                console.log(loginRequest.response, e)
+                                
+                                document.getElementById("content").innerHTML=elements.createAccount();  
                             }
                         }
-                        loginRequest.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}/${sig}`);
-                        loginRequest.send();
                     }
+                    loginRequest.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}/${sig}`);
+                    loginRequest.send();
                 }
-                request.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}`);
-                request.send();
-                
             }
+            request.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}`);
+            request.send();
+            
         }
+        
     },
     load:async ()=>{
-        if(localStorage.provider=="web3"){
-            document.getElementById("content").innerHTML="Please login to web3 provider:<br>"+elements.loading();
-            await window.ethereum.enable();
-            
-            provider = new ethers.providers.Web3Provider(web3.currentProvider);            
-            console.log(provider);
-            document.getElementById("content").innerHTML=elements.loading();
-        }else if(localStorage.provider=="torus"){
-            if(provider){}else{
+        if(provider){}else{
+            if(localStorage.provider=="web3"){
+                document.getElementById("content").innerHTML="Please login to web3 provider:<br>"+elements.loading();
+                await window.ethereum.enable();
+                
+                provider = new ethers.providers.Web3Provider(web3.currentProvider);            
+                console.log(provider);
+                document.getElementById("content").innerHTML=elements.loading();
+            }else if(localStorage.provider=="torus"){
+                
                 document.getElementById("content").innerHTML=elements.loading();
                 console.log();
                 torus = new Torus();
@@ -193,13 +206,12 @@ var account={
                 signer = await provider.getSigner();
                 
                 //await account.login();
-                changePage();
-            }
+                //changePage();
 
-        }else if(location.hash=="#account"||location.hash=="account"){
-            document.getElementById("content").innerHTML=elements.connect();   
+            }else if(location.hash=="#account"||location.hash=="account"){
+                document.getElementById("content").innerHTML=elements.connect();   
+            }
         }
-        
         if(provider){
 
         }else{
@@ -300,20 +312,38 @@ var account={
             console.log(e);
         }
     },
-    create:(a)=>{
+    create:async (a)=>{
         if(a==1||(document.getElementById("verifyTOS")&&document.getElementById("verifyTOS").checked==true)){
             account.info.username=document.getElementById("usernamei").value;
             account.info.firstname=document.getElementById("firstname").value;
             account.info.lastname=document.getElementById("lastname").value;
             account.info.email=document.getElementById("emaili").value;
             account.info.bio=document.getElementById("bioi").value;
-            
+
+            localStorage.userInfo=JSON.stringify(account.info);
+
+            let sig=await account.sign("illust account edit");
             changePage();
-            firebase.database().ref('users/' + provider.provider.selectedAddress+"/username").set(account.info.username);
-            firebase.database().ref('users/' + provider.provider.selectedAddress+"/firstname").set(account.info.firstname);
-            firebase.database().ref('users/' + provider.provider.selectedAddress+"/lastname").set(account.info.lastname);
-            firebase.database().ref('users/' + provider.provider.selectedAddress+"/email").set(account.info.email);
-            firebase.database().ref('users/' + provider.provider.selectedAddress+"/bio").set(account.info.bio);
+            var request = new XMLHttpRequest(); 
+            
+            request.onreadystatechange = function() {
+                if (request.readyState === 4) {
+                    let m=request.response;
+                    console.log(m);
+                    var loginRequest = new XMLHttpRequest(); 
+                    loginRequest.onreadystatechange = async function(){
+                        try{
+                            console.log("account info updated successfully")
+                        }catch(e){
+                            console.log("Account info not updated successfully", e, loginRequest.response)
+                        }
+                    }
+                    loginRequest.open("POST", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}/${sig}`);
+                    loginRequest.send(JSON.stringify(account.info));
+                }
+            }
+            request.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}`);
+            request.send();
             
         }else{
             console.log(document.getElementById("verifyTOS").value);
@@ -1560,14 +1590,14 @@ async function invokeCos(w, m){
         });
     }
 }
-if(window.ethereum){
-    window.ethereum.on('accountsChanged', function (accounts) {
-        changePage();
-    });
-    window.ethereum.on('networkChanged', function (accounts) {
-        changePage();
-    });
-}
+// if(window.ethereum){
+//     window.ethereum.on('accountsChanged', function (accounts) {
+//         changePage();
+//     });
+//     window.ethereum.on('networkChanged', function (accounts) {
+//         changePage();
+//     });
+// }
 async function testFunction(){
     window.ethereum.enable();
     provider = new ethers.providers.Web3Provider(web3.currentProvider);

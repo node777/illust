@@ -1,6 +1,6 @@
 var elements = {
     pages:{
-        content: ()=>{
+        default: ()=>{
             return elements.pages.winners2();
         },
         editAssets:()=>{
@@ -292,11 +292,12 @@ var elements = {
                         Limited Run NFT AR Pieces
                     </div>
                 </div>
-                <div class="w1" style="background-image:url('images/doom4.png'); width:110%;height:75vw;background-size: 100%; margin:0 -10% -10%;background-repeat:no-repeat;"></div>
+                <div class="w1" style="background-image:url('images/doom4.png'); width:112%;height:75vw;background-size: 100%; margin:2% -6% -17%;background-repeat:no-repeat;"></div>
                 
                 <div class="flex  wrap w1" style="text-align:center;margin-bottom:152px">
         
                     <div>
+                        <h1>MF-9</h1>
                         <div class="br" style="float:left;width:64px;"></div>
             
 
@@ -307,6 +308,7 @@ var elements = {
                         
                     </div>
                     <div>
+                        <h1>MF-10</h1>   
                         <div class="br" style="float:left;width:64px;"></div>
 
                         <model-viewer ar ios-src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.usdz" src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
@@ -316,6 +318,7 @@ var elements = {
                         
                     </div>
                     <div>
+                        <h1>MF-11</h1>
                         <div class="br" style="float:left;width:64px;"></div>
 
                         <model-viewer ar ios-src="assets/models/8456350751317975846800924683986100177337207567287562046240586730923411985742.usdz" src="assets/models/8456350751317975846800924683986100177337207567287562046240586730923411985742.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
@@ -356,10 +359,10 @@ var elements = {
             }
         },
         account:async()=>{
-            console.log(provider);
             //document.getElementById("content").innerHTML=elements.connect();
             try{
-                await account.load();
+                //await account.login();
+                
                 return elements.account();
                 
             }catch(e){
@@ -744,6 +747,14 @@ var elements = {
 
             `
         },
+        gallery(p){
+            console.log(p);
+            return `
+                
+                <model-viewer ar ios-src="assets/models/${p[1]}.usdz" src="assets/models/${p[1]}.gltf" onError="this.onerror=null;this.src='assets/models/${p[1]}.glb';" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+            `
+        },
         404:()=>{
             "Page could not be loaded"
         }
@@ -877,42 +888,53 @@ var elements = {
     account:async()=>{
         let r;
         //await account.load();
-            if(provider&&provider.provider&&provider.provider.selectedAddress!=null&&provider.provider.selectedAddress!=undefined){
-                //console.log(provider.provider.selectedAddress);
-                let a;
-                let b;
-                if(account.info&&account.info.username){
-                    console.log("Got Acc info", account.info);
-                    a= await elements.profileInfo();
-                    b=account.info.username; 
-                }else{
-                    //connectAccount(1);
-                    //await account.load();
-                    console.log("Loading Acc info");
-                    await account.login();
-                    a= await elements.profileInfo();
-                }
+        
+        console.trace(provider);
+        if(provider&&provider.provider&&provider.provider.selectedAddress!=null&&provider.provider.selectedAddress!=undefined){
+            //console.log(provider.provider.selectedAddress);
+            let a;
+            let b;
+            if(account.info&&account.info.username){
+                console.log("Got Acc info", account.info);
+                a= await elements.profileInfo();
+                b=account.info.username; 
+                
                 r=`
-                    <div class="flex">
-                        <div id="accountContent" style="flex:4;padding:16px;">
-                            ${a}
-                        </div>
-                        <div id="sidebar2">
-                            <img src="assets/icons/account.svg" style="width:90%;padding:0 3%; margin: 0 0 16px;"/>
-                            <b>@${b||"NO USER"}</b><br><br>
-                            <div id="pr" onclick="account.select('pr');account.information()">Profile<br><br></div>
-                            <div id="vw" onclick="account.select(3);account.wallet();">View Wallet<br><br></div>
-                            <div id="cl" onclick="account.select(4);document.getElementById('accountContent').innerHTML=elements.collection()">Collection<br><br></div>
-                            <div id="ep" onclick="account.select(5);account.edit()">Edit Profile<br><br></div>
-                            <div id="so" onclick="account.select(6);account.logout()">Sign Out<br><br></div>
-
-                        </div>
+                <div class="flex">
+                    <div id="accountContent" style="flex:4;padding:16px;">
+                        ${a}
                     </div>
+                    <div id="sidebar2">
+                        <img src="assets/icons/account.svg" style="width:90%;padding:0 3%; margin: 0 0 16px;"/>
+                        <b>@${b||"NO USER"}</b><br><br>
+                        <div id="pr" onclick="account.select('pr');account.information()">Profile<br><br></div>
+                        <div id="vw" onclick="account.select(3);account.wallet();">View Wallet<br><br></div>
+                        <div id="cl" onclick="account.select(4);document.getElementById('accountContent').innerHTML=elements.collection()">Collection<br><br></div>
+                        <div id="ep" onclick="account.select(5);account.edit()">Edit Profile<br><br></div>
+                        <div id="so" onclick="account.select(6);account.logout()">Sign Out<br><br></div>
+
+                    </div>
+                </div>
                 `;
             }else{
-                r=elements.connect();
-
+                //connectAccount(1);
+                //await account.load();
+                console.log("Loading Acc info");
+                account.login();
+                //a= await elements.profileInfo();
+                
+                r=elements.loading();
             }
+        }else{
+            console.log("No provider");
+            if(localStorage.userInfo){
+                console.log("User found");
+                account.login();
+            }else{
+                console.log("No user could be found")
+                r=elements.connect();
+            }
+        }
         // }catch(e){
         //     r=elements.connect();
         //     console.log(e);
@@ -945,7 +967,7 @@ var elements = {
                     default:
                         n="No provider connected"
                 }
-                b=await web3.eth.getBalance(provider.provider.selectedAddress);
+                b=await web3.eth.getBalance(provider.provider.selectedAddress,console.log);
             }catch(e){
                 console.log(e);
             }
@@ -1117,8 +1139,8 @@ var elements = {
             <div class="br" id="connectionMethod" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
             <p style="font-size:12px">Illust Space, a web3.0 application, uses a crypto wallet for buying, selling, and trading augmented reality art. Your account is tied to your wallet. Please select one of the three options below: Torus (on the left), an existing Web3.0 Provider (middle), or an existing Private Key. Torus is an easy to use service for creating your first crypto wallet using an existing email, facebook account, or other online authentication services. Select Web3.0 if you already have a provider on your browser such as MetaMask or Coinbase Wallet; Illust Space does not have access to your private keys, please keep your private key information to yourself as this is highly sensitive information.    
             <div class="flex">
-                    <div onclick="localStorage.setItem('provider','torus');account.load();"><img src="assets/torus.svg" /><div class="br"></div><b id="torusBox">Connect with Torus</b></div>
-                    <div onclick="localStorage.setItem('provider','web3');account.load();clearInterval(torInt);changePage();"><img src="assets/metamask.png" /><div class="br"></div><b>Connect with Web3 Provider</b><br><br>
+                    <div onclick="localStorage.setItem('provider','torus');account.login();"><img src="assets/torus.svg" /><div class="br"></div><b id="torusBox">Connect with Torus</b></div>
+                    <div onclick="localStorage.setItem('provider','web3');account.login();clearInterval(torInt);changePage();"><img src="assets/metamask.png" /><div class="br"></div><b>Connect with Web3 Provider</b><br><br>
         `
         if(window.ethereum){
             r+= "<p style='font-size:10px'>Web3 Browser Detected</p>";

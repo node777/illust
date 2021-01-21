@@ -17,9 +17,6 @@
   "author": "Sabin Hertz",
   "license": "ISC",
   "dependencies": {
-    "@wasmer/wasi": "^0.12.0",
-    "body-parser": "^1.19.0",
-    "ethers": "^4.0.47",
     "express": "^4.17.1"
   }
 }

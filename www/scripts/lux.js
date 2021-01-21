@@ -12,7 +12,7 @@ function setup(){
 async function changePage (x){
 
     lux.t.innerHTML=await elements.loading();
-    var h=(location.hash||"#content");
+    var h=(location.hash||"#default");
     var hwa=h.split("#")[1];
     var a=hwa.split("?");
     var p=a[0];
