@@ -282,8 +282,8 @@ input, .popup textarea{
     display: initial;
     background-color: var(--color2);
     color: var(--color1);
-    margin: 3% 25%;
-    width: 50%;
+    /* margin: 3% 25%;
+    width: 50%; */
     font-size: 22px;
     border:0px;
     border-bottom: 2px solid var(--color1);
@@ -431,6 +431,8 @@ a:active {
 }
 
 /* ==== ELEMNTS STYLED WITH BEM NAMING SCHEMA https://en.bem.info/methodology/css/ === */
+
+/* profileInfo */
 .profileInfo {
     text-align: left;
 }
@@ -439,9 +441,49 @@ a:active {
     margin: 0 !important;
      /*^ I hate this but its needed TEMP */
 }
-.collectionWrapper{
+.profileInfo__userName{
+    cursor: pointer;
+    margin-bottom: 25px;
+    position: relative;
+    padding-bottom: 15px;
+}
+.profileInfo__userName:hover{
+    color: var(--color4);
+}
+.profileInfo__userName:before{
+    content: "";
+    width: 65px;
+    height: 1px;
+    border-bottom: 1px solid var(--color1);
+    position: absolute;
+    bottom: 0;
+}
+
+.profileInfo__userAttribute{
+    display: block;
+    margin-bottom: 15px;
+}
+.profileInfo__userAttribute--link{
+    cursor: pointer;
+}
+
+.profileInfo__userAttribute--link:hover{
+    color: var(--color4);
+}
+
+.profileInfo__edit{
+    cursor:pointer;
+}
+
+.profileInfo__edit:hover{
+    color: var(--color4);
+}
+
+/* profileAssets */
+.profileAssets__collection{
     text-align: center;
 }
+
 
 
 @media (orientation: portrait) {
