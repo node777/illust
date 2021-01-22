@@ -61,10 +61,12 @@ input[type=number] {
 #header>*{
 float: left;
 }
-#account .flex div{
+
+/* TEMP removing and replacing */
+/* #account .flex div{
     cursor: pointer;
     text-align: center;
-}
+} */
 #account .flex div .br{
     margin: 15%;
     width: 70%;
@@ -427,6 +429,21 @@ a:active {
 .w5{
     width: 50%;
 }
+
+/* ==== ELEMNTS STYLED WITH BEM NAMING SCHEMA https://en.bem.info/methodology/css/ === */
+.profileInfo {
+    text-align: left;
+}
+.profileInfo__photo{
+    display: block;
+    margin: 0 !important;
+     /*^ I hate this but its needed TEMP */
+}
+.collectionWrapper{
+    text-align: center;
+}
+
+
 @media (orientation: portrait) {
     .mobile{
         display: initial;

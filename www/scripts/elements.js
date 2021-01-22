@@ -759,7 +759,7 @@ var elements = {
             "Page could not be loaded"
         }
     },
-    header: `
+    header: /*html*/`
         <div id="ac" onclick="location.hash='account'">
             <img src="assets/icons/account.svg" />
         </div>
@@ -771,7 +771,7 @@ var elements = {
         </div>
         <div class="br" style="margin:1%"></div>
     `,
-    sidebar:`
+    sidebar: /*html*/`
         <div onclick=""><a href="https://illust.space">Exhibitions</a></div>
         <div><a href="https://illust.space/about">About</a></div>
 
@@ -899,13 +899,12 @@ var elements = {
                 a= await elements.profileInfo();
                 b=account.info.username; 
                 
-                r=`
+                r=/*html*/`
                 <div class="flex">
                     <div id="accountContent" style="flex:4;padding:16px;">
                         ${a}
                     </div>
                     <div id="sidebar2">
-                        <img src="assets/icons/account.svg" style="width:90%;padding:0 3%; margin: 0 0 16px;"/>
                         <b>@${b||"NO USER"}</b><br><br>
                         <div id="pr" onclick="account.select('pr');account.information()">Profile<br><br></div>
                         <div id="vw" onclick="account.select(3);account.wallet();">View Wallet<br><br></div>
@@ -978,13 +977,13 @@ var elements = {
                 ln=account.info.lastname;
             }
             let c=elements.collection();
-            return `
+            return /*html*/`
                 <h1 style="text-align:left">ACCOUNT INFO</h1>
                 <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
                 <div class="flex wrap" style="width:62vw">
-                    <div>
-
-                        <div style="text-align:left">
+                    <div >
+                        <div class="profileInfo" >
+                            <img src="assets/icons/account.svg" class="profileInfo__photo" />
                             Username: <b>${b||"NO USER"}</b><br><br>
                             Email: ${e}<br><br>
                             Name: ${fn} ${ln}<br><br>
@@ -993,8 +992,10 @@ var elements = {
                         </div>
                     </div>
                     <div>
-                        <b style="text-decoration: underline;">Collection:</b>
-                        <br><br>${c}
+                        <div class="collectionWrapper">
+                            <b style="text-decoration: underline;">Collection:</b>
+                            <br><br>${c}
+                        </div>
                     </div>
                 </div>
 
