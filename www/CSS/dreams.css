@@ -71,14 +71,6 @@ float: left;
     margin: 15%;
     width: 70%;
 }
-#account .flex img{
-
-    height: 12vw;
-    margin: 64px auto 32px;
-}
-#accountContent{
-    text-align: left;
-}
 #hd{
     margin: 9px 24px 24px 24px;
     width: calc(100% - 164px);
@@ -117,6 +109,8 @@ float: left;
 #content{
     top:96px;
     padding-bottom:64px;
+    padding: 0 5% 5%;
+    width: 90%;
 }
 #footer{
     display: none;
@@ -296,9 +290,6 @@ input, .popup textarea{
     opacity: 0;
     background-color: var(--color2);
 }
-#content{
-    padding: 0 5% 5%;
-}
 #connectAccount .box{
     cursor: pointer;
     font-size: 12px;
@@ -420,9 +411,10 @@ a:active {
 .flex{
     display: flex;
 }
-.flex>*{
+/* TEMP REMOVE unsure of other effects */
+/* .flex>*{
     flex: 1;
-}
+} */
 .w1{
     width: 100%;
 }
@@ -435,9 +427,12 @@ a:active {
 /* profileInfo */
 .profileInfo {
     text-align: left;
+    flex-basis: 25%;
+    flex-grow: 0;
 }
 .profileInfo__photo{
     display: block;
+    width: 150px;
     margin: 0 !important;
      /*^ I hate this but its needed TEMP */
 }
@@ -446,6 +441,9 @@ a:active {
     margin-bottom: 25px;
     position: relative;
     padding-bottom: 15px;
+}
+.profileInfo__userName>input{
+    flex-grow: 2;
 }
 .profileInfo__userName:hover{
     color: var(--color4);
@@ -458,13 +456,29 @@ a:active {
     position: absolute;
     bottom: 0;
 }
+.profileInfo__userName--edit:hover{
+    color: var(--color1);
+}
+.profileInfo__userName--edit{
+    display: flex;
+}
+.profileInfo__userName--edit>input{
+    flex-grow: 2;
+    margin-left: 5px;
+}
 
 .profileInfo__userAttribute{
-    display: block;
-    margin-bottom: 15px;
+    display: flex;
+    margin-bottom: 20px;
+}
+.profileInfo__userAttribute>input{
+    flex-grow: 2;
+    margin-left: 5px;
+    margin-top: -2px; 
 }
 .profileInfo__userAttribute--link{
     cursor: pointer;
+    font-size: 20px;
 }
 
 .profileInfo__userAttribute--link:hover{
@@ -480,11 +494,37 @@ a:active {
 }
 
 /* profileAssets */
+.profileAssets{
+    flex-grow: 1;
+}
 .profileAssets__collection{
     text-align: center;
+    display: flex;
+    justify-content: center;
+}
+.profileAssets__header{
+    text-align: right;
+    margin-bottom: 30px;
+}
+.profileAssets__headerItem{
+    text-transform: uppercase;
+    display: inline-block;
+    font-size: 18px;
+    margin-left: 30px;
+}
+.profileAssets__headerItem:hover{
+    color: var(--color5);
+    cursor: pointer;
+}
+.profileAssets__headerItem--current{
+    font-weight: bold;
+    color: var(--color4);
 }
 
-
+/* h-* classes are helper classes that have very few styles that can be used across components. */
+.h-100pw{
+    width: 100%;
+}
 
 @media (orientation: portrait) {
     .mobile{
@@ -509,7 +549,14 @@ a:active {
     body{
         font-size: 12px;
     }
-}
+    .profileAssets__header{
+        text-align: left;
+        margin-top: 30px;
+    }
+    .profileAssets__headerItem{
+        margin-left: 0px;
+        margin-right: 30px;
+    }
 #collection #footer{
     display: none;
 }

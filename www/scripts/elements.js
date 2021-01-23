@@ -972,7 +972,7 @@ var elements = {
             return /*html*/`
                 <h1 style="text-align:left">ACCOUNT INFO</h1>
                 <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
-                <div class="flex wrap" style="width:100vw">
+                <div class="flex wrap h-100pw">
                     <div class="profileInfo" >
                         <img src="assets/icons/account.svg" class="profileInfo__photo" />
                         <h2 class="profileInfo__userName" onclick="account.select('pr');account.information()">
@@ -996,9 +996,9 @@ var elements = {
                         <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.select(6);account.logout()">Sign Out</div>
                     </div>
                     <div class="profileAssets">
-                        <div class="profileAssets__heaader">
-                            <div id="cl" onclick="account.select(4);document.getElementById('accountContent').innerHTML=elements.collection()">Collection<br><br></div>
-                            <div id="vw" onclick="account.select(3);account.wallet();">View Wallet<br><br></div>
+                        <div class="profileAssets__header">
+                            <div id="cl" class="profileAssets__headerItem profileAssets__headerItem--current" onclick="account.select(4);document.getElementById('accountContent').innerHTML=elements.collection()">Collection<br><br></div>
+                            <div id="vw" class="profileAssets__headerItem"  onclick="account.select(3);account.wallet();">View Wallet<br><br></div>
                         </div>
                         <div class="profileAssets__collection">
                             <br><br>${c}
@@ -1053,10 +1053,11 @@ var elements = {
             return /*html*/`
                 <h1 style="text-align:left">ACCOUNT INFO | EDIT</h1>
                 <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
-                <div class="flex wrap" style="width:100vw">
+                <div class="flex wrap h-100pw">
                     <div class="profileInfo" >
                         <img src="assets/icons/account.svg" class="profileInfo__photo" />
-                        <h2 class="profileInfo__userName">
+                        <h2 class="profileInfo__userName profileInfo__userName--edit">
+                            Profile:
                             <input id="usernamei" value='${b||"NO USER"}' />
                         </h2>
                         <div class="profileInfo__userAttribute">
@@ -1076,9 +1077,9 @@ var elements = {
                         <div class="button" onclick="account.create(1);">Update Account Info</div>
                     </div>
                     <div class="profileAssets">
-                        <div class="profileAssets__heaader">
-                            <div id="cl" onclick="account.select(4);document.getElementById('accountContent').innerHTML=elements.collection()">Collection<br><br></div>
-                            <div id="vw" onclick="account.select(3);account.wallet();">View Wallet<br><br></div>
+                        <div class="profileAssets__header">
+                            <div id="cl" class="profileAssets__headerItem profileAssets__headerItem--current" onclick="account.select(4);document.getElementById('accountContent').innerHTML=elements.collection()">Collection<br><br></div>
+                            <div id="vw" class="profileAssets__headerItem"  onclick="account.select(3);account.wallet();">View Wallet<br><br></div>
                         </div>
                         <div class="profileAssets__collection">
                             <br><br>${c}
@@ -1127,7 +1128,7 @@ var elements = {
     },
     collection:()=>{
         if(account.info.collection){
-            let r="<div class='flex wrap'>"
+            let r=/*html*/`<div class='profileAsset__collectionItem'>`
             
             for(i in account.info.collection){
                 r+="<div>"
