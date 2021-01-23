@@ -521,10 +521,16 @@ a:active {
     color: var(--color4);
 }
 
-/* h-* classes are helper classes that have very few styles that can be used across components. */
+/* "h-*" classes are helper classes that have very few styles that can be used across components.
+helper classes should e used sparingly 
+*/
 .h-100pw{
     width: 100%;
 }
+.h-flex-g1{
+    flex-grow:1;
+}
+
 
 @media (orientation: portrait) {
     .mobile{

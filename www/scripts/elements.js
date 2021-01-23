@@ -257,7 +257,7 @@ var elements = {
             `
         },
         winners2:()=>{
-            return `
+            return /*html*/`
                 <h1 style="margin:64px 1% 0">MF DOOM AUCTION 2 CLOSED</h1>   
                 <div class="br" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
                 <br>
@@ -296,7 +296,7 @@ var elements = {
                 
                 <div class="flex  wrap w1" style="text-align:center;margin-bottom:152px">
         
-                    <div>
+                    <div class="h-flex-g1">
                         <h1>MF-9</h1>
                         <div class="br" style="float:left;width:64px;"></div>
             
@@ -307,7 +307,7 @@ var elements = {
                         <div class="button w5" onclick="location.hash='asset?15656630424036753581450935940596632215884383929372546170587529153151943392229'">View Collection</div>
                         
                     </div>
-                    <div>
+                    <div class="h-flex-g1">
                         <h1>MF-10</h1>   
                         <div class="br" style="float:left;width:64px;"></div>
 
@@ -317,7 +317,7 @@ var elements = {
                         <div class="button w5" onclick="location.hash='asset?70937556211959927769088791688503419832872233678974511813637293239899188185264'">View Collection</div>
                         
                     </div>
-                    <div>
+                    <div class="h-flex-g1">
                         <h1>MF-11</h1>
                         <div class="br" style="float:left;width:64px;"></div>
 
@@ -1236,7 +1236,7 @@ var elements = {
         `
     },
     DOOM2:()=>{
-        return `
+        return /*html*/`
             <h1 style="margin:64px 1% 0">MF DOOM COLLECTION 2</h1>   
             <div class="br" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
             <br>
@@ -1262,7 +1262,7 @@ var elements = {
                 <div class="w1" style="background-image:url('images/doom2.png'); height:50vw; margin:-11vw 0 -20vw;background-size:40%;background-repeat:no-repeat;background-position:50% 0"></div>
 
                 <div class="flex wrap w1" style="margin-bottom:180px;">
-                    <div>
+                    <div class="h-flex-g1">
                         <h1>Lot MF-09</h1>
                         <div class="br" style="float:left;width:64px;"></div>
 
@@ -1271,13 +1271,13 @@ var elements = {
                         <div class="button w5" onclick="location.hash='lot?609'">Place Bid</div>
                         
                     </div>
-                    <div>
+                    <div  class="h-flex-g1">
                         <h1>Lot MF-10</h1>
                         <div class="br" style="float:left;width:64px;"></div>
                         <model-viewer ar ios-src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.usdz" src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
                         <div class="button w5" onclick="location.hash='lot?610'">Place Bid</div>
                         
-                    </div>
+                    </div  class="h-flex-g1">
                     <div style="">
                         <h1>Lot MF-11</h1>
                         <div class="br" style="float:left;width:64px;"></div>
