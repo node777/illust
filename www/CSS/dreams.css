@@ -429,6 +429,7 @@ a:active {
     text-align: left;
     flex-basis: 25%;
     flex-grow: 0;
+    max-width: 100%;
 }
 .profileInfo__photo{
     display: block;
@@ -441,9 +442,15 @@ a:active {
     margin-bottom: 25px;
     position: relative;
     padding-bottom: 15px;
+    font-size: 24px;
+    font-weight: 700;
+
 }
-.profileInfo__userName>input{
+.profileInfo__userName > input{
     flex-grow: 2;
+}
+.profileInfo__userName > label{
+    font-weight: bold;
 }
 .profileInfo__userName:hover{
     color: var(--color4);
@@ -462,7 +469,7 @@ a:active {
 .profileInfo__userName--edit{
     display: flex;
 }
-.profileInfo__userName--edit>input{
+.profileInfo__userName--edit > input{
     flex-grow: 2;
     margin-left: 5px;
 }
@@ -471,10 +478,14 @@ a:active {
     display: flex;
     margin-bottom: 20px;
 }
-.profileInfo__userAttribute>input{
+.profileInfo__userAttribute > input{
     flex-grow: 2;
     margin-left: 5px;
     margin-top: -2px; 
+}
+.profileInfo__userAttribute > label{
+    font-weight: bold;
+
 }
 .profileInfo__userAttribute--link{
     cursor: pointer;
@@ -520,6 +531,9 @@ a:active {
     font-weight: bold;
     color: var(--color4);
 }
+.accountContent__wrapper{
+    width: calc(100% - 16px);
+}
 
 /* "h-*" classes are helper classes that have very few styles that can be used across components.
 helper classes should e used sparingly 
@@ -563,12 +577,25 @@ helper classes should e used sparingly
         margin-left: 0px;
         margin-right: 30px;
     }
+    .profileInfo__userAttribute--edit{
+        flex-wrap: wrap;
+    }
+    .profileInfo__userAttribute--edit > * {
+        flex-basis: 100%;
+        margin-bottom: 5px;
+    }
+    .profileInfo__userName--edit > *{
+        flex-basis: 100%;
+        margin-bottom: 5px;
+    }
+    .profileInfo__userName--edit{
+        flex-wrap: wrap;
+    }
+
+
 #collection #footer{
     display: none;
 }
 #account .flex img:hover{
     filter: brightness(0.5);
-}
-#account input{
-    display: initial;
 }

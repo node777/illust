@@ -901,7 +901,7 @@ var elements = {
                 
                 r=/*html*/`
                 <div class="flex">
-                    <div id="accountContent" style="flex:4;padding:16px;">
+                    <div id="accountContent" class="accountContent__wrapper" style="padding:16px;">
                         ${a}
                     </div>
                     
@@ -975,9 +975,9 @@ var elements = {
                 <div class="flex wrap h-100pw">
                     <div class="profileInfo" >
                         <img src="assets/icons/account.svg" class="profileInfo__photo" />
-                        <h2 class="profileInfo__userName" onclick="account.select('pr');account.information()">
+                        <div class="profileInfo__userName" onclick="account.select('pr');account.information()">
                             @${b||"NO USER"}
-                        </h2>
+                        </div>
                         <div class="profileInfo__userAttribute">
                             <strong>Email:</strong>
                             ${e}
@@ -1056,21 +1056,21 @@ var elements = {
                 <div class="flex wrap h-100pw">
                     <div class="profileInfo" >
                         <img src="assets/icons/account.svg" class="profileInfo__photo" />
-                        <h2 class="profileInfo__userName profileInfo__userName--edit">
-                            Profile:
+                        <div class="profileInfo__userName profileInfo__userName--edit">
+                            <label>Profile:</label>
                             <input id="usernamei" value='${b||"NO USER"}' />
-                        </h2>
-                        <div class="profileInfo__userAttribute">
-                            <strong>Email:</strong>
+                        </div>
+                        <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
+                            <label>Email:</label>
                                 <input id="emaili" value='${e}' />
                         </div>
-                        <div class="profileInfo__userAttribute">
-                            <strong>Name:</strong>
+                        <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
+                            <label>Name:</label>
                             <input id="firstname" value='${fn}' />
                             <input id="lastname" value='${ln}' />
                         </div>
-                        <div class="profileInfo__userAttribute"> 
-                            <strong>Bio:</strong>
+                        <div class="profileInfo__userAttribute profileInfo__userAttribute--edit"> 
+                            <label>Bio:</label>
                             <input id='bioi' value='${account.info.bio||"Welcome to my page, this is my bio"}' />
                         </div>
                         <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.select(6);account.logout()">Sign Out</div>
