@@ -411,10 +411,9 @@ a:active {
 .flex{
     display: flex;
 }
-/* TEMP REMOVE unsure of other effects */
-/* .flex>*{
+.flex>*{
     flex: 1;
-} */
+}
 .w1{
     width: 100%;
 }
@@ -543,6 +542,9 @@ helper classes should e used sparingly
 }
 .h-flex-g1{
     flex-grow:1;
+}
+.h-flex{
+    display: flex;
 }
 
 

@@ -900,7 +900,7 @@ var elements = {
                 b=account.info.username; 
                 
                 r=/*html*/`
-                <div class="flex">
+                <div class="h-flex">
                     <div id="accountContent" class="accountContent__wrapper" style="padding:16px;">
                         ${a}
                     </div>
@@ -972,7 +972,7 @@ var elements = {
             return /*html*/`
                 <h1 style="text-align:left">ACCOUNT INFO</h1>
                 <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
-                <div class="flex wrap h-100pw">
+                <div class="h-flex wrap h-100pw">
                     <div class="profileInfo" >
                         <img src="assets/icons/account.svg" class="profileInfo__photo" />
                         <div class="profileInfo__userName" onclick="account.select('pr');account.information()">
@@ -1053,7 +1053,7 @@ var elements = {
             return /*html*/`
                 <h1 style="text-align:left">ACCOUNT INFO | EDIT</h1>
                 <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
-                <div class="flex wrap h-100pw">
+                <div class="h-flex wrap h-100pw">
                     <div class="profileInfo" >
                         <img src="assets/icons/account.svg" class="profileInfo__photo" />
                         <div class="profileInfo__userName profileInfo__userName--edit">
