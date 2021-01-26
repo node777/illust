@@ -419,7 +419,7 @@ var elements = {
 
                     if(m["end_date"]){
                         setTimeout(auction.loadDate,1);
-                        auctionDetails=`
+                        auctionDetails=/*html*/`
                             <div>
                                 <a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
                                 <div id="priceBox"></div>
@@ -433,19 +433,23 @@ var elements = {
                                 <div class="button w5" onclick="placeBid('${a[1]}')">Place Bid</div>
                                 
                                 <div id="userBid">${b}</div>
+                                <p>
+                                    If you'd rather place a bid through one of our auctioneers, 
+                                    please get in touch at  +1 (310) 294-8615 or you can also reach
+                                    us on our <a href="https://discord.gg/98qqje5">discord</a>.
+                                </p> 
                             </div>
                         `
                     }else{
-                        auctionDetails="This asset is not for sale"
+                        auctionDetails=`This asset is not for sale`
                     }
-    
                     document.getElementById("assetBox").innerHTML= /*html*/`
                         <div id="lotBox" class="lotAsset">
                             <h1 class="lotAsset__title">${name}</h1>
                             <div class="lotAsset__wrapper">
                                 <div class="lotAsset__content">
                                     <div class="lotAsset__viewer">
-                                        <model-viewer class="lostAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
+                                        <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask"></model-viewer>
                                         <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">Wear</a>
                                         <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">World</a>
                                         <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">Share</a>
@@ -459,6 +463,7 @@ var elements = {
                                 
                                     <div class="lotAsset__description">
                                         <div class="w1">
+                                            
                                             ${m.description}<br><br>
                                             2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
                                             <br><br>
@@ -468,7 +473,6 @@ var elements = {
                                             <!--
                                             <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
                                             <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
-                                            If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
                                         </div>
                                     </div>
                                 </div>
