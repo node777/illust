@@ -560,7 +560,6 @@ a:active {
 }
 .lotAsset__content{
     display: flex;
-    flex-wrap: nowrap;
     flex-basis: 75%;
     text-align: center;
 }
@@ -575,6 +574,7 @@ a:active {
 }
 .lotAsset__auction{
     flex-basis: 25%;
+    padding-top: 5%;
 }
 .lotAsset__model{
     display: block;
@@ -642,7 +642,21 @@ helper classes should e used sparingly
     .profileInfo__userName--edit{
         flex-wrap: wrap;
     }
-
+    .lotAsset__content{
+        flex-basis: 100%;
+    }
+    .lotAsset__auction{
+        flex-basis: 100%;
+    }
+    .lotAsset__description{
+        flex-basis: 100%;
+    }
+    .lotAsset__viewer{
+        flex-basis: 100%;
+    }
+    .lotAsset__content{
+        flex-wrap: wrap;
+    }
 
 #collection #footer{
     display: none;
