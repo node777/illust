@@ -647,6 +647,7 @@ helper classes should e used sparingly
     }
     .lotAsset__auction{
         flex-basis: 100%;
+        padding: 5%;
     }
     .lotAsset__description{
         flex-basis: 100%;
