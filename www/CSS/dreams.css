@@ -109,8 +109,12 @@ float: left;
 #content{
     top:96px;
     padding-bottom:64px;
-    padding: 0 5% 5%;
-    width: 90%;
+    padding-top: 50px;
+    padding-left: 5%;
+    padding-right: 5%;
+    max-width: 1600px;
+    margin: 0 auto;
+
 }
 #footer{
     display: none;
@@ -141,8 +145,8 @@ float: left;
     top: 0;
 }
 
-
-#lotBox{
+/* TEMP remove lot wrappings */
+/* #lotBox{
     padding: 5%;
     word-break: break-word;
 }
@@ -151,7 +155,7 @@ float: left;
 }
 #lotBox>*{
     padding: 5%;
-}
+} */
 #lotBox model-viewer{
     width: 200;
     height: auto;
@@ -534,6 +538,35 @@ a:active {
     width: calc(100% - 16px);
 }
 
+/* lotAssets */
+.lotAsset__title{
+    display: block;
+    margin-bottom: 50px;
+}
+.lotAsset__wrapper{
+    display: flex;
+    flex-wrap: wrap;
+}
+.lotAsset__content{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-basis: 75%;
+    text-align: center;
+}
+.lotAsset__description{
+    flex-basis: 50%;
+    text-align: left;
+    padding: 5%;
+}
+.lotAsset__viewer{
+    flex-basis: 50%;
+}
+.lotAsset__auction{
+    flex-basis: 25%;
+}
+.lotAsset__model{
+    display: block;
+}
 /* "h-*" classes are helper classes that have very few styles that can be used across components.
 helper classes should e used sparingly 
 */

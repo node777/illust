@@ -439,32 +439,42 @@ var elements = {
                         auctionDetails="This asset is not for sale"
                     }
     
-                    document.getElementById("assetBox").innerHTML= `
-                        <div id="lotBox">
-                            <h1 style="margin:0">${name}</h1>
-                            <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
-                            <div class="flex wrap w1">
-                                <div style="text-align:center">
-                                    <model-viewer ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
-                                    <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}"><b>Try On</b></a>
-                                </div>
+                    document.getElementById("assetBox").innerHTML= /*html*/`
+                        <div id="lotBox" class="lotAsset">
+                            <h1 class="lotAsset__title">${name}</h1>
+                            <div class="lotAsset__wrapper">
+                                <div class="lotAsset__content">
+                                    <div class="lotAsset__viewer">
+                                        <model-viewer class="lostAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
+                                        <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">Wear</a>
+                                        <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">World</a>
+                                        <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">Share</a>
+                                        <div class="lostAsset__tags">  
+                                            <!--TEMP STUB TABS-->
+                                            <a>#something</a>
+                                            <a>#tag</a>
+                                            <a>#anotehrtag</a>
+                                        </div>
+                                    </div>
                                 
-                                <div style="text-align:center">
+                                    <div class="lotAsset__description">
+                                        <div class="w1">
+                                            ${m.description}<br><br>
+                                            2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
+                                            <br><br>
+                                            View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
+                                                <div>Initial price: ${iPrice}</div>
+                                                <br>Single Edition
+                                            <!--
+                                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
+                                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
+                                            If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lotAsset__auction">
                                     ${auctionDetails}
                                 </div>
-
-                            </div>
-                            <div class="w1">
-                                ${m.description}<br><br>
-                                2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
-                                <br><br>
-                                View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
-                                    <div>Initial price: ${iPrice}</div>
-                                    <br>Single Edition
-                                <!--
-                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
-                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
-                                If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
                             </div>
                         </div>
                         
