@@ -1142,16 +1142,25 @@ var elements = {
     },
     collection:()=>{
         if(account.info.collection){
-            let r=/*html*/`<div class='profileAsset__collectionItem'>`
+            let r=/*html*/`<div class='profileAssets__collectionItem'>`
             
             for(i in account.info.collection){
-                r+="<div>"
-                r+=account.info.collection[i];
-                r+=`<model-viewer style="margin:auto;height:30vh;position:relative" ar ios-src="assets/models/${i}.usdz" src="assets/models/${i}.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>`;
+                r+=/*html*/`
+                <div class="collectionItem__wrapper">
+                    <div class="collectionItem__modelViewerWrapper">
+                        <model-viewer ar ios-src="assets/models/${i}.usdz" src="assets/models/${i}.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${i}">🎭 Try On</a>
+                    </div>
+                    <div class="collectionItem__attributes">
+                        <h3 class="collectionItem__title">${account.info.collection[i]}</h3>
+                        <a class="collectionItem__link" onclick="console.log(elements.pages.asset(${i}))">more</a>
+                        <a class="collectionItem__artist" href="">Artist Name</a>
+                    </div>
+                    
+                </div>`
+
                 //r+=`View on <a href="https://etherscan.io/address/0x965d0Efd2560516FC2076Ee2C1dea478b82841B9#tokentxnsErc721">Etherscan</a></div>`;
-                r+=`<a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${i}"><b>Try On</b></a>`
-                r+="</div>"
-                
+    
             }
             r+="</div>"
             return r;

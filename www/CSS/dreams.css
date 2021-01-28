@@ -1,6 +1,8 @@
 @charset "utf-8";
-#maskTransfer{
 
+/* === GLOBALS START === */
+
+#maskTransfer{
 }
 :root {
 	--color1: #ffffff;
@@ -46,10 +48,17 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+.input {
+
+}
+
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+/* === GLOBALS END === */
+
 #header{
     top:0;
     z-index: 5;
@@ -513,9 +522,9 @@ a:active {
     flex-grow: 1;
 }
 .profileAssets__collection{
-    text-align: center;
     display: flex;
-    justify-content: center;
+    flex-wrap: wrap;
+    padding: 5%;
 }
 .profileAssets__header{
     text-align: right;
@@ -534,6 +543,9 @@ a:active {
 .profileAssets__headerItem--current{
     font-weight: bold;
     color: var(--color4);
+}
+.profileAssets__collectionItem{
+    flex-basis: 50%;
 }
 .accountContent__wrapper{
     width: calc(100% - 16px);
@@ -583,6 +595,38 @@ a:active {
     width: 100%;
     padding-bottom: 108%;
 }
+
+.collectionItem__modelViewerWrapper{
+    position: relative;
+    padding-top: 100%;
+}
+.collectionItem__modelViewerWrapper > model-viewer{
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    width: 90%;
+    height: 90%;
+}
+.collectionItem__facePreview{
+    position: absolute; 
+    bottom: 5px;
+    right: 5px;
+}
+.collectionItem__attributes{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.collectionItem__wrapper{
+    margin: 5% 5% 10% 5%;
+
+}
+.collectionItem__artist{
+    flex-basis: 100%;
+}
+
 /* "h-*" classes are helper classes that have very few styles that can be used across components.
 helper classes should e used sparingly 
 */
@@ -638,6 +682,9 @@ helper classes should e used sparingly
     .profileInfo__userName--edit > *{
         flex-basis: 100%;
         margin-bottom: 5px;
+    }
+    .profileAssets__collectionItem{
+    flex-basis: 100%;
     }
     .profileInfo__userName--edit{
         flex-wrap: wrap;
