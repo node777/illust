@@ -523,6 +523,7 @@ a:active {
     display: flex;
     flex-wrap: wrap;
     padding: 5%;
+    justify-content: center;
 }
 .profileAssets__header{
     text-align: right;
@@ -685,7 +686,7 @@ helper classes should e used sparingly
         padding: 0px;
     }
     .profileAssets__collectionItem{
-    flex-basis: 100%;
+        flex-basis: 100%;
     }
     .profileInfo__userName--edit{
         flex-wrap: wrap;
