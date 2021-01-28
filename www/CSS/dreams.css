@@ -498,6 +498,7 @@ a:active {
 }
 .profileInfo__userAttribute > label{
     font-weight: bold;
+    white-space: nowrap;
 
 }
 .profileInfo__userAttribute--link{
@@ -620,7 +621,7 @@ a:active {
 }
 
 .collectionItem__wrapper{
-    margin: 5% 5% 10% 5%;
+    margin: 10% 10% 20% 10%;
 
 }
 .collectionItem__artist{
@@ -659,10 +660,10 @@ helper classes should e used sparingly
     .wrap model-viewer {
     }
     h2{
-        font-size: 13px;
+        font-size: 16px;
     }
     body{
-        font-size: 12px;
+        font-size: 14px;
     }
     .profileAssets__header{
         text-align: left;
@@ -682,6 +683,9 @@ helper classes should e used sparingly
     .profileInfo__userName--edit > *{
         flex-basis: 100%;
         margin-bottom: 5px;
+    }
+    .profileAssets__collection{
+        padding: 0px;
     }
     .profileAssets__collectionItem{
     flex-basis: 100%;
@@ -704,6 +708,9 @@ helper classes should e used sparingly
     }
     .lotAsset__content{
         flex-wrap: wrap;
+    }
+    .collectionItem__wrapper{
+        margin: 0 0 5% 0;
     }
 
 #collection #footer{

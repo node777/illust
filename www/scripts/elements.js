@@ -998,8 +998,13 @@ var elements = {
                             <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
                         </div>
                         <div class="profileInfo__userAttribute">
-                            <strong>Name:</strong>
-                            ${fn} ${ln}
+                            <strong>First Name:</strong>
+                            ${fn}
+                            <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
+                        </div>
+                        <div class="profileInfo__userAttribute">
+                            <strong>Last Name Name:</strong>
+                            ${ln}
                             <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
                         </div>
                         <div class="profileInfo__userAttribute">
@@ -1079,8 +1084,11 @@ var elements = {
                                 <input id="emaili" value='${e}' />
                         </div>
                         <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
-                            <label>Name:</label>
+                            <label>First Name:</label>
                             <input id="firstname" value='${fn}' />
+                        </div>
+                        <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
+                            <label>Last Name:</label>
                             <input id="lastname" value='${ln}' />
                         </div>
                         <div class="profileInfo__userAttribute profileInfo__userAttribute--edit"> 
