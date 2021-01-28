@@ -290,12 +290,13 @@ input, .popup textarea{
     display: initial;
     background-color: var(--color2);
     color: var(--color1);
-    /* margin: 3% 25%;
-    width: 50%; */
+    margin: 3% 25%;
+    width: 50%;
     font-size: 22px;
     border:0px;
     border-bottom: 2px solid var(--color1);
 }
+
 #overlay{
     position: fixed;
     height: 100%;
@@ -452,15 +453,13 @@ a:active {
 }
 .profileInfo__userName{
     cursor: pointer;
-    margin-bottom: 25px;
+    margin-top: 15px;
+    margin-bottom: 40px;
     position: relative;
     padding-bottom: 15px;
     font-size: 24px;
     font-weight: 700;
 
-}
-.profileInfo__userName > input{
-    flex-grow: 2;
 }
 .profileInfo__userName > label{
     font-weight: bold;
@@ -484,22 +483,20 @@ a:active {
 }
 .profileInfo__userName--edit > input{
     flex-grow: 2;
-    margin-left: 5px;
+    margin: 0 0 0 5px;
 }
 
 .profileInfo__userAttribute{
     display: flex;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 .profileInfo__userAttribute > input{
     flex-grow: 2;
-    margin-left: 5px;
-    margin-top: -2px; 
+    margin: 0px 0px -2px 5px;
 }
 .profileInfo__userAttribute > label{
     font-weight: bold;
     white-space: nowrap;
-
 }
 .profileInfo__userAttribute--link{
     cursor: pointer;
