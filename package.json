@@ -1,5 +1,5 @@
 {
-  "name": "hydra",
+  "name": "Illust",
   "version": "1.0.0",
   "description": "Enterprise Blockchain",
   "main": "index.js",
@@ -7,12 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "hydra",
-    "blockchain",
-    "database",
-    "server",
-    "serverless",
-    "enterprise"
+    "Illust",
+    "blockchain"
   ],
   "author": "Sabin Hertz",
   "license": "ISC",

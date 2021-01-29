@@ -5,83 +5,6 @@ var signer
 let currentAuth=0;
 let torInt;
 var torus;
-var assets={
-    selected:0,
-    upload:async()=>{
-        
-        let fr = new FileReader();
-        const selectedFile = document.getElementById('assetInput').files[0];
-        console.log(selectedFile);
-        fr.readAsArrayBuffer(selectedFile);
-        //let a=new Int8Array(selectedFile);
-        //console.log(h);
-        fr.onload = async function(event) {
-            if(location.hash=="#editAssets"){
-                console.log(event.target.result);
-                
-                let a=new Int8Array(event.target.result);
-                let h=ethers.utils.sha256(a);
-                let n=ethers.BigNumber.from(h);
-                document.getElementById("assetMintID").value=n;
-                document.getElementById("asset_id").value=n;
-            }
-        }
-    },
-    "bajibbly":{
-        hash:"8456350751317975846800924683986100177337207567287562046240586730923411985742",
-        name:"fewfgwegwergrgwer",
-        iPrice:1.2,
-        ext:"gltf"
-    },
-    90007:{
-        hash:"green",
-        name:"MF-7",
-        iPrice:1.2,
-        ext:"gltf"
-    },
-    90008:{
-        hash:"blue",
-        name:"MF-8",
-        iPrice:1.2,
-        ext:"gltf"
-    },
-    999:{
-        hash:"blacksludge",
-        name:"MF-BLACKSLUDGE",
-        iPrice:1.2,
-        ext:"gltf"
-    },
-    609:{
-        hash:"15656630424036753581450935940596632215884383929372546170587529153151943392229",
-        name:"MF-09",
-        iPrice:"4.0",
-        ext:"gltf",
-        override:{
-            bidder:"metalfingers",
-            bid:4.6
-        }
-    },
-    610:{
-        hash:"70937556211959927769088791688503419832872233678974511813637293239899188185264",
-        name:"MF-10",
-        iPrice:"4.0",
-        ext:"gltf",
-        override:{
-            bidder:"Betosk8s",
-            bid:4.4
-        }
-    },
-    611:{
-        hash:"8456350751317975846800924683986100177337207567287562046240586730923411985742",
-        name:"MF-11",
-        iPrice:"6.2",
-        ext:"gltf",
-        override:{
-            bidder:"kingvanilli",
-            bid:9.1
-        }
-    }
-}
 var account={
     info:{
     },
@@ -351,7 +274,616 @@ var account={
         }
     }
 }
-
+var assets={
+    loadContractData(){
+    },
+    async invokeERC(w,p){
+        var abi = [
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "approved",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "Approval",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "operator",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "bool",
+                        "name": "approved",
+                        "type": "bool"
+                    }
+                ],
+                "name": "ApprovalForAll",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "to",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "Transfer",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address payable",
+                        "name": "user",
+                        "type": "address"
+                    }
+                ],
+                "name": "addToWhitelist",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "to",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "approve",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                    }
+                ],
+                "name": "balanceOf",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "baseURI",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getApproved",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "operator",
+                        "type": "address"
+                    }
+                ],
+                "name": "isApprovedForAll",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenID",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "royaltyReciever1",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "royaltyReciever2",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "split",
+                        "type": "uint8"
+                    }
+                ],
+                "name": "mintAsset",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "name",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "ownerOf",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "piecelist",
+                "outputs": [
+                    {
+                        "internalType": "address payable",
+                        "name": "minter",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "royaltyReciever1",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "royaltyReciever2",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "split",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address payable",
+                        "name": "user",
+                        "type": "address"
+                    }
+                ],
+                "name": "removeFromWhitelist",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "to",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "safeTransferFrom",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "to",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bytes",
+                        "name": "_data",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "safeTransferFrom",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "operator",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "approved",
+                        "type": "bool"
+                    }
+                ],
+                "name": "setApprovalForAll",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "setTokenPrice",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_tokenURI",
+                        "type": "string"
+                    }
+                ],
+                "name": "setTokenURI",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "bytes4",
+                        "name": "interfaceId",
+                        "type": "bytes4"
+                    }
+                ],
+                "name": "supportsInterface",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "symbol",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "index",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "tokenByIndex",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "index",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "tokenOfOwnerByIndex",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "tokenURI",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "totalSupply",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "to",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "transferFrom",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            }
+        ];
+        var address = '0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6';
+        var contract = new ethers.Contract(address, abi, provider);
+        //mintAsset
+        if(w=="a"){
+            let provider = new ethers.providers.Web3Provider(web3.currentProvider);
+            let signer = await provider.getSigner();
+            contract=await contract.connect(signer);
+            let assetId=new ethers.BigNumber.from(document.getElementById("assetMintID").value);
+            console.log(assetId, assetId.toString(), assetId.to);
+            var sendPromise = contract.mintAsset(assetId.toString(), ethers.utils.getAddress(document.getElementById("assetMintUser").value), ethers.utils.getAddress(document.getElementById("recipient1").value), ethers.utils.getAddress(document.getElementById("recipient2").value), Number(document.getElementById("split").value));
+            console.log(sendPromise)
+            sendPromise.then(function(transaction) {
+                document.getElementById("data").innerHTML=(transaction);
+            });
+        }
+        //setApproval
+        if(w=="r"){
+            connectTorus();
+            let signer = provider.getSigner();
+            contract=await contract.connect(signer);
+            //let assetId=new ethers.BigNumber.from(document.getElementById("assetMintID").value);
+            //console.log(assetId, assetId.toString(), assetId.to);
+            var sendPromise = contract.setApprovalForAll("0x7cca737DC640eC07943aA32736E834eCa9E4C4eC", 1);
+            console.log(sendPromise)
+            sendPromise.then(function(transaction) {
+                document.getElementById("data").innerHTML=(transaction);
+            });
+        }
+        //check balance of address
+        else if(w=="b"){
+            let provider = new ethers.providers.Web3Provider(web3.currentProvider);
+            let signer = provider.getSigner();
+            contract=contract.connect(signer);
+            var sendPromise = contract.balanceOf(ethers.utils.getAddress("0xDc4c460577951Df59161467C2E4Ea41078c8D184", true));
+            console.log(ethers.utils.getAddress("0xDc4c460577951Df59161467C2E4Ea41078c8D184", true));
+            sendPromise.then(function(transaction) {
+                document.getElementById("data").innerHTML=(transaction);
+            });        
+        }
+        //get asset data
+        else if(w=="getOwner"){
+            try{
+            provider = new ethers.providers.Web3Provider(web3.currentProvider)
+            }catch(e){
+                provider=new ethers.providers.EtherscanProvider();
+            }
+            contract=contract.connect(provider);
+            var o = await contract.ownerOf(p);
+            //console.log(ethers.utils.getAddress("0xDc4c460577951Df59161467C2E4Ea41078c8D184", true));
+            return o;
+        }
+        else if(w=="getData"){
+            try{
+            provider = new ethers.providers.Web3Provider(web3.currentProvider)
+            }catch(e){
+                provider=new ethers.providers.EtherscanProvider();
+            }
+            contract=contract.connect(provider);
+            var o = await contract.piecelist(p);
+            //console.log(ethers.utils.getAddress("0xDc4c460577951Df59161467C2E4Ea41078c8D184", true));
+            return o;
+        }
+    }
+}
+var market={
+}
 var auction={
     "loadDate":()=>{
         var utcSeconds = result[4].toNumber();
@@ -520,9 +1052,25 @@ function hashMesh(){
     document.getElementById('upload').click();
     document.getElementById('upload').addEventListener('change', readFileAsString);
 }
-function upload(){
-    document.getElementById('upload').click();
-    document.getElementById('upload').addEventListener('change', readFileAsString);
+async function upload(){
+    
+    let fr = new FileReader();
+    const selectedFile = document.getElementById('assetInput').files[0];
+    console.log(selectedFile);
+    fr.readAsText(selectedFile);
+    //let a=new Int8Array(selectedFile);
+    //console.log(h);
+    fr.onload = async function(event) {
+        if(location.hash=="#editAssets"){
+            console.log(event.target.result);
+            
+            let a=(event.target.result);
+            let h=ethers.utils.id(a);
+            let n=ethers.BigNumber.from(h);
+            document.getElementById("assetMintID").value=n;
+            document.getElementById("asset_id").value=n;
+        }
+    }
 }
 async function readFileAsString(f) {
     files = this.files;
@@ -583,11 +1131,14 @@ function addAsset(){
     location.hash=`editAsset?${document.getElementById("asset_id").value}`
 }
 async function editAsset(a){
+    console.log(assetData)
+    a=new ethers.BigNumber.from(a)
     for(v in assetData){
         console.log(`asset_${v}`)
         assetData[v]=document.getElementById(`asset_${v}`).value;
     }
-    let s = await account.sign("update asset");
+    let s = "test"//await account.sign("update asset");
+    console.log(a);
     var request = new XMLHttpRequest(); 
     request.onreadystatechange = function() {
         if (request.readyState === 4) {
@@ -627,584 +1178,6 @@ function register(){
 function copyText(t){
 
     this.select();this.setSelectionRange(0, 99999);document.execCommand("copy");alert("Copied the text: " + this.innerHTML);
-}
-async function invokeERC(w){
-    var abi = [
-        {
-            "inputs": [],
-            "stateMutability": "nonpayable",
-            "type": "constructor"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "approved",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "Approval",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "operator",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "bool",
-                    "name": "approved",
-                    "type": "bool"
-                }
-            ],
-            "name": "ApprovalForAll",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "from",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "Transfer",
-            "type": "event"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address payable",
-                    "name": "user",
-                    "type": "address"
-                }
-            ],
-            "name": "addToWhitelist",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "approve",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                }
-            ],
-            "name": "balanceOf",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "baseURI",
-            "outputs": [
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "getApproved",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address",
-                    "name": "operator",
-                    "type": "address"
-                }
-            ],
-            "name": "isApprovedForAll",
-            "outputs": [
-                {
-                    "internalType": "bool",
-                    "name": "",
-                    "type": "bool"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "tokenID",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "user",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "royaltyReciever1",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "royaltyReciever2",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint8",
-                    "name": "split",
-                    "type": "uint8"
-                }
-            ],
-            "name": "mintAsset",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "name",
-            "outputs": [
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "ownerOf",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "name": "piecelist",
-            "outputs": [
-                {
-                    "internalType": "address payable",
-                    "name": "minter",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "royaltyReciever1",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "royaltyReciever2",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint8",
-                    "name": "split",
-                    "type": "uint8"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "price",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address payable",
-                    "name": "user",
-                    "type": "address"
-                }
-            ],
-            "name": "removeFromWhitelist",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "from",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "safeTransferFrom",
-            "outputs": [],
-            "stateMutability": "payable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "from",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "bytes",
-                    "name": "_data",
-                    "type": "bytes"
-                }
-            ],
-            "name": "safeTransferFrom",
-            "outputs": [],
-            "stateMutability": "payable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "operator",
-                    "type": "address"
-                },
-                {
-                    "internalType": "bool",
-                    "name": "approved",
-                    "type": "bool"
-                }
-            ],
-            "name": "setApprovalForAll",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "price",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "setTokenPrice",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "string",
-                    "name": "_tokenURI",
-                    "type": "string"
-                }
-            ],
-            "name": "setTokenURI",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "bytes4",
-                    "name": "interfaceId",
-                    "type": "bytes4"
-                }
-            ],
-            "name": "supportsInterface",
-            "outputs": [
-                {
-                    "internalType": "bool",
-                    "name": "",
-                    "type": "bool"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "symbol",
-            "outputs": [
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "index",
-                    "type": "uint256"
-                }
-            ],
-            "name": "tokenByIndex",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "index",
-                    "type": "uint256"
-                }
-            ],
-            "name": "tokenOfOwnerByIndex",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "tokenURI",
-            "outputs": [
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "totalSupply",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "from",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "transferFrom",
-            "outputs": [],
-            "stateMutability": "payable",
-            "type": "function"
-        }
-    ];
-    var address = '0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6';
-    var contract = new ethers.Contract(address, abi, provider);
-    if(w=="a"){
-        let provider = new ethers.providers.Web3Provider(web3.currentProvider);
-        let signer = await provider.getSigner();
-        contract=await contract.connect(signer);
-        let assetId=new ethers.BigNumber.from(document.getElementById("assetMintID").value);
-        console.log(assetId, assetId.toString(), assetId.to);
-        var sendPromise = contract.mintAsset(assetId.toString(), ethers.utils.getAddress(document.getElementById("assetMintUser").value), ethers.utils.getAddress(document.getElementById("recipient1").value), ethers.utils.getAddress(document.getElementById("recipient2").value), Number(document.getElementById("split").value));
-        console.log(sendPromise)
-        sendPromise.then(function(transaction) {
-            document.getElementById("data").innerHTML=(transaction);
-        });
-    }
-    if(w=="r"){
-        connectTorus();
-        let signer = provider.getSigner();
-        contract=await contract.connect(signer);
-        //let assetId=new ethers.BigNumber.from(document.getElementById("assetMintID").value);
-        //console.log(assetId, assetId.toString(), assetId.to);
-        var sendPromise = contract.setApprovalForAll("0x7cca737DC640eC07943aA32736E834eCa9E4C4eC", 1);
-        console.log(sendPromise)
-        sendPromise.then(function(transaction) {
-            document.getElementById("data").innerHTML=(transaction);
-        });
-    }
-    else if(w=="b"){
-        let provider = new ethers.providers.Web3Provider(web3.currentProvider);
-        let signer = provider.getSigner();
-        contract=contract.connect(signer);
-        var sendPromise = contract.balanceOf(ethers.utils.getAddress("0xDc4c460577951Df59161467C2E4Ea41078c8D184", true));
-        console.log(ethers.utils.getAddress("0xDc4c460577951Df59161467C2E4Ea41078c8D184", true));
-        sendPromise.then(function(transaction) {
-            document.getElementById("data").innerHTML=(transaction);
-        });        
-    }
 }
 async function invoke(w, m){
 

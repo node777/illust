@@ -37,7 +37,8 @@ input{
 }
 model-viewer{
     position: absolute;
-    height:80%;
+    height:300;
+    width: 300;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -124,6 +125,15 @@ float: left;
 }
 
 /*page specific*/
+/*market page*/
+#listings{
+    width: 90%;
+}
+#listings>div{
+    width: 33%;
+    overflow: hidden;
+    float: left;
+}
 #default{
     overflow-x: hidden;
 }
@@ -144,7 +154,9 @@ float: left;
     padding: 0;
     top: 0;
 }
-
+#gallery #paldesk-widget-btnframe{
+    display: none;
+}
 
 #lotBox{
     padding: 5%;
@@ -428,6 +440,10 @@ a:active {
     width: 50%;
 }
 @media (orientation: portrait) {
+    
+    #listings>div{
+        width: 100%;
+    }
     .mobile{
         display: initial;
     }

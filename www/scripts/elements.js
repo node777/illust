@@ -3,6 +3,56 @@ var elements = {
         default: ()=>{
             return elements.pages.winners2();
         },
+        market(p){
+            var request = new XMLHttpRequest(); 
+            request.onreadystatechange = async function() {
+                if (request.readyState === 4) {
+                    let r="";
+                    let m=JSON.parse(request.response)
+                    for(a in m){
+                        console.log(a, m[a])
+                        let name;
+                        let vars="";
+                        for(v in m[a]){
+                            if(v=="animation_url"){
+                                vars+=`
+                                    <model-viewer ar src="${m[a][v]}" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>`
+                            }else if(v=="name"){
+                                name=m[a][v]
+                            }else if(v=="description"){
+                                vars+=m[a][v]
+                            }else if(v=="creator"){
+                                vars+=`Creator ${m[a][v]}`
+                            }else{
+                                //vars+=`${v}: ${m[a][v]}<br>`
+    
+                            }
+                        }
+                        r+=`<div>
+                            <h1 style="height:32px">${name}</h1> <br><br>
+                            ${vars}
+                            <div id="owner_${a}">Loading Owner...</div>
+                            <div id="view_${a}" class="button w5" onclick="location.hash='asset?${a}'">View Asset</div>
+                        </div>`
+                        //r+=a
+                    }
+                    document.getElementById("listings").innerHTML=r;
+                    for(a in m){
+                        let assetData=await assets.invokeERC("getData", a);
+                        let owner=await assets.invokeERC("getOwner", a);
+                        if(owner==provider.provider.selectedAddress){
+                            document.getElementById(`view_${a}`).innerHTML="Edit/Sell Asset"
+                        }
+                        document.getElementById(`owner_${a}`).innerHTML="Owner: "+owner;
+                        console.log(assetData[0])
+                    }
+                }
+            }
+            request.open("GET", "https://us-central1-illust.cloudfunctions.net/metadata");
+            request.send();
+            
+            return `<div id="listings">${elements.loading()}</div>`
+        },
         editAssets:()=>{
             
             var request = new XMLHttpRequest(); 
@@ -43,7 +93,7 @@ var elements = {
                             <div class="box">
                                 Upload FBX
                                 <input type="file" id="assetInput">
-                                <div class="button" onclick="assets.upload()">Upload</div>
+                                <div class="button" onclick="upload()">Upload</div>
                             </div>
 
 
@@ -54,7 +104,7 @@ var elements = {
                                 <input id="recipient1" placeholder="Fee recipient 1" />
                                 <input id="recipient2" placeholder="Fee recipient 2" />
                                 <input id="split" placeholder="Recipient 1 pecent / 100" />
-                                <div class="button" onclick="invokeERC('a');">Mint Asset</div>
+                                <div class="button" onclick="assets.invokeERC('a');">Mint Asset</div>
                             </div>
 
                             <div class="box">
@@ -87,7 +137,10 @@ var elements = {
                     let r=""
                     let vars=""
                     console.log(m);
-                    
+                    console.log(assetData)
+                    if(assetData==undefined){
+                        assetData={};
+                    }
                     for(v in m){
                         assetData[v]=m[v];
                         vars+=`${v}: <input id="asset_${v}" value="${m[v]}"></input><br>`
@@ -116,7 +169,7 @@ var elements = {
                             <input id="fieldName" placeholder="Field Name"></input>
                             <div class="button" onclick="addField(${a[1]})">add field</div>
                         </div>
-                        <div class="button" onclick="editAsset(${a[1]})">Save Asset</div>
+                        <div class="button" onclick="editAsset(${"'"+new ethers.BigNumber.from(a[1])+"'"})">Save Asset</div>
                     </div>
                     <div class="button" onclick="location.hash='editAssets'">Back</div>`
                     
@@ -333,7 +386,7 @@ var elements = {
         maskTransfer:()=>{
             account.load();
             return `
-                <div class="button" onclick="invokeERC('r')">Approve Transfer</div>
+                <div class="button" onclick="assets.invokeERC('r')">Approve Transfer</div>
             `
         },
         claimItem:(i)=>{
@@ -411,17 +464,18 @@ var elements = {
                     let hash=a[1];
                     let url=m["animation_url"];
                     let iPrice=m.price||0;
-                    assets.selected=a[1];
-                    let auctionDetails;
+                    let assetDetails=`
+                        Created by: ${m.creator||"Illust"}<br><br>
+                        <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Transaction History</a><br><br>
+                    `;
+                    //<a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
                     
                     
                     //let auction=JSON.parse(await illustMarket("r", n[1]));
 
                     if(m["end_date"]){
                         setTimeout(auction.loadDate,1);
-                        auctionDetails=`
-                            <div>
-                                <a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
+                        assetDetails+=`
                                 <div id="priceBox"></div>
                                 <div id="topBidder"></div>
                                 <div id="dateBox"></div>
@@ -433,10 +487,9 @@ var elements = {
                                 <div class="button w5" onclick="placeBid('${a[1]}')">Place Bid</div>
                                 
                                 <div id="userBid">${b}</div>
-                            </div>
                         `
                     }else{
-                        auctionDetails="This asset is not for sale"
+                        assetDetails+="This asset is not for sale"
                     }
     
                     document.getElementById("assetBox").innerHTML= `
@@ -450,7 +503,7 @@ var elements = {
                                 </div>
                                 
                                 <div style="text-align:center">
-                                    ${auctionDetails}
+                                    ${assetDetails}
                                 </div>
 
                             </div>
@@ -481,7 +534,6 @@ var elements = {
                 let name=assets[n[1]].name;
                 let hash=assets[n[1]].hash;
                 let iPrice=assets[n[1]].iPrice;
-                assets.selected=n[1];
 
                 try{
                     b=`Your current bid: ${JSON.parse(account.info.bids[a])}<br>`
@@ -539,7 +591,6 @@ var elements = {
                 let name=assets[n[1]].name;
                 let hash=assets[n[1]].hash;
                 let iPrice=assets[n[1]].iPrice;
-                assets.selected=n[1];
                 let auction=JSON.parse(await illustMarket("r", n[1]));
                 console.log(auction);
                 account.load();
@@ -723,11 +774,11 @@ var elements = {
                             <input id="recipient1" placeholder="Fee recipient 1" />
                             <input id="recipient2" placeholder="Fee recipient 2" />
                             <input id="split" placeholder="pecent / 100" />
-                            <div class="button" onclick="invokeERC('a');">Create Asset</div>
+                            <div class="button" onclick="assets.invokeERC('a');">Create Asset</div>
                         </div>
                         <div class="box">
                             Check Assets in your account
-                            <div id="bidButton" class="button" onmousedown="invokeERC('b')">Check</div>
+                            <div id="bidButton" class="button" onmousedown="assets.invokeERC('b')">Check</div>
                         </div>
                     </div>
                     <div class="box">
@@ -747,13 +798,27 @@ var elements = {
 
             `
         },
-        gallery(p){
+        gallery:(p)=>{
             console.log(p);
-            return `
+            try{
                 
+                return `
+                    
                 <model-viewer ar ios-src="assets/models/${p[1]}.usdz" src="assets/models/${p[1]}.gltf" onError="this.onerror=null;this.src='assets/models/${p[1]}.glb';" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
 
-            `
+                `
+            }catch(e){
+                return `
+                    
+                <model-viewer ar ios-src="assets/models/${p[1]}.usdz" src="assets/models/${p[1]}.glb" onError="this.onerror=null;this.src='assets/models/${p[1]}.gltf';" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+
+                `
+
+            }
+        },
+        reboot:()=>{
+            localStorage.clear();
+            location.hash="account"
         },
         404:()=>{
             "Page could not be loaded"
@@ -867,11 +932,11 @@ var elements = {
                             <input id="recipient1" placeholder="Fee recipient 1" />
                             <input id="recipient2" placeholder="Fee recipient 2" />
                             <input id="split" placeholder="pecent / 100" />
-                            <div class="button" onclick="invokeERC('a');">Create Asset</div>
+                            <div class="button" onclick="assets.invokeERC('a');">Create Asset</div>
                         </div>
                         <div class="box">
                             Check Assets in your account
-                            <div id="bidButton" class="button" onmousedown="invokeERC('b')">Check</div>
+                            <div id="bidButton" class="button" onmousedown="assets.invokeERC('b')">Check</div>
                         </div>
                     </div>
                     <div class="box">
