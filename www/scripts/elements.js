@@ -10,33 +10,60 @@ var elements = {
                     let r="";
                     let m=JSON.parse(request.response)
                     for(a in m){
-                        console.log(a, m[a])
+                        // console.log(a, m[a])
+                        
+                        //scope variables
                         let name;
-                        let vars="";
+                        let colItemModelUrl
+                        let colItemName
+                        let ColItemDesc
+                        let colItemCreator
+
+                        console.log(a)
+                        console.log("^a")
+                        console.log(m[a])
+                        console.log("^m[a]")
+
+
                         for(v in m[a]){
                             if(v=="animation_url"){
-                                vars+=`
-                                    <model-viewer ar src="${m[a][v]}" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>`
+                                colItemModelUrl = m[a][v]
                             }else if(v=="name"){
-                                name=m[a][v]
+                                colItemName=m[a][v]
                             }else if(v=="description"){
-                                vars+=m[a][v]
+                                ColItemDesc =m[a][v]
                             }else if(v=="creator"){
-                                vars+=`Creator ${m[a][v]}<br>`
+                                colItemCreator = m[a][v]
                             }else{
                                 //vars+=`${v}: ${m[a][v]}<br>`
     
                             }
                         }
-                        r+=`<div>
-                            <h1 style="height:32px">${name}</h1> <br><br>
-                            ${vars}
-                            <div id="owner_${a}">Loading Owner...</div>
-                            <div id="view_${a}" class="button w5" onclick="location.hash='asset?${a}'">View Asset</div>
-                        </div>`
+                        r+=/*html*/`
+                            <div class="collectionItem__wrapper">
+                                <div class="collectionItem__modelViewerWrapper">
+                                    <model-viewer ar ios-src="assets/models/.usdz" src="assets/models/${colItemModelUrl}.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                                    <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#">🎭 Try On</a>
+                                </div>
+                                <div class="collectionItem__attributes">
+                                    <h3 class="collectionItem__title">${colItemCreator}</h3>
+                                    <a class="collectionItem__link" onclick="location.hash='asset?${a}">more</a>
+                                    <a class="collectionItem__artist" href="">${colItemName}</a>
+                                    
+                                </div>
+                                                
+                            </div>
+                            `
                         //r+=a
+                        /* <div>
+                                <h1 style="height:32px">${name}</h1> <br><br>
+                                ${vars}
+                                <div id="owner_${a}">Loading Owner...</div>
+                                <div id="view_${a}" class="button w5" onclick="location.hash='asset?${a}'">View Asset</div>
+                            </div>
+                            */
                     }
-                    document.getElementById("listings").innerHTML=r;
+                    document.getElementById("js-listings").innerHTML=r;
                     for(a in m){
                         let assetData=await assets.invokeERC("getData", a);
                         let owner=await assets.invokeERC("getOwner", a);
@@ -51,7 +78,7 @@ var elements = {
             request.open("GET", "https://us-central1-illust.cloudfunctions.net/metadata");
             request.send();
             
-            return `<div id="listings">${elements.loading()}</div>`
+            return `<div id="js-listings" class="market__collection">${elements.loading()}</div>`
         },
         editAssets:()=>{
             
