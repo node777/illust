@@ -22,7 +22,7 @@ var elements = {
                             }else if(v=="description"){
                                 vars+=m[a][v]
                             }else if(v=="creator"){
-                                vars+=`Creator ${m[a][v]}`
+                                vars+=`Creator ${m[a][v]}<br>`
                             }else{
                                 //vars+=`${v}: ${m[a][v]}<br>`
     
@@ -40,7 +40,7 @@ var elements = {
                     for(a in m){
                         let assetData=await assets.invokeERC("getData", a);
                         let owner=await assets.invokeERC("getOwner", a);
-                        if(owner==provider.provider.selectedAddress){
+                        if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
                             document.getElementById(`view_${a}`).innerHTML="Edit/Sell Asset"
                         }
                         document.getElementById(`owner_${a}`).innerHTML="Owner: "+owner;
@@ -451,8 +451,9 @@ var elements = {
             `
         },
         asset:async(a)=>{
+            await account.load()
             var request = new XMLHttpRequest(); 
-            request.onreadystatechange = function() {
+            request.onreadystatechange = async function() {
                 if (request.readyState === 4) {
                     if(!request.response){
                         return `Asset could not be found <div class='button' onclick='location.hash=""'>Home</div>`
@@ -468,28 +469,48 @@ var elements = {
                         Created by: ${m.creator||"Illust"}<br><br>
                         <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Transaction History</a><br><br>
                     `;
+                    
+                    let owner=await assets.invokeERC("getOwner", hash);
+                    assetDetails+=`Owner: ${owner}<br><br>`;
                     //<a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
                     
                     
                     //let auction=JSON.parse(await illustMarket("r", n[1]));
 
                     if(m["end_date"]){
-                        setTimeout(auction.loadDate,1);
+                        console.log(m)
+                        //setTimeout(auction.loadDate,1);
+                        let endTime=new Date(m["end_date"]);
+                        let timeNow=new Date(Date.now());
+
+                        console.log(endTime.getTime(),timeNow.getTime())
                         assetDetails+=`
-                                <div id="priceBox"></div>
-                                <div id="topBidder"></div>
-                                <div id="dateBox"></div>
-                                <div style="display:none" id="countdownBox"></div>
-                            
-                                
-                                Place your bid:<br>
-                                <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.200000000000000000' value='0.000000000000000000' /> ETH
-                                <div class="button w5" onclick="placeBid('${a[1]}')">Place Bid</div>
-                                
-                                <div id="userBid">${b}</div>
+                        
+                            Top bidder: ${m["top_bidder"]}
+                            <br><br>
+                            <div id="startPriceBox">Start price: ${m["start_price"]}</div>
+                            <br><br>
                         `
+                        if(endTime.getTime()>timeNow.getTime()){
+                            assetDetails+=`
+                                    <div id="priceBox">Currenct price: ${m["price"]}<br><br></div>
+                                    <div id="dateBox">End date: ${m["end_date"]}</div>
+                                    <br><br>
+                                    Place your bid:<br>
+                                    <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.200000000000000000' value='${Number(m["price"])+0.2}' /> ETH
+                                    <div class="button w5" onclick="market.bid()">Place Bid</div>
+                                    
+                                    <div id="userBid"></div>
+                            `
+                        }else{
+                            assetDetails+=`This sale ended on ${m["end_date"]}`
+                        }
                     }else{
                         assetDetails+="This asset is not for sale"
+                    }
+
+                    if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
+                        assetDetails+=`<div class='button' onclick="document.getElementById('assetDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Mangae asset sale":"Sell Asset"}</div>`
                     }
     
                     document.getElementById("assetBox").innerHTML= `
@@ -497,12 +518,13 @@ var elements = {
                             <h1 style="margin:0">${name}</h1>
                             <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
                             <div class="flex wrap w1">
+
                                 <div style="text-align:center">
                                     <model-viewer ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
                                     <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}"><b>Try On</b></a>
                                 </div>
                                 
-                                <div style="text-align:center">
+                                <div id="assetDetails" style="text-align:center">
                                     ${assetDetails}
                                 </div>
 
@@ -512,7 +534,6 @@ var elements = {
                                 2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
                                 <br><br>
                                 View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
-                                    <div>Initial price: ${iPrice}</div>
                                     <br>Single Edition
                                 <!--
                                 <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
@@ -1339,6 +1360,20 @@ var elements = {
                 Till the end of days he will be the ill Doomsayer… The days are strung up on that cross-quarter half light, Samhain, All souls - Halloween. And as the darkness draws in and the evenings give way to fire-spit crackle; long shadowed children (perhaps wearing masks on top of masks) search for plague free treats. In a period of seasonal shift, the prophet of doom always sounds louder, perhaps it is the cold slowing atoms, amplifying rhymes - perhaps it really is the end times. Time will tell. But a mask is suddenly far more desirable and if the streets are infected we can provide a panacea. Drawing on the golden age comic inspiration of the original Metal Face, the first Halloween auction consists of two extremely limited hand crafted masks, redolent of the original Dr (he of namesake and tentacle) they reflect the two aspects - shadow and growth. Hand drawn textures conjure comic pages, upturned eyes assure you that they are still something that the baddest villain of them all would wear apocalypse or not.
                     </div>
             </div>
+        `
+    },
+    sellAsset(){
+        let date=new Date(new Date().toString().split('GMT')[0]+' UTC').toISOString().split('.')[0]
+        console.log(date)
+        return `
+            
+            <h2>Begin Auction</h2><br><br>
+            Starting Bid:
+            <div style="width:100%;margin:0 0 32px 0;"><input style="margin:0;" id="start_price" type='number' step='0.200000000000000000' value='0.000000000000000000' /> ETH</div>
+            Auction Close Time:
+            <input id="end_date" type="datetime-local" value="${date}"></input>
+            <div class="button" onclick="market.beginAuction()">Begin Auction</div>
+            <div class="button" onclick="changePage()">Cancel</div>
         `
     },
     homeButton:`

@@ -26,6 +26,7 @@ var account={
       }
       else if(localStorage.provider=="torus"){
         try{
+          //signer=new CustomSigner(provider);
           // let m=Uint8Array.from(msg);
           // console.log(m, m.length);
           // var a = await web3.eth.getAccounts();
@@ -134,11 +135,6 @@ var account={
             }else if(location.hash=="#account"||location.hash=="account"){
                 document.getElementById("content").innerHTML=elements.connect();   
             }
-        }
-        if(provider){
-
-        }else{
-            
         }
     },
     getBal:async()=>{
@@ -883,6 +879,50 @@ var assets={
     }
 }
 var market={
+    async beginAuction(){
+        let asset=location.hash.split("?")[1]
+        let r={
+            message:{
+                asset:asset,
+                "end_date":document.getElementById("end_date").value,
+                "start_price":document.getElementById("start_price").value
+            }
+        }
+        r.sig = await account.sign(JSON.stringify(r.message))
+        
+        var request = new XMLHttpRequest(); 
+        request.onreadystatechange = function() {
+            if (request.readyState === 4) {
+                alert(request.response)
+                location.reload()
+            }
+        }
+        //request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/sell`);
+        request.open("POST", `http://localhost:5001/illust/us-central1/market/sell`);
+        request.send(JSON.stringify(r));
+    },
+    async bid(){
+        let asset=location.hash.split("?")[1]
+        let r={
+            message:{
+                asset:asset,
+                "amount":document.getElementById("bidAmount").value,
+                "timestamp":Date.now()
+            }
+        }
+        r.sig = await account.sign(JSON.stringify(r.message))
+        
+        var request = new XMLHttpRequest(); 
+        request.onreadystatechange = function() {
+            if (request.readyState === 4) {
+                alert(request.response)
+                //location.reload()
+            }
+        }
+        //request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/bid`);
+        request.open("POST", `http://localhost:5001/illust/us-central1/market/bid`);
+        request.send(JSON.stringify(r));
+    }
 }
 var auction={
     "loadDate":()=>{
