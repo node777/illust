@@ -625,6 +625,10 @@ a:active {
 .collectionItem__artist{
     flex-basis: 100%;
 }
+.collectionItem__link{
+    cursor: pointer;
+    text-transform: uppercase;
+}
 
 
 .market__collection{
@@ -722,6 +726,9 @@ helper classes should e used sparingly
     }
     .collectionItem__wrapper{
         margin: 0 0 5% 0;
+    }
+    .market__collectionItem{
+        flex-basis: 100%;
     }
 
 #collection #footer{

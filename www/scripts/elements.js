@@ -48,7 +48,7 @@ var elements = {
                                     </div>
                                     <div class="collectionItem__attributes">
                                         <h3 class="collectionItem__title">${colItemCreator}</h3>
-                                        <a class="collectionItem__link" onclick="location.hash='asset?${a}">more</a>
+                                        <a class="collectionItem__link" onclick="location.hash='asset?${a}">MORE</a>
                                         <a class="collectionItem__artist" href="">${colItemName}</a>
                                         
                                     </div>             
