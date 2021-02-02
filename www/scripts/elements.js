@@ -40,18 +40,19 @@ var elements = {
                             }
                         }
                         r+=/*html*/`
-                            <div class="collectionItem__wrapper">
-                                <div class="collectionItem__modelViewerWrapper">
-                                    <model-viewer ar ios-src="assets/models/.usdz" src="assets/models/${colItemModelUrl}.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
-                                    <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#">🎭 Try On</a>
+                            <div class='market__collectionItem'>
+                                <div class="collectionItem__wrapper">
+                                    <div class="collectionItem__modelViewerWrapper">
+                                        <model-viewer ar ios-src="assets/models/.usdz" src="assets/models/${colItemModelUrl}.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#">🎭 Try On</a>
+                                    </div>
+                                    <div class="collectionItem__attributes">
+                                        <h3 class="collectionItem__title">${colItemCreator}</h3>
+                                        <a class="collectionItem__link" onclick="location.hash='asset?${a}">more</a>
+                                        <a class="collectionItem__artist" href="">${colItemName}</a>
+                                        
+                                    </div>             
                                 </div>
-                                <div class="collectionItem__attributes">
-                                    <h3 class="collectionItem__title">${colItemCreator}</h3>
-                                    <a class="collectionItem__link" onclick="location.hash='asset?${a}">more</a>
-                                    <a class="collectionItem__artist" href="">${colItemName}</a>
-                                    
-                                </div>
-                                                
                             </div>
                             `
                         //r+=a
