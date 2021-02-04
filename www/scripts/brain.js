@@ -307,13 +307,13 @@ var account={
         document.getElementById('js-profileInfo').innerHTML=m;
         
     },
-    select:(r)=>{
+    selectHeader:(r)=>{
         try{
-            // document.getElementById('pr').style="";
-            // document.getElementById('vw').style="";
-            // document.getElementById('cl').style="";
-            // document.getElementById('ep').style="";
-            // document.getElementById('so').style="";
+            let headerItemArray = Array.from(document.getElementsByClassName('js-profileHeaderItem'));
+            headerItemArray.forEach(element => {
+                element.classList.remove('profileAssets__headerItem--current')
+            });
+            r.classList.add("profileAssets__headerItem--current")
         }catch(e){
             console.log(e);
         }

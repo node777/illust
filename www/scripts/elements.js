@@ -18,7 +18,6 @@ var elements = {
                     }
                     let m=JSON.parse(request.response);
                     let r=""
-                    console.log(m);
                     for(a in m){
                         let vars="";
                         for(v in m[a]){
@@ -86,7 +85,6 @@ var elements = {
                     }
                     let r=""
                     let vars=""
-                    console.log(m);
                     
                     for(v in m){
                         assetData[v]=m[v];
@@ -911,7 +909,6 @@ var elements = {
                 console.log("Got Acc info", account.info);
                 a= await elements.profileInfo();
                 profileAssets = await elements.profileAssets()
-                console.log(profileAssets)
                 b=account.info.username; 
                 
                 r=/*html*/`
@@ -996,30 +993,30 @@ var elements = {
             return /*html*/`
                 <div>
                     <img src="assets/icons/account.svg" class="profileInfo__photo" />
-                    <div class="profileInfo__userName" onclick="account.select('pr');account.information()">
+                    <div class="profileInfo__userName" onclick="account.information()">
                         @${b||"NO USER"}
                     </div>
                     <div class="profileInfo__userAttribute">
                         <strong>Email:</strong>
                         ${e}
-                        <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
+                        <span class="profileInfo__edit" onclick="account.edit()">&#x270E</span>
                     </div>
                     <div class="profileInfo__userAttribute">
                         <strong>First Name:</strong>
                         ${fn}
-                        <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
+                        <span class="profileInfo__edit" onclick="account.edit()">&#x270E</span>
                     </div>
                     <div class="profileInfo__userAttribute">
                         <strong>Last Name:</strong>
                         ${ln}
-                        <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
+                        <span class="profileInfo__edit" onclick="account.edit()">&#x270E</span>
                     </div>
                     <div class="profileInfo__userAttribute">
                         <strong>Bio:</strong>
                         ${account.info.bio||"Welcome to my page, this is my bio"}
-                        <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
+                        <span class="profileInfo__edit" onclick="account.edit()">&#x270E</span>
                     </div>
-                    <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.select(6);account.logout()">Sign Out</div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.logout()">Sign Out</div>
                 </div>
 
             `;
@@ -1030,16 +1027,14 @@ var elements = {
         }
     },
     profileAssets:async()=>{
-        console.log('profile assets');
         let c=elements.collection();
-        console.log(c)
 
 
         return /*html*/`
             <div>
                 <div class="profileAssets__header">
-                    <div id="cl" class="profileAssets__headerItem profileAssets__headerItem--current" onclick="account.select(4);document.getElementById('js-profileContents').innerHTML=elements.collection()">Collection<br><br></div>
-                    <div id="vw" class="profileAssets__headerItem"  onclick="account.select(3);account.wallet();">Views Wallet<br><br></div>
+                    <div id="cl" class="js-profileHeaderItem profileAssets__headerItem profileAssets__headerItem--current" onclick="account.selectHeader(this);document.getElementById('js-profileContents').innerHTML=elements.collection()">Collection<br><br></div>
+                    <div id="vw" class="js-profileHeaderItem profileAssets__headerItem"  onclick="account.selectHeader(this);account.wallet();">view Wallet<br><br></div>
                 </div>
                 <div id="js-profileContents" class="profileAssets__collection">
                     <br><br>${c}
@@ -1106,7 +1101,7 @@ var elements = {
                         <label>Bio:</label>
                         <input id='bioi' value='${account.info.bio||"Welcome to my page, this is my bio"}' />
                     </div>
-                    <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.select(6);account.logout()">Sign Out</div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.logout()">Sign Out</div>
                     <div class="button" onclick="account.create(1);">Update Account Info</div>
                 </div>
             `;
