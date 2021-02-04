@@ -574,7 +574,7 @@ var elements = {
                                     </div>
                                 </div>
                                 <div class="lotAsset__auction">
-                                    ${auctionDetails}
+                                    ${assetDetails}
                                 </div>
                             </div>
                         </div>
