@@ -573,21 +573,22 @@ a:active {
 }
 .lotAsset__content{
     display: flex;
-    flex-basis: 75%;
+    flex-basis: 66%;
     text-align: center;
 }
 .lotAsset__description{
     flex-basis: 50%;
     text-align: left;
-    padding: 5%;
+    padding: 30px;
 }
 .lotAsset__viewer{
     flex-basis: 50%;
     position: relative;
 }
 .lotAsset__auction{
-    flex-basis: 25%;
-    padding-top: 5%;
+    flex-basis: 33%;
+    padding-top: 30px;
+    text-align: right;
 }
 .lotAsset__model{
     display: block;
