@@ -996,27 +996,23 @@ var elements = {
                     <div class="profileInfo__userName" onclick="account.information()">
                         @${b||"NO USER"}
                     </div>
-                    <div class="profileInfo__userAttribute">
+                    <div class="profileInfo__userAttribute" onclick="account.edit()">
                         <strong>Email:</strong>
-                        ${e}
-                        <span class="profileInfo__edit" onclick="account.edit()">&#x270E</span>
+                        <span>${e}</span>
                     </div>
-                    <div class="profileInfo__userAttribute">
+                    <div class="profileInfo__userAttribute" onclick="account.edit()">
                         <strong>First Name:</strong>
-                        ${fn}
-                        <span class="profileInfo__edit" onclick="account.edit()">&#x270E</span>
+                        <span>${fn}<span>
                     </div>
-                    <div class="profileInfo__userAttribute">
+                    <div class="profileInfo__userAttribute" onclick="account.edit()">
                         <strong>Last Name:</strong>
-                        ${ln}
-                        <span class="profileInfo__edit" onclick="account.edit()">&#x270E</span>
+                        <span>${ln}</span>
                     </div>
-                    <div class="profileInfo__userAttribute">
+                    <div class="profileInfo__userAttribute" onclick="account.edit()">
                         <strong>Bio:</strong>
-                        ${account.info.bio||"Welcome to my page, this is my bio"}
-                        <span class="profileInfo__edit" onclick="account.edit()">&#x270E</span>
+                        <span>${account.info.bio||"Welcome to my page, this is my bio"}</span>
                     </div>
-                    <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.logout()">Sign Out</div>
+                    <div class="profileInfo__logout" id="so" onclick="account.logout()">Sign Out</div>
                 </div>
 
             `;

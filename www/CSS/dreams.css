@@ -489,6 +489,16 @@ a:active {
 .profileInfo__userAttribute{
     display: flex;
     margin-bottom: 30px;
+    cursor: pointer;
+}
+.profileInfo__userAttribute > span{
+    margin-left: 5px;
+}
+.profileInfo__userAttribute > span:hover:after{
+    content: "✎"
+}
+.profileInfo__userAttribute > span:hover{
+    color: var(--color4);
 }
 .profileInfo__userAttribute > input{
     flex-grow: 2;
@@ -498,22 +508,14 @@ a:active {
     font-weight: bold;
     white-space: nowrap;
 }
-.profileInfo__userAttribute--link{
+.profileInfo__logout{
     cursor: pointer;
     font-size: 20px;
 }
-
-.profileInfo__userAttribute--link:hover{
+.profileInfo__logout:hover{
     color: var(--color4);
 }
 
-.profileInfo__edit{
-    cursor:pointer;
-}
-
-.profileInfo__edit:hover{
-    color: var(--color4);
-}
 
 /* profileAssets */
 .profileAssets{
