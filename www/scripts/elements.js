@@ -531,8 +531,10 @@ var elements = {
                     }else{
                         assetDetails+="This asset is not for sale"
                     }
+                    console.log('hi')
+                    console.log(provider)
 
-                    if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
+                    if(provider.provider && owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
                         assetDetails+=`<div class='button' onclick="document.getElementById('assetDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Mangae asset sale":"Sell Asset"}</div>`
                     }
                     console.log(m)
@@ -544,7 +546,7 @@ var elements = {
                                     <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}" target="_blank">History</a>
                                 </li>
                                 <li>
-                                    <a href="">Other Works</a>
+                                    <a href="#">Other Works</a>
                                 </li>
                             </ul>
                             <div class="lotAsset__wrapper">
