@@ -20,7 +20,7 @@ body {
     font-family: 'Poppins', sans-serif;
     /*font-variant: small-caps;*/
     letter-spacing: 2px;
-
+    align-content: flex-start;
     font-weight: 300;
 	-webkit-user-select: none;  /* Chrome all / Safari all */
 	-moz-user-select: none;     /* Firefox all */
