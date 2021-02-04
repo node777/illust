@@ -43,7 +43,7 @@ var elements = {
                             <div class='market__collectionItem'>
                                 <div class="collectionItem__wrapper">
                                     <div class="collectionItem__modelViewerWrapper">
-                                        <model-viewer ar ios-src="assets/models/.usdz" src="assets/models/${colItemModelUrl}.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                                        <model-viewer ar ios-src="assets/models/.usdz" src="${colItemModelUrl}" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
                                         <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#">🎭 Try On</a>
                                     </div>
                                     <div class="collectionItem__attributes">
@@ -96,7 +96,6 @@ var elements = {
                     }
                     let m=JSON.parse(request.response);
                     let r=""
-                    console.log(m);
                     for(a in m){
                         let vars="";
                         for(v in m[a]){
@@ -169,6 +168,7 @@ var elements = {
                     if(assetData==undefined){
                         assetData={};
                     }
+
                     for(v in m){
                         assetData[v]=m[v];
                         vars+=`${v}: <input id="asset_${v}" value="${m[v]}"></input><br>`
@@ -338,7 +338,7 @@ var elements = {
             `
         },
         winners2:()=>{
-            return `
+            return /*html*/`
                 <h1 style="margin:64px 1% 0">MF DOOM AUCTION 2 CLOSED</h1>   
                 <div class="br" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
                 <br>
@@ -377,7 +377,7 @@ var elements = {
                 
                 <div class="flex  wrap w1" style="text-align:center;margin-bottom:152px">
         
-                    <div>
+                    <div class="h-flex-g1">
                         <h1>MF-9</h1>
                         <div class="br" style="float:left;width:64px;"></div>
             
@@ -388,7 +388,7 @@ var elements = {
                         <div class="button w5" onclick="location.hash='asset?15656630424036753581450935940596632215884383929372546170587529153151943392229'">View Collection</div>
                         
                     </div>
-                    <div>
+                    <div class="h-flex-g1">
                         <h1>MF-10</h1>   
                         <div class="br" style="float:left;width:64px;"></div>
 
@@ -398,7 +398,7 @@ var elements = {
                         <div class="button w5" onclick="location.hash='asset?70937556211959927769088791688503419832872233678974511813637293239899188185264'">View Collection</div>
                         
                     </div>
-                    <div>
+                    <div class="h-flex-g1">
                         <h1>MF-11</h1>
                         <div class="br" style="float:left;width:64px;"></div>
 
@@ -443,7 +443,6 @@ var elements = {
             //document.getElementById("content").innerHTML=elements.connect();
             try{
                 //await account.login();
-                
                 return elements.account();
                 
             }catch(e){
@@ -541,35 +540,44 @@ var elements = {
                         assetDetails+=`<div class='button' onclick="document.getElementById('assetDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Mangae asset sale":"Sell Asset"}</div>`
                     }
     
-                    document.getElementById("assetBox").innerHTML= `
-                        <div id="lotBox">
-                            <h1 style="margin:0">${name}</h1>
-                            <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
-                            <div class="flex wrap w1">
-
-                                <div style="text-align:center">
-                                    <model-viewer ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
-                                    <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}"><b>Try On</b></a>
-                                </div>
+                    document.getElementById("assetBox").innerHTML= /*html*/`
+                        <div id="lotBox" class="lotAsset">
+                            <h1 class="lotAsset__title">${name}</h1>
+                            <div class="lotAsset__wrapper">
+                                <div class="lotAsset__content">
+                                    <div class="lotAsset__viewer">
+                                        <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask"></model-viewer>
+                                        <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">Wear</a>
+                                        <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">World</a>
+                                        <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">Share</a>
+                                        <div class="lostAsset__tags">  
+                                            <!--TEMP STUB TABS-->
+                                            <a>#something</a>
+                                            <a>#tag</a>
+                                            <a>#anotehrtag</a>
+                                        </div>
+                                    </div>
                                 
-                                <div id="assetDetails" style="text-align:center">
-                                    ${assetDetails}
+                                    <div class="lotAsset__description">
+                                        <div class="w1">
+                                            
+                                            ${m.description}<br><br>
+                                            2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
+                                            <br><br>
+                                            View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
+                                                <div>Initial price: ${iPrice}</div>
+                                                <br>Single Edition
+                                            <!--
+                                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
+                                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
+                                        </div>
+                                    </div>
                                 </div>
-
-                            </div>
-                            <div class="w1">
-                                ${m.description}<br><br>
-                                2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
-                                <br><br>
-                                View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
-                                    <br>Single Edition
-                                <!--
-                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
-                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
-                                If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
+                                <div class="lotAsset__auction">
+                                    ${auctionDetails}
+                                </div>
                             </div>
                         </div>
-                        
                     `
                 }
             }
@@ -873,7 +881,7 @@ var elements = {
             "Page could not be loaded"
         }
     },
-    header: `
+    header: /*html*/`
         <div id="ac" onclick="location.hash='account'">
             <img src="assets/icons/account.svg" />
         </div>
@@ -885,7 +893,7 @@ var elements = {
         </div>
         <div class="br" style="margin:1%"></div>
     `,
-    sidebar:`
+    sidebar: /*html*/`
         <div onclick=""><a href="https://illust.space">Exhibitions</a></div>
         <div><a href="https://illust.space/about">About</a></div>
 
@@ -1011,24 +1019,26 @@ var elements = {
             if(account.info&&account.info.username){
                 console.log("Got Acc info", account.info);
                 a= await elements.profileInfo();
+                profileAssets = await elements.profileAssets()
                 b=account.info.username; 
                 
-                r=`
-                <div class="flex">
-                    <div id="accountContent" style="flex:4;padding:16px;">
-                        ${a}
-                    </div>
-                    <div id="sidebar2">
-                        <img src="assets/icons/account.svg" style="width:90%;padding:0 3%; margin: 0 0 16px;"/>
-                        <b>@${b||"NO USER"}</b><br><br>
-                        <div id="pr" onclick="account.select('pr');account.information()">Profile<br><br></div>
-                        <div id="vw" onclick="account.select(3);account.wallet();">View Wallet<br><br></div>
-                        <div id="cl" onclick="account.select(4);document.getElementById('accountContent').innerHTML=elements.collection()">Collection<br><br></div>
-                        <div id="ep" onclick="account.select(5);account.edit()">Edit Profile<br><br></div>
-                        <div id="so" onclick="account.select(6);account.logout()">Sign Out<br><br></div>
+                r=/*html*/`
+                    <div class="h-flex">
+                        <div id="accountContent" class="accountContent__wrapper" style="padding:16px;">
+                            <h1 style="text-align:left">ACCOUNT INFO</h1>
+                            <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
+                            <div id="js-accountWrapper" class="h-flex wrap h-100pw">
+                                <div id="js-profileInfo" class="profileInfo" >
+                                    ${a}
+                                </div>
+                                <div id="js-profileAssets" class="profileAssets">
+                                    ${profileAssets}
+                                </div>
 
+                            </div>
+                        </div>
+                        
                     </div>
-                </div>
                 `;
             }else{
                 //connectAccount(1);
@@ -1091,25 +1101,29 @@ var elements = {
                 fn=account.info.firstname;
                 ln=account.info.lastname;
             }
-            let c=elements.collection();
-            return `
-                <h1 style="text-align:left">ACCOUNT INFO</h1>
-                <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
-                <div class="flex wrap" style="width:62vw">
-                    <div>
-
-                        <div style="text-align:left">
-                            Username: <b>${b||"NO USER"}</b><br><br>
-                            Email: ${e}<br><br>
-                            Name: ${fn} ${ln}<br><br>
-                            Bio:
-                            <br><br>${account.info.bio||"Welcome to my page, this is my bio"}
-                        </div>
+            return /*html*/`
+                <div>
+                    <img src="assets/icons/account.svg" class="profileInfo__photo" />
+                    <div class="profileInfo__userName" onclick="account.information()">
+                        @${b||"NO USER"}
                     </div>
-                    <div>
-                        <b style="text-decoration: underline;">Collection:</b>
-                        <br><br>${c}
+                    <div class="profileInfo__userAttribute" onclick="account.edit()">
+                        <strong>Email:</strong>
+                        <span>${e}</span>
                     </div>
+                    <div class="profileInfo__userAttribute" onclick="account.edit()">
+                        <strong>First Name:</strong>
+                        <span>${fn}<span>
+                    </div>
+                    <div class="profileInfo__userAttribute" onclick="account.edit()">
+                        <strong>Last Name:</strong>
+                        <span>${ln}</span>
+                    </div>
+                    <div class="profileInfo__userAttribute" onclick="account.edit()">
+                        <strong>Bio:</strong>
+                        <span>${account.info.bio||"Welcome to my page, this is my bio"}</span>
+                    </div>
+                    <div class="profileInfo__logout" id="so" onclick="account.logout()">Sign Out</div>
                 </div>
 
             `;
@@ -1118,6 +1132,21 @@ var elements = {
             return `Account info could not be located`;
 
         }
+    },
+    profileAssets:async()=>{
+        let c=elements.collection();
+
+
+        return /*html*/`
+            <div>
+                <div class="profileAssets__header">
+                    <div id="cl" class="js-profileHeaderItem profileAssets__headerItem profileAssets__headerItem--current" onclick="account.selectHeader(this);document.getElementById('js-profileContents').innerHTML=elements.collection()">Collection<br><br></div>
+                    <div id="vw" class="js-profileHeaderItem profileAssets__headerItem"  onclick="account.selectHeader(this);account.wallet();">view Wallet<br><br></div>
+                </div>
+                <div id="js-profileContents" class="profileAssets__collection">
+                    <br><br>${c}
+                </div>
+            </div>`;
     },
     editProfile:async()=>{
         try{
@@ -1156,27 +1185,32 @@ var elements = {
                 ln=account.info.lastname;
             }
             let c=elements.collection();
-            return `
-                <h1 style="text-align:left">ACCOUNT INFO</h1>
-                <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
-                <div class="flex" style="width:100%">
-                    <div>
-
-                        <div style="text-align:left">
-                            Username: <input id="usernamei" value='${b||"NO USER"}' /><br><br>
-                            Email: <input id="emaili" value='${e}' /><br><br>
-                            Name: <input id="firstname" value='${fn}' / > <input id="lastname" value='${ln}' /><br><br>
-                            Bio:<br>
-                            <input id='bioi' value='${account.info.bio||"Welcome to my page, this is my bio"}' />
-                        </div>
+            return /*html*/`
+                <div id="js-profileInfo" class="profileInfo" >
+                    <img src="assets/icons/account.svg" class="profileInfo__photo" />
+                    <div class="profileInfo__userName profileInfo__userName--edit">
+                        <label>Profile:</label>
+                        <input id="usernamei" value='${b||"NO USER"}' />
                     </div>
-                    <div>
-                        <b style="text-decoration: underline;">Collection:</b>
-                        <br><br>${c}
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
+                        <label>Email:</label>
+                            <input id="emaili" value='${e}' />
                     </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
+                        <label>First Name:</label>
+                        <input id="firstname" value='${fn}' />
+                    </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
+                        <label>Last Name:</label>
+                        <input id="lastname" value='${ln}' />
+                    </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--edit"> 
+                        <label>Bio:</label>
+                        <input id='bioi' value='${account.info.bio||"Welcome to my page, this is my bio"}' />
+                    </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.logout()">Sign Out</div>
+                    <div class="button" onclick="account.create(1);">Update Account Info</div>
                 </div>
-                <div class="button" onclick="account.create(1);">Update Account Info</div>
-
             `;
         }catch(e){
             console.log(e);
@@ -1219,16 +1253,25 @@ var elements = {
     },
     collection:()=>{
         if(account.info.collection){
-            let r="<div class='flex wrap'>"
+            let r=/*html*/`<div class='profileAssets__collectionItem'>`
             
             for(i in account.info.collection){
-                r+="<div>"
-                r+=account.info.collection[i];
-                r+=`<model-viewer style="margin:auto;height:30vh;position:relative" ar ios-src="assets/models/${i}.usdz" src="assets/models/${i}.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>`;
+                r+=/*html*/`
+                <div class="collectionItem__wrapper">
+                    <div class="collectionItem__modelViewerWrapper">
+                        <model-viewer ar ios-src="assets/models/${i}.usdz" src="assets/models/${i}.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${i}">🎭 Try On</a>
+                    </div>
+                    <div class="collectionItem__attributes">
+                        <h3 class="collectionItem__title">${account.info.collection[i]}</h3>
+                        <a class="collectionItem__link" onclick="console.log(elements.pages.asset(${i}))">more</a>
+                        <a class="collectionItem__artist" href="">Artist Name</a>
+                    </div>
+                    
+                </div>`
+
                 //r+=`View on <a href="https://etherscan.io/address/0x965d0Efd2560516FC2076Ee2C1dea478b82841B9#tokentxnsErc721">Etherscan</a></div>`;
-                r+=`<a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${i}"><b>Try On</b></a>`
-                r+="</div>"
-                
+    
             }
             r+="</div>"
             return r;
@@ -1327,7 +1370,7 @@ var elements = {
         `
     },
     DOOM2:()=>{
-        return `
+        return /*html*/`
             <h1 style="margin:64px 1% 0">MF DOOM COLLECTION 2</h1>   
             <div class="br" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
             <br>
@@ -1353,7 +1396,7 @@ var elements = {
                 <div class="w1" style="background-image:url('images/doom2.png'); height:50vw; margin:-11vw 0 -20vw;background-size:40%;background-repeat:no-repeat;background-position:50% 0"></div>
 
                 <div class="flex wrap w1" style="margin-bottom:180px;">
-                    <div>
+                    <div class="h-flex-g1">
                         <h1>Lot MF-09</h1>
                         <div class="br" style="float:left;width:64px;"></div>
 
@@ -1362,13 +1405,13 @@ var elements = {
                         <div class="button w5" onclick="location.hash='lot?609'">Place Bid</div>
                         
                     </div>
-                    <div>
+                    <div  class="h-flex-g1">
                         <h1>Lot MF-10</h1>
                         <div class="br" style="float:left;width:64px;"></div>
                         <model-viewer ar ios-src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.usdz" src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
                         <div class="button w5" onclick="location.hash='lot?610'">Place Bid</div>
                         
-                    </div>
+                    </div  class="h-flex-g1">
                     <div style="">
                         <h1>Lot MF-11</h1>
                         <div class="br" style="float:left;width:64px;"></div>

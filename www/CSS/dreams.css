@@ -490,6 +490,16 @@ a:active {
     display: flex;
     margin-bottom: 30px;
 }
+.profileInfo__userAttribute > span{
+    margin-left: 5px;
+    cursor:pointer;
+}
+.profileInfo__userAttribute > span:hover:after{
+    content: "✎"
+}
+.profileInfo__userAttribute > span:hover{
+    color: var(--color4);
+}
 .profileInfo__userAttribute > input{
     flex-grow: 2;
     margin: 0px 0px -2px 5px;
@@ -498,20 +508,12 @@ a:active {
     font-weight: bold;
     white-space: nowrap;
 }
-.profileInfo__userAttribute--link{
+
+.profileInfo__logout{
     cursor: pointer;
     font-size: 20px;
 }
-
-.profileInfo__userAttribute--link:hover{
-    color: var(--color4);
-}
-
-.profileInfo__edit{
-    cursor:pointer;
-}
-
-.profileInfo__edit:hover{
+.profileInfo__logout:hover{
     color: var(--color4);
 }
 
@@ -642,7 +644,6 @@ a:active {
     flex-basis: 33%;
 }
 
-
 /* "h-*" classes are helper classes that have very few styles that can be used across components.
 helper classes should e used sparingly 
 */
@@ -730,7 +731,7 @@ helper classes should e used sparingly
     .market__collectionItem{
         flex-basis: 100%;
     }
-
+}
 #collection #footer{
     display: none;
 }
