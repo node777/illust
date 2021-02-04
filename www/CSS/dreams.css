@@ -745,16 +745,29 @@ helper classes should e used sparingly
     }
     .lotAsset__auction{
         flex-basis: 100%;
-        padding: 5%;
     }
-    .lotAsset__description{
+    .lotAsset__details{
         flex-basis: 100%;
+        padding: 0px;
     }
     .lotAsset__viewer{
         flex-basis: 100%;
     }
     .lotAsset__content{
         flex-wrap: wrap;
+    }
+    .lotAsset__title{
+        width: 100%;
+    }
+    .lotAsset__linkouts{
+        width: 100%;
+    }
+    .lotAsset__auction{
+        text-align: left;
+    }
+    .lotAsset__attribute{
+        max-width: calc(100vw - 50px);
+        overflow: scroll;
     }
     .collectionItem__wrapper{
         margin: 0 0 5% 0;
