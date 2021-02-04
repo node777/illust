@@ -362,7 +362,6 @@ var elements = {
             //document.getElementById("content").innerHTML=elements.connect();
             try{
                 //await account.login();
-                
                 return elements.account();
                 
             }catch(e){
@@ -911,15 +910,27 @@ var elements = {
             if(account.info&&account.info.username){
                 console.log("Got Acc info", account.info);
                 a= await elements.profileInfo();
+                profileAssets = await elements.profileAssets()
+                console.log(profileAssets)
                 b=account.info.username; 
                 
                 r=/*html*/`
-                <div class="h-flex">
-                    <div id="accountContent" class="accountContent__wrapper" style="padding:16px;">
-                        ${a}
+                    <div class="h-flex">
+                        <div id="accountContent" class="accountContent__wrapper" style="padding:16px;">
+                            <h1 style="text-align:left">ACCOUNT INFO</h1>
+                            <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
+                            <div id="js-accountWrapper" class="h-flex wrap h-100pw">
+                                <div id="js-profileInfo" class="profileInfo" >
+                                    ${a}
+                                </div>
+                                <div id="js-profileAssets" class="profileAssets">
+                                    ${profileAssets}
+                                </div>
+
+                            </div>
+                        </div>
+                        
                     </div>
-                    
-                </div>
                 `;
             }else{
                 //connectAccount(1);
@@ -982,47 +993,33 @@ var elements = {
                 fn=account.info.firstname;
                 ln=account.info.lastname;
             }
-            let c=elements.collection();
             return /*html*/`
-                <h1 style="text-align:left">ACCOUNT INFO</h1>
-                <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
-                <div class="h-flex wrap h-100pw">
-                    <div class="profileInfo" >
-                        <img src="assets/icons/account.svg" class="profileInfo__photo" />
-                        <div class="profileInfo__userName" onclick="account.select('pr');account.information()">
-                            @${b||"NO USER"}
-                        </div>
-                        <div class="profileInfo__userAttribute">
-                            <strong>Email:</strong>
-                            ${e}
-                            <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
-                        </div>
-                        <div class="profileInfo__userAttribute">
-                            <strong>First Name:</strong>
-                            ${fn}
-                            <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
-                        </div>
-                        <div class="profileInfo__userAttribute">
-                            <strong>Last Name Name:</strong>
-                            ${ln}
-                            <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
-                        </div>
-                        <div class="profileInfo__userAttribute">
-                            <strong>Bio:</strong>
-                            ${account.info.bio||"Welcome to my page, this is my bio"}
-                            <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
-                        </div>
-                        <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.select(6);account.logout()">Sign Out</div>
+                <div>
+                    <img src="assets/icons/account.svg" class="profileInfo__photo" />
+                    <div class="profileInfo__userName" onclick="account.select('pr');account.information()">
+                        @${b||"NO USER"}
                     </div>
-                    <div class="profileAssets">
-                        <div class="profileAssets__header">
-                            <div id="cl" class="profileAssets__headerItem profileAssets__headerItem--current" onclick="account.select(4);document.getElementById('accountContent').innerHTML=elements.collection()">Collection<br><br></div>
-                            <div id="vw" class="profileAssets__headerItem"  onclick="account.select(3);account.wallet();">View Wallet<br><br></div>
-                        </div>
-                        <div class="profileAssets__collection">
-                            <br><br>${c}
-                        </div>
+                    <div class="profileInfo__userAttribute">
+                        <strong>Email:</strong>
+                        ${e}
+                        <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
                     </div>
+                    <div class="profileInfo__userAttribute">
+                        <strong>First Name:</strong>
+                        ${fn}
+                        <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
+                    </div>
+                    <div class="profileInfo__userAttribute">
+                        <strong>Last Name:</strong>
+                        ${ln}
+                        <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
+                    </div>
+                    <div class="profileInfo__userAttribute">
+                        <strong>Bio:</strong>
+                        ${account.info.bio||"Welcome to my page, this is my bio"}
+                        <span class="profileInfo__edit" onclick="account.select(5);account.edit()">&#x270E</span>
+                    </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.select(6);account.logout()">Sign Out</div>
                 </div>
 
             `;
@@ -1031,6 +1028,23 @@ var elements = {
             return `Account info could not be located`;
 
         }
+    },
+    profileAssets:async()=>{
+        console.log('profile assets');
+        let c=elements.collection();
+        console.log(c)
+
+
+        return /*html*/`
+            <div>
+                <div class="profileAssets__header">
+                    <div id="cl" class="profileAssets__headerItem profileAssets__headerItem--current" onclick="account.select(4);document.getElementById('js-profileContents').innerHTML=elements.collection()">Collection<br><br></div>
+                    <div id="vw" class="profileAssets__headerItem"  onclick="account.select(3);account.wallet();">Views Wallet<br><br></div>
+                </div>
+                <div id="js-profileContents" class="profileAssets__collection">
+                    <br><br>${c}
+                </div>
+            </div>`;
     },
     editProfile:async()=>{
         try{
@@ -1070,43 +1084,30 @@ var elements = {
             }
             let c=elements.collection();
             return /*html*/`
-                <h1 style="text-align:left">ACCOUNT INFO | EDIT</h1>
-                <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
-                <div class="h-flex wrap h-100pw">
-                    <div class="profileInfo" >
-                        <img src="assets/icons/account.svg" class="profileInfo__photo" />
-                        <div class="profileInfo__userName profileInfo__userName--edit">
-                            <label>Profile:</label>
-                            <input id="usernamei" value='${b||"NO USER"}' />
-                        </div>
-                        <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
-                            <label>Email:</label>
-                                <input id="emaili" value='${e}' />
-                        </div>
-                        <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
-                            <label>First Name:</label>
-                            <input id="firstname" value='${fn}' />
-                        </div>
-                        <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
-                            <label>Last Name:</label>
-                            <input id="lastname" value='${ln}' />
-                        </div>
-                        <div class="profileInfo__userAttribute profileInfo__userAttribute--edit"> 
-                            <label>Bio:</label>
-                            <input id='bioi' value='${account.info.bio||"Welcome to my page, this is my bio"}' />
-                        </div>
-                        <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.select(6);account.logout()">Sign Out</div>
-                        <div class="button" onclick="account.create(1);">Update Account Info</div>
+                <div id="js-profileInfo" class="profileInfo" >
+                    <img src="assets/icons/account.svg" class="profileInfo__photo" />
+                    <div class="profileInfo__userName profileInfo__userName--edit">
+                        <label>Profile:</label>
+                        <input id="usernamei" value='${b||"NO USER"}' />
                     </div>
-                    <div class="profileAssets">
-                        <div class="profileAssets__header">
-                            <div id="cl" class="profileAssets__headerItem profileAssets__headerItem--current" onclick="account.select(4);document.getElementById('accountContent').innerHTML=elements.collection()">Collection<br><br></div>
-                            <div id="vw" class="profileAssets__headerItem"  onclick="account.select(3);account.wallet();">View Wallet<br><br></div>
-                        </div>
-                        <div class="profileAssets__collection">
-                            <br><br>${c}
-                        </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
+                        <label>Email:</label>
+                            <input id="emaili" value='${e}' />
                     </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
+                        <label>First Name:</label>
+                        <input id="firstname" value='${fn}' />
+                    </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
+                        <label>Last Name:</label>
+                        <input id="lastname" value='${ln}' />
+                    </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--edit"> 
+                        <label>Bio:</label>
+                        <input id='bioi' value='${account.info.bio||"Welcome to my page, this is my bio"}' />
+                    </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.select(6);account.logout()">Sign Out</div>
+                    <div class="button" onclick="account.create(1);">Update Account Info</div>
                 </div>
             `;
         }catch(e){

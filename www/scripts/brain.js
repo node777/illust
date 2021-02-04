@@ -126,7 +126,7 @@ var account={
         // if(account.info!={}){
         //     console.log("already logged in")
         // }
-        
+
         await account.load();
         if(localStorage.userInfo){
             let d=JSON.parse(localStorage.userInfo);
@@ -166,10 +166,10 @@ var account={
                                 }else if(loginRequest.response!=""&&loginRequest.response!="Could not verify signature"){
                                     localStorage.userInfo=loginRequest.response;
                                     account.login();
-                                }else{console.log(request.response)}
+                                }else{console.log(request.response)
+                                }
                             }catch(e){
                                 console.log(loginRequest.response, e)
-                                
                                 document.getElementById("content").innerHTML=elements.createAccount();  
                             }
                         }
@@ -288,26 +288,32 @@ var account={
     information:async()=>{
         if(document.getElementById('accountContent')){
             let m=await elements.profileInfo();
-            document.getElementById('accountContent').innerHTML=m;
+            let profileAssetsHtml=await elements.profileAssets();
+
+            document.getElementById('js-profileInfo').innerHTML=m;
+            document.getElementById('js-profileAssets').innerHTML=profileAssetsHtml;
+
         }
     },
     wallet:async()=>{
         let m=await elements.walletInfo();
         console.log(m);
-        document.getElementById('accountContent').innerHTML=m;
+        document.getElementById('js-profileContents').innerHTML=m;
     },
     edit:async()=>{
         let m=await elements.editProfile();
-        document.getElementById('accountContent').innerHTML=m;
+        let profileAssetsHtml=await elements.profileAssets();
+
+        document.getElementById('js-profileInfo').innerHTML=m;
+        
     },
     select:(r)=>{
         try{
-            document.getElementById('pr').style="";
-            document.getElementById('vw').style="";
-            document.getElementById('cl').style="";
-            document.getElementById('ep').style="";
-            document.getElementById('so').style="";
-            document.getElementById(`${r}`).style="color:var(--color4);";
+            // document.getElementById('pr').style="";
+            // document.getElementById('vw').style="";
+            // document.getElementById('cl').style="";
+            // document.getElementById('ep').style="";
+            // document.getElementById('so').style="";
         }catch(e){
             console.log(e);
         }
