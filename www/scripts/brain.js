@@ -898,7 +898,7 @@ var market={
             }
         }
         //request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/sell`);
-        request.open("POST", `http://localhost:5001/illust/us-central1/market/sell`);
+        request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/sell`);
         request.send(JSON.stringify(r));
     },
     async bid(){
@@ -920,7 +920,7 @@ var market={
             }
         }
         //request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/bid`);
-        request.open("POST", `http://localhost:5001/illust/us-central1/market/bid`);
+        request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/bid`);
         request.send(JSON.stringify(r));
     }
 }
