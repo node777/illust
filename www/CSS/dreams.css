@@ -1,6 +1,8 @@
 @charset "utf-8";
-#maskTransfer{
 
+/* === GLOBALS START === */
+
+#maskTransfer{
 }
 :root {
 	--color1: #ffffff;
@@ -35,21 +37,28 @@ body > *{
 }
 input{
 }
-model-viewer{
+/* TEMP too many consequences */
+/* model-viewer{
     position: absolute;
-    height:300;
-    width: 300;
-}
+    height:80%;
+} */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
+.input {
+
+}
+
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+/* === GLOBALS END === */
+
 #header{
     top:0;
     z-index: 5;
@@ -62,21 +71,15 @@ input[type=number] {
 #header>*{
 float: left;
 }
-#account .flex div{
+
+/* TEMP removing and replacing */
+/* #account .flex div{
     cursor: pointer;
     text-align: center;
-}
+} */
 #account .flex div .br{
     margin: 15%;
     width: 70%;
-}
-#account .flex img{
-
-    height: 12vw;
-    margin: 64px auto 32px;
-}
-#accountContent{
-    text-align: left;
 }
 #hd{
     margin: 9px 24px 24px 24px;
@@ -116,6 +119,12 @@ float: left;
 #content{
     top:96px;
     padding-bottom:64px;
+    padding-top: 50px;
+    padding-left: 5%;
+    padding-right: 5%;
+    max-width: 1600px;
+    margin: 0 auto;
+
 }
 #footer{
     display: none;
@@ -125,15 +134,6 @@ float: left;
 }
 
 /*page specific*/
-/*market page*/
-#listings{
-    width: 90%;
-}
-#listings>div{
-    width: 33%;
-    overflow: hidden;
-    float: left;
-}
 #default{
     overflow-x: hidden;
 }
@@ -154,11 +154,9 @@ float: left;
     padding: 0;
     top: 0;
 }
-#gallery #paldesk-widget-btnframe{
-    display: none;
-}
 
-#lotBox{
+/* TEMP remove lot wrappings */
+/* #lotBox{
     padding: 5%;
     word-break: break-word;
 }
@@ -167,14 +165,14 @@ float: left;
 }
 #lotBox>*{
     padding: 5%;
-}
-#lotBox model-viewer{
+} */
+/* #lotBox model-viewer{
     width: 200;
     height: auto;
     position: relative;
     height: 300;
     float: left;
-}
+} */
 #collectionBox{
     word-break: break-word;
     padding: 5%;
@@ -298,6 +296,7 @@ input, .popup textarea{
     border:0px;
     border-bottom: 2px solid var(--color1);
 }
+
 #overlay{
     position: fixed;
     height: 100%;
@@ -305,9 +304,6 @@ input, .popup textarea{
     display: none;
     opacity: 0;
     background-color: var(--color2);
-}
-#content{
-    padding: 0 5% 5%;
 }
 #connectAccount .box{
     cursor: pointer;
@@ -439,11 +435,261 @@ a:active {
 .w5{
     width: 50%;
 }
+
+/* ==== ELEMNTS STYLED WITH BEM NAMING SCHEMA https://en.bem.info/methodology/css/ === */
+
+/* profileInfo */
+.profileInfo {
+    text-align: left;
+    flex-basis: 25%;
+    flex-grow: 0;
+    max-width: 100%;
+}
+.profileInfo__photo{
+    display: block;
+    width: 150px;
+    margin: 0 !important;
+     /*^ I hate this but its needed TEMP */
+}
+.profileInfo__userName{
+    cursor: pointer;
+    margin-top: 15px;
+    margin-bottom: 40px;
+    position: relative;
+    padding-bottom: 15px;
+    font-size: 24px;
+    font-weight: 700;
+
+}
+.profileInfo__userName > label{
+    font-weight: bold;
+}
+.profileInfo__userName:hover{
+    color: var(--color4);
+}
+.profileInfo__userName:before{
+    content: "";
+    width: 65px;
+    height: 1px;
+    border-bottom: 1px solid var(--color1);
+    position: absolute;
+    bottom: 0;
+}
+.profileInfo__userName--edit:hover{
+    color: var(--color1);
+}
+.profileInfo__userName--edit{
+    display: flex;
+}
+.profileInfo__userName--edit > input{
+    flex-grow: 2;
+    margin: 0 0 0 5px;
+}
+
+.profileInfo__userAttribute{
+    display: flex;
+    margin-bottom: 30px;
+}
+.profileInfo__userAttribute > span{
+    margin-left: 5px;
+    cursor:pointer;
+}
+.profileInfo__userAttribute > span:hover:after{
+    content: "✎"
+}
+.profileInfo__userAttribute > span:hover{
+    color: var(--color4);
+}
+.profileInfo__userAttribute > input{
+    flex-grow: 2;
+    margin: 0px 0px -2px 5px;
+}
+.profileInfo__userAttribute > label{
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.profileInfo__logout{
+    cursor: pointer;
+    font-size: 20px;
+}
+.profileInfo__logout:hover{
+    color: var(--color4);
+}
+
+/* profileAssets */
+.profileAssets{
+    flex-grow: 1;
+}
+.profileAssets__collection{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5%;
+    justify-content: center;
+}
+.profileAssets__header{
+    text-align: right;
+    margin-bottom: 30px;
+}
+.profileAssets__headerItem{
+    text-transform: uppercase;
+    display: inline-block;
+    font-size: 18px;
+    margin-left: 30px;
+}
+.profileAssets__headerItem:hover{
+    color: var(--color5);
+    cursor: pointer;
+}
+.profileAssets__headerItem--current{
+    font-weight: bold;
+    color: var(--color4);
+}
+.profileAssets__collectionItem{
+    flex-basis: 50%;
+}
+.accountContent__wrapper{
+    width: calc(100% - 16px);
+}
+
+/* lotAssets */
+.lotAsset__title{
+    display: inline-block;
+    margin-bottom: 50px;
+    position: relative;
+    padding-bottom: 15px;
+    width: 50%;
+    vertical-align: top;
+}
+.lotAsset__title:before{
+    content: "";
+    width: 65px;
+    height: 1px;
+    border-bottom: 1px solid var(--color1);
+    position: absolute;
+    bottom: 0;
+}
+.lotAsset__wrapper{
+    display: flex;
+    flex-wrap: wrap;
+}
+.lotAsset__content{
+    display: flex;
+    flex-basis: 66.666%;
+    text-align: center;
+}
+.lotAsset__creator{
+    position: relative;
+    padding-bottom: 8px;
+}
+.lotAsset__creator:before{
+    content: "";
+    width: 25px;
+    height: 1px;
+    border-bottom: 1px solid var(--color1);
+    position: absolute;
+    bottom: 0;
+}
+.lotAsset__attribute{
+    margin-bottom: 10px;
+}
+.lotAsset__details{
+    flex-basis: 50%;
+    text-align: left;
+    padding: 30px;
+}
+.lotAsset__viewer{
+    flex-basis: 50%;
+    position: relative;
+}
+.lotAsset__auction{
+    flex-basis: 33.333%;
+    padding-top: 30px;
+    text-align: right;
+}
+.lotAsset__model{
+    display: block;
+    height: auto;
+    background-color: var(--color1);
+    width: 100%;
+    padding-bottom: 108%;
+}
+.lotAsset__modelShare{
+    margin: 0 5px;
+}
+.lotAsset__linkouts{
+    display: inline-block;
+    text-align: right;
+    font-size: 24px;
+    width: calc(50% - 7px);
+    padding-left: 0px;
+}
+.lotAsset__linkouts li{
+    display: inline-block;
+    margin-left: 10px;
+}
+.collectionItem__modelViewerWrapper{
+    position: relative;
+    padding-top: 100%;
+}
+.collectionItem__modelViewerWrapper > model-viewer{
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    width: 90%;
+    height: 90%;
+}
+.collectionItem__facePreview{
+    position: absolute; 
+    bottom: 5px;
+    right: 5px;
+}
+.collectionItem__attributes{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.collectionItem__wrapper{
+    margin: 10% 10% 20% 10%;
+
+}
+.collectionItem__artist{
+    flex-basis: 100%;
+}
+.collectionItem__link{
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+
+.market__collection{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-right: calc(-5% + 16px);
+    margin-left: calc(-5% + 16px);
+}
+.market__collectionItem{
+    flex-basis: 33%;
+}
+
+/* "h-*" classes are helper classes that have very few styles that can be used across components.
+helper classes should e used sparingly 
+*/
+.h-100pw{
+    width: 100%;
+}
+.h-flex-g1{
+    flex-grow:1;
+}
+.h-flex{
+    display: flex;
+}
+
+
 @media (orientation: portrait) {
-    
-    #listings>div{
-        width: 100%;
-    }
     .mobile{
         display: initial;
     }
@@ -461,10 +707,73 @@ a:active {
     .wrap model-viewer {
     }
     h2{
-        font-size: 13px;
+        font-size: 16px;
     }
     body{
-        font-size: 12px;
+        font-size: 14px;
+    }
+    .profileAssets__header{
+        text-align: left;
+        margin-top: 30px;
+    }
+    .profileAssets__headerItem{
+        margin-left: 0px;
+        margin-right: 30px;
+    }
+    .profileInfo__userAttribute--edit{
+        flex-wrap: wrap;
+    }
+    .profileInfo__userAttribute--edit > * {
+        flex-basis: 100%;
+        margin-bottom: 5px;
+    }
+    .profileInfo__userName--edit > *{
+        flex-basis: 100%;
+        margin-bottom: 5px;
+    }
+    .profileAssets__collection{
+        padding: 0px;
+    }
+    .profileAssets__collectionItem{
+        flex-basis: 100%;
+    }
+    .profileInfo__userName--edit{
+        flex-wrap: wrap;
+    }
+    .lotAsset__content{
+        flex-basis: 100%;
+    }
+    .lotAsset__auction{
+        flex-basis: 100%;
+    }
+    .lotAsset__details{
+        flex-basis: 100%;
+        padding: 0px;
+    }
+    .lotAsset__viewer{
+        flex-basis: 100%;
+    }
+    .lotAsset__content{
+        flex-wrap: wrap;
+    }
+    .lotAsset__title{
+        width: 100%;
+    }
+    .lotAsset__linkouts{
+        width: 100%;
+    }
+    .lotAsset__auction{
+        text-align: left;
+    }
+    .lotAsset__attribute{
+        max-width: calc(100vw - 50px);
+        overflow: scroll;
+    }
+    .collectionItem__wrapper{
+        margin: 0 0 5% 0;
+    }
+    .market__collectionItem{
+        flex-basis: 100%;
     }
 }
 #collection #footer{
@@ -472,7 +781,4 @@ a:active {
 }
 #account .flex img:hover{
     filter: brightness(0.5);
-}
-#account input{
-    display: initial;
 }
