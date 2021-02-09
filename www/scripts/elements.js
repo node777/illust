@@ -531,8 +531,6 @@ var elements = {
                     }else{
                         assetDetails+="This asset is not for sale"
                     }
-                    console.log('hi')
-                    console.log(provider)
 
                     if(provider.provider && owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
                         assetDetails+=`<div class='button' onclick="document.getElementById('assetDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Mangae asset sale":"Sell Asset"}</div>`
