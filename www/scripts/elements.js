@@ -385,7 +385,7 @@ var elements = {
                         <model-viewer ar ios-src="assets/models/15656630424036753581450935940596632215884383929372546170587529153151943392229.usdz" src="assets/models/15656630424036753581450935940596632215884383929372546170587529153151943392229.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
 
                         Winner: metalfingers
-                        <div class="button w5" onclick="location.hash='asset?15656630424036753581450935940596632215884383929372546170587529153151943392229'">View Collection</div>
+                        <div class="button w5" onclick="location.hash='asset2?15656630424036753581450935940596632215884383929372546170587529153151943392229'">View Collection</div>
                         
                     </div>
                     <div class="h-flex-g1">
@@ -395,7 +395,7 @@ var elements = {
                         <model-viewer ar ios-src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.usdz" src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
 
                         Winner: Betosk8s
-                        <div class="button w5" onclick="location.hash='asset?70937556211959927769088791688503419832872233678974511813637293239899188185264'">View Collection</div>
+                        <div class="button w5" onclick="location.hash='asset2?70937556211959927769088791688503419832872233678974511813637293239899188185264'">View Collection</div>
                         
                     </div>
                     <div class="h-flex-g1">
@@ -405,7 +405,7 @@ var elements = {
                         <model-viewer ar ios-src="assets/models/8456350751317975846800924683986100177337207567287562046240586730923411985742.usdz" src="assets/models/8456350751317975846800924683986100177337207567287562046240586730923411985742.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
 
                         Winner: kingvanilli
-                        <div class="button w5" onclick="location.hash='asset?8456350751317975846800924683986100177337207567287562046240586730923411985742'">View Collection</div>
+                        <div class="button w5" onclick="location.hash='asset2?8456350751317975846800924683986100177337207567287562046240586730923411985742'">View Collection</div>
                         
                     </div>
                 </div>
@@ -585,180 +585,87 @@ var elements = {
             request.send();
             return `<div id="assetBox"></div>`
         },
-        lot:async(n)=>{
-            try{
-                let b="<br>";
-                let name=assets[n[1]].name;
-                let hash=assets[n[1]].hash;
-                let iPrice=assets[n[1]].iPrice;
-
-                try{
-                    b=`Your current bid: ${JSON.parse(account.info.bids[a])}<br>`
-                }catch(e){console.log(e)}
-                invoke("qq", n[1]);
-                account.load();
-                
-                return `
-                    <div id="lotBox">
-                        <h1 style="margin:0">Lot ${name}</h1>
-                        <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
-                        <div class="flex wrap w1">
-                            <div style="text-align:center">
-                                <model-viewer ar  ios-src="assets/models/${hash}.usdz" src="assets/models/${hash}.${assets[n[1]].ext}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
-                                <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}"><b>Try On</b></a>
-                            </div>
-                            <div>
-                                <a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
-                                <div id="priceBox"></div>
-                                <div id="topBidder"></div>
-                                <div id="dateBox"></div>
-                                <div style="display:none" id="countdownBox"></div>
-                            
-                                
-                                Place your bid:<br>
-                                <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.200000000000000000' value='0.000000000000000000' /> ETH
-                                <div class="button w5" onclick="placeBid('${n[1]}')">Place Bid</div>
-                                
-                                <div id="userBid">${b}</div>
-                            </div>
-                            
-                        </div>
-                        <div class="w1">
-                            Metal Face ${name} - 2020<br><br>
-                            2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
-                            <br><br>
-                            View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
-                                <div>Initial price: ${iPrice}</div>
-                                <br>Single Edition
-                            <!--
-                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
-                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
-                            If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
-                        </div>
-                    </div>
+        asset2:async(a)=>{
+            await account.load()
+            var request = new XMLHttpRequest(); 
+            request.onreadystatechange = async function() {
+                if (request.readyState === 4) {
+                    if(!request.response){
+                        return `Asset could not be found <div class='button' onclick='location.hash=""'>Home</div>`
+                    }
+                    let m=JSON.parse(request.response);
+                    console.log(m);
+                    let b="<br>";
+                    let name=m.name;
+                    let hash=a[1];
+                    let url=m["animation_url"];
+                    let iPrice=m.price||0;
+                    let assetDetails=`
+                        Created by: ${m.creator||"Illust"}<br><br>
+                        <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Transaction History</a><br><br>
+                    `;
                     
-                `
-            }catch(e){
-                console.log(e);
-                return elements.DOOM();
-            }
-        },
-        lot2:async(n)=>{
-            try{
-                let name=assets[n[1]].name;
-                let hash=assets[n[1]].hash;
-                let iPrice=assets[n[1]].iPrice;
-                let auction=JSON.parse(await illustMarket("r", n[1]));
-                console.log(auction);
-                account.load();
-                //invoke("qq", n[1]);
-                return `
-                    <div id="lotBox">
-                        <h1 style="margin:0">Lot ${name}</h1>
-                        <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
-                        <div class="flex wrap w1">
-                            <div style="text-align:center">
-                                <model-viewer ar  ios-src="assets/models/${hash}.usdz" src="assets/models/${hash}.${assets[n[1]].ext}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
-                                <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}"><b>Try On</b></a>
-                            </div>
-                            <div>
-                                <a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
-                                <div id="priceBox">Current Price: ${Number(auction.topBid)}</div>
-                                <div id="topBidder"></div>
-                                <div id="dateBox"></div>
-                                <div style="display:none" id="countdownBox"></div>
-                            
-                                
-                                Place your bid:<br>
-                                <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.200000000000000000' value='0.000000000000000000' /> ETH
-                                <div class="button w5" onclick="illustMarket('bid', '${n[1]}')">Place Bid</div>
-                                
-                                <div id="userBid"></div>
-                            </div>
-                            
-                        </div>
-                        <div class="w1">
-                            Metal Face ${name} - 2020<br><br>
-                            2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
-                            <br><br>
-                            View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
-                                <div>Initial price: ${iPrice}</div>
-                                <br>Single Edition
-                            <!--
-                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
-                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
-                            If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
-                        </div>
-                    </div>
+                    let owner=await assets.invokeERC("getOwner", hash);
+                    assetDetails+=`Owner: ${owner}<br><br>`;
+                    //<a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
                     
-                `
-            }catch(e){
-                console.log(e);
-                return elements.DOOM();
-            }
-        },
-        lotOld:async(n)=>{
-            try{
-                let b="";
-                let m="green";
-                auction.bid=90007;
-                let p=2.1;
-                let i=`
-                    Initial Price: 1.2000000 ETH<br><br>
-                    Auction closed<br>Sunday 25 OCT 08:00 PM (PST)<div id="date"></div></b><br><br>
-                `
+                    
+                    //let auction=JSON.parse(await illustMarket("r", n[1]));
 
-                if(n[1]=="MF-8"){
-                    m="blue";
-                    auction.bid=90008;
-                    p=2.2
-                }else if(n[1]=="test10"){
-                    m="sludge";
-                    auction.bid=9999;
-                    i=`
-                    Place your bid:<br>
-                    <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.000000000000000001' value='0.000000000000000000' /> ETH
-                    <div class="button w5" onclick="placeBid('${a}')">Place Bid</div>
+                    if(m["end_date"]){
+                        console.log(m)
+                        //setTimeout(auction.loadDate,1);
+                        let endTime=new Date(m["end_date"]);
+                        let timeNow=new Date(Date.now());
+
+                        console.log(endTime.getTime(),timeNow.getTime())
+                        assetDetails+=`
+                        
+                            Top bidder: ${m["top_bidder"]}
+                            <br><br>
+                            <div id="startPriceBox">Start price: ${m["start_price"]}</div>
+                            <br><br>
+                        `
+                    }else{
+                        assetDetails+="This asset is not for sale"
+                    }
+
+    
+                    document.getElementById("assetBox").innerHTML= `
+                        <div id="lotBox">
+                            <h1 style="margin:0">${name}</h1>
+                            <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
+                            <div class="flex wrap w1">
+
+                                <div style="text-align:center">
+                                    <model-viewer ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
+                                    <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}"><b>Try On</b></a>
+                                </div>
+                                
+                                <div id="assetDetails" style="text-align:center">
+                                    ${assetDetails}
+                                </div>
+
+                            </div>
+                            <div class="w1">
+                                ${m.description}<br><br>
+                                2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
+                                <br><br>
+                                View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
+                                    <br>Single Edition
+                                <!--
+                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
+                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
+                                If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
+                            </div>
+                        </div>
+                        
                     `
                 }
-                try{
-                    b=`Your current bid: ${account.info.bids[a]}`
-                }catch(e){}
-                invoke("qq", a);
-                return `
-                    <div id="lotBox">
-                        <div class="flex wrap">
-                        <div>
-                            <h1>Lot ${n[1]}</h1>
-                            <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
-                            <a>Minted by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><b><br>
-                            
-                            <div id="priceBox">Price: ${p} ETH</div>
-                            <div id="topBidder"></div><br>
-                            <div id="userBid">${b}</div><br>
-                            
-                            Run of Four<br><br>
-                            ${i}
-                        </div>
-                        <div style="text-align:center">
-                            <model-viewer ar  ios-src="assets/models/${m}.usdz" src="assets/models/${m}.glb" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%"></model-viewer>
-                            <a href="https://app.illust.space/ar/faces.html#${m}">Try On</a>
-                        </div>
-                        <div>
-                            Metal Face ${m} - 2020<br><br>
-                            Hand modeled & hand illustrated AR NFT. Hashed mesh. Limited mint of four - signed and numbered by MF DOOM.
-                            <br><br>
-                            View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6">Etherscan</a><!--
-                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
-                            <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
-                            If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our discord: https://discord.gg/gW6cdW 
-                        </div>
-                    </div>
-                    
-                `
-            }catch(e){
-                return elements.DOOM;
             }
+            request.open("GET", `https://us-central1-illust.cloudfunctions.net/metadata/${a[1]}`);
+            request.send();
+            return `<div id="assetBox"></div>`
         },
         collections:()=>{
             return elements.DOOM2();
