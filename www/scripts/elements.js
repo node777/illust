@@ -13,16 +13,12 @@ var elements = {
                         // console.log(a, m[a])
                         
                         //scope variables
-                        let name;
                         let colItemModelUrl
                         let colItemName
-                        let ColItemDesc
+                        let colItemDesc
                         let colItemCreator
 
-                        console.log(a)
-                        console.log("^a")
-                        console.log(m[a])
-                        console.log("^m[a]")
+
 
 
                         for(v in m[a]){
@@ -31,12 +27,11 @@ var elements = {
                             }else if(v=="name"){
                                 colItemName=m[a][v]
                             }else if(v=="description"){
-                                ColItemDesc =m[a][v]
+                                colItemDesc =m[a][v]
                             }else if(v=="creator"){
                                 colItemCreator = m[a][v]
                             }else{
                                 //vars+=`${v}: ${m[a][v]}<br>`
-    
                             }
                         }
                         r+=/*html*/`
@@ -48,7 +43,7 @@ var elements = {
                                     </div>
                                     <div class="collectionItem__attributes">
                                         <h3 class="collectionItem__title">${colItemCreator}</h3>
-                                        <a class="collectionItem__link" onclick="location.hash='asset?${a}">MORE</a>
+                                        <a class="collectionItem__link" onclick="location.hash = 'asset?${a}'">MORE</a>
                                         <a class="collectionItem__artist" href="">${colItemName}</a>
                                         
                                     </div>             
@@ -486,7 +481,6 @@ var elements = {
                         return `Asset could not be found <div class='button' onclick='location.hash=""'>Home</div>`
                     }
                     let m=JSON.parse(request.response);
-                    console.log(m);
                     let b="<br>";
                     let name=m.name;
                     let hash=a[1];
@@ -536,7 +530,6 @@ var elements = {
                     if(provider.provider && owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
                         assetDetails+=`<div class='button' onclick="document.getElementById('assetDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Mangae asset sale":"Sell Asset"}</div>`
                     }
-                    console.log(m)
                     document.getElementById("assetBox").innerHTML= /*html*/`
                         <div id="lotBox" class="lotAsset">
                             <h1 class="lotAsset__title">${name}</h1>
