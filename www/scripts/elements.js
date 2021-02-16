@@ -409,12 +409,13 @@ var elements = {
                     let b="<br>";
                     let name=m.name;
                     let hash=a[1];
+                    let tags=m.tags;
                     let url=m["animation_url"];
                     let iPrice=m.price||0;
                     assets.selected=a[1];
                     let auctionDetails;
                     
-                    
+
                     //let auction=JSON.parse(await illustMarket("r", n[1]));
 
                     if(m["end_date"]){
@@ -455,9 +456,7 @@ var elements = {
                                         <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">Share</a>
                                         <div class="lostAsset__tags">  
                                             <!--TEMP STUB TABS-->
-                                            <a>#something</a>
-                                            <a>#tag</a>
-                                            <a>#anotehrtag</a>
+                                            <span>Tags: ${tags}</span>
                                         </div>
                                     </div>
                                 
