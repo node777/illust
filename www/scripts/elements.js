@@ -42,9 +42,9 @@ var elements = {
                                         <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#">🎭 Try On</a>
                                     </div>
                                     <div class="collectionItem__attributes">
-                                        <h3 class="collectionItem__title">${colItemCreator}</h3>
+                                        <h3 class="collectionItem__title">${colItemName}</h3>
                                         <a class="collectionItem__link" onclick="location.hash = 'asset?${a}'">MORE</a>
-                                        <a class="collectionItem__artist" href="">${colItemName}</a>
+                                        <a class="collectionItem__artist" href="">${colItemCreator}</a>
                                         
                                     </div>             
                                 </div>
@@ -488,10 +488,18 @@ var elements = {
                     let url=m["animation_url"];
                     let iPrice=m.price||0;
                     let assetDetails =``;
+                    let tagsHTML = ``;
                     
                     let owner=await assets.invokeERC("getOwner", hash);
                     //<a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
                     
+
+                    if (tags){
+                        tagsHTML = `<div class="lotAsset__tags">  
+                            <span>Tags: ${tags}</span>
+                        </div>`
+
+                    }
 
                     //let auction=JSON.parse(await illustMarket("r", n[1]));
 
@@ -530,6 +538,7 @@ var elements = {
                     if(provider.provider && owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
                         assetDetails+=`<div class='button' onclick="document.getElementById('assetDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Mangae asset sale":"Sell Asset"}</div>`
                     }
+                    console.log(m)
                     document.getElementById("assetBox").innerHTML= /*html*/`
                         <div id="lotBox" class="lotAsset">
                             <h1 class="lotAsset__title">${name}</h1>
@@ -545,13 +554,13 @@ var elements = {
                                 <div class="lotAsset__content">
                                     <div class="lotAsset__viewer">
                                         <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask"></model-viewer>
-                                        <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">Wear</a>
+                                        <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${hash}">Wear</a>
                                         <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">World</a>
-                                        <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">Share</a>
-                                        <div class="lostAsset__tags">  
-                                            <!--TEMP STUB TABS-->
-                                            <span>Tags: ${tags}</span>
-                                        </div>
+                                        <a class="lotAsset__modelShare" style="font-size:30px" href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share
+                                            <input id="js-share" class="lotAsset__shareInput" aria-hidden="true"/>
+                                            <div class="h-tooltip">Link Copied!</div>
+                                        </a>
+                                        ${tagsHTML}
                                     </div>
                                 
                                     <div class="lotAsset__details">
@@ -778,7 +787,7 @@ var elements = {
         },
         404:()=>{
             "Page could not be loaded"
-        }
+        },
     },
     header: /*html*/`
         <div id="ac" onclick="location.hash='account'">
@@ -1155,6 +1164,7 @@ var elements = {
             let r=/*html*/`<div class='profileAssets__collectionItem'>`
             
             for(i in account.info.collection){
+                console.log(account.info.collection)
                 r+=/*html*/`
                 <div class="collectionItem__wrapper">
                     <div class="collectionItem__modelViewerWrapper">
@@ -1163,7 +1173,7 @@ var elements = {
                     </div>
                     <div class="collectionItem__attributes">
                         <h3 class="collectionItem__title">${account.info.collection[i]}</h3>
-                        <a class="collectionItem__link" onclick="console.log(elements.pages.asset(${i}))">more</a>
+                        <a class="collectionItem__link" onclick="location.hash = 'asset?${i}'">more</a>
                         <a class="collectionItem__artist" href="">Artist Name</a>
                     </div>
                     
@@ -1345,6 +1355,28 @@ var elements = {
             <div class="button" onclick="market.beginAuction()">Begin Auction</div>
             <div class="button" onclick="changePage()">Cancel</div>
         `
+    },
+    shareSheet:(link, el) => {
+
+        //add current url to value of hidden input field and copy it
+        let shareValue = document.getElementById('js-share')
+        shareValue.style.display = "inline-block"
+        shareValue.value = link;
+        
+        shareValue.select()
+        shareValue.setSelectionRange(0, 99999); /* For mobile devices */
+
+        document.execCommand("copy");
+
+        //show and hide tooltip that text was copied
+        let tooltip = el.getElementsByClassName("h-tooltip")[0]
+        tooltip.style.opacity = 0.95;
+        setTimeout( () => tooltip.style.opacity = 0, 3000 )
+
+
+
+
+   
     },
     homeButton:`
         <div class="button" onmousedown="location.hash=''">

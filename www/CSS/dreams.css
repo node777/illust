@@ -616,6 +616,11 @@ a:active {
 }
 .lotAsset__modelShare{
     margin: 0 5px;
+    position: relative;
+}
+.lotAsset__shareInput{
+    position: absolute;
+    left: -999em;
 }
 .lotAsset__linkouts{
     display: inline-block;
@@ -623,6 +628,7 @@ a:active {
     font-size: 24px;
     width: calc(50% - 7px);
     padding-left: 0px;
+    font-weight: bold;
 }
 .lotAsset__linkouts li{
     display: inline-block;
@@ -673,7 +679,7 @@ a:active {
 }
 .market__collectionItem{
     flex-basis: 33%;
-}
+} 
 
 /* "h-*" classes are helper classes that have very few styles that can be used across components.
 helper classes should e used sparingly 
@@ -687,7 +693,32 @@ helper classes should e used sparingly
 .h-flex{
     display: flex;
 }
-
+.h-tooltip{
+    width: 140px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: -40px;
+    left: 50%;
+    margin-left: -75px;
+    transition: opacity 0.3s;
+    font-size: 16px;
+    opacity: 0;
+}
+.h-tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -10px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent #555 transparent;
+  }
 
 @media (orientation: portrait) {
     .mobile{
