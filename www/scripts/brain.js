@@ -13,6 +13,7 @@ var account={
       console.trace("Signing message")
       if(localStorage.provider=="web3"){
         try{
+        
             signer=provider.getSigner();
           let signature = await signer.signMessage(msg);
           console.log(signature);
@@ -64,9 +65,13 @@ var account={
                 bio:d.bio,
                 bids:{}
             } 
-            console.log(account.info)
-            await changePage();
+            //console.log(account.info)
+            //await changePage();
             account.information();
+            if(account.loggedIn!=1){
+                changePage();
+            }
+            account.loggedIn=1;
             //console.log(document.getElementById("content").innerHTML)
         }else{
             var request = new XMLHttpRequest(); 
@@ -130,7 +135,6 @@ var account={
                 signer = await provider.getSigner();
                 
                 //await account.login();
-                //changePage();
 
             }else if(location.hash=="#account"||location.hash=="account"){
                 document.getElementById("content").innerHTML=elements.connect();   
@@ -876,9 +880,30 @@ var assets={
             //console.log(ethers.utils.getAddress("0xDc4c460577951Df59161467C2E4Ea41078c8D184", true));
             return o;
         }
-    }
+    },
+    tokens:{}
 }
 var market={
+    countdown(){
+        market.timeLeft=new Date(market.endTime).getTime()-Date.now()
+        
+        market.timer=setInterval(()=>{
+            
+            if(document.getElementById("countdownBox")){
+                //console.log(market.timeLeft)
+                market.timeLeft=market.timeLeft-1000
+                //let timeRemaining=market.timeLeft
+                daysRemaining=Math.floor(market.timeLeft/86400000)
+                hoursRemaining=Math.floor(market.timeLeft%86400000/3600000)
+                minutesRemaining=Math.floor(market.timeLeft%3600000/60000)
+                secondsRemaining=Math.floor(market.timeLeft%60000/1000)
+                document.getElementById("countdownBox").innerHTML=`Auction closing in: ${daysRemaining} Days, ${hoursRemaining} Hours, ${minutesRemaining} Minutes, ${secondsRemaining} Seconds`
+            }else{
+                clearInterval(market.timer)
+            }
+        }, 1000)
+        
+    },
     async beginAuction(){
         let asset=location.hash.split("?")[1]
         let r={
@@ -898,7 +923,7 @@ var market={
             }
         }
         //request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/sell`);
-        request.open("POST", `http://localhost:5001/illust/us-central1/market/sell`);
+        request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/sell`);
         request.send(JSON.stringify(r));
     },
     async bid(){
@@ -916,11 +941,11 @@ var market={
         request.onreadystatechange = function() {
             if (request.readyState === 4) {
                 alert(request.response)
-                //location.reload()
+                location.reload()
             }
         }
         //request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/bid`);
-        request.open("POST", `http://localhost:5001/illust/us-central1/market/bid`);
+        request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/bid`);
         request.send(JSON.stringify(r));
     }
 }
@@ -1166,27 +1191,37 @@ function explore(){
 
 }
 
+//var metadataURL='https://us-central1-illust.cloudfunctions.net/metadata'
+//let metadataTestAPI='http://localhost:5001/illust/us-central1/metadata'
 var assetData={}
 function addAsset(){
     location.hash=`editAsset?${document.getElementById("asset_id").value}`
 }
 async function editAsset(a){
     console.log(assetData)
+    //a is the asset ID
     a=new ethers.BigNumber.from(a)
     for(v in assetData){
         console.log(`asset_${v}`)
         assetData[v]=document.getElementById(`asset_${v}`).value;
     }
-    let s = "test"//await account.sign("update asset");
-    console.log(a);
+    let s;
+    try{
+        s=await account.sign("update asset");
+    }catch{
+        alert("Please login as illust admin")
+        return
+    }
+    console.log(a,s);
     var request = new XMLHttpRequest(); 
     request.onreadystatechange = function() {
         if (request.readyState === 4) {
+            
+            alert(`${request.responseText}`);
         }
     }
     request.open("POST", `https://us-central1-illust.cloudfunctions.net/metadata/edit/${a}/${s}`);
     request.send(JSON.stringify(assetData));
-    alert(`Asset ${a} saved sccessfully`);
 
 }
 function addField(){
