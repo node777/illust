@@ -30,6 +30,8 @@ admin.initializeApp({
 var db = admin.database();
   
 
+let adminAddress='0x9CBD55532935ff709B17039C369D5C03d41F2dC4'
+
 metadataAPI.get('/', (req, res) => {
     var ref = db.ref(`assets`);
         
@@ -53,13 +55,21 @@ metadataAPI.get('/:a', (req, res) => {
 metadataAPI.post('/edit/:a/:s', async(req, res) => {
     
         var ref = db.ref(`assets/${req.params.a}`);
-            
-        await ref.set(
-            JSON.parse(req.body)
-        );
-        
-        res.send("asset updated successfully");
-    
+        console.log(req.params.s),
+        console.log(ethers.utils.verifyMessage("update asset",req.params.s),adminAddress);
+        try{
+            if(ethers.utils.verifyMessage("update asset",req.params.s).toLowerCase()==adminAddress.toLowerCase()){
+                await ref.set(
+                    JSON.parse(req.body)
+                );
+                res.send("asset updated successfully");
+            }else{
+                res.send("Plese login as Illust Admin (illust contracts)");
+            }
+        }catch(e){
+            res.send(`got error ${e}`);
+        }
+
 });
 //nonce
 var userKEYS={}
@@ -720,7 +730,7 @@ auctionAPI.post('/bid', async(req, res) => {
     ref.once("value", (snapshot)=>{
         let s=snapshot.val()
         console.log(s);
-        if(m.message.amount>s.price){
+        if(Number(m.message.amount)>Number(s.price)){
             var userRef = db.ref(`users/${messageSigner}/bids/${m.message.asset}`);
             userRef.set(m.message.amount);
             var updates = {};

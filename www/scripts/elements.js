@@ -8,7 +8,44 @@ var elements = {
             request.onreadystatechange = async function() {
                 if (request.readyState === 4) {
                     let r="";
-                    let m=JSON.parse(request.response)
+                    assets.tokens=JSON.parse(request.response)
+
+                    let m={};
+                    //check tag search parameter
+                    if(p[1]){
+                        let p1=p[1].split("=")
+                        if(p1[0]=="creator"){
+                            let creators=p1[1].split("&");
+                            for(a in assets.tokens){
+                                //\check if asset has tags 
+                                
+                                let creator=assets.tokens[a].creator||"Illust"
+                                console.log(creator, creators)
+                                if(creator.toLowerCase()==(creators[0]).toLowerCase()){
+                                    m[a]=assets.tokens[a];
+                                }
+                            }
+                        }
+                        else if(p1[0]=="tags"){
+                            let tags=p1[1].split("&");
+                            for(a in assets.tokens){
+                                //check if asset has tags 
+                                if(assets.tokens[a].tags){
+                                    let assetTags=assets.tokens[a].tags.split(" ")
+                                    //console.log(a,assetTags)
+                                    if(assetTags.includes(tags[0])){
+                                        //console.log(assets.tokens[a])
+                                        m[a]=assets.tokens[a];
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        
+                        m=assets.tokens
+                    }
+
+
                     for(a in m){
                         console.log(a, m[a])
                         let name;
@@ -44,14 +81,41 @@ var elements = {
                             document.getElementById(`view_${a}`).innerHTML="Edit/Sell Asset"
                         }
                         document.getElementById(`owner_${a}`).innerHTML="Owner: "+owner;
-                        console.log(assetData[0])
+                        //console.log(assetData[0])
                     }
                 }
             }
             request.open("GET", "https://us-central1-illust.cloudfunctions.net/metadata");
             request.send();
             
-            return `<div id="listings">${elements.loading()}</div>`
+            return `
+                Illust Marketplace
+                <div id="searchOptions" class="flex">
+                    <div>
+                        <input id="tagSearch" placeholder="Search by tag"></input>
+                        <div style="width: 120px;padding:4px;margin:auto" class="button" onclick="location.hash='market?tags='+document.getElementById('tagSearch').value">Search</div>
+                    </div>
+                    <div style="font-size:22px">
+                        Sort by:
+                        <select style="font-size:22px" name="sortBy" id="sortBy">
+                            
+                            <option default value="">Default</option>
+                            <option value="">Price</option>
+                            <option value="">Name</option>
+                            <option value="">Latest</option>
+                        </select>
+                        <br>
+                        Ar Type
+                        <select style="font-size:22px" name="arType" id="arType">
+                            <option value="any">Any</option>
+                            <option value="wearable">Wearable</option>
+                            <option value="environmental">Wearable</option>
+                            <option value="sculpture">Sculpture</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="listings">${elements.loading()}</div>
+            `
         },
         editAssets:()=>{
             
@@ -120,7 +184,8 @@ var elements = {
             request.send();
             return `Illust Assets:<div id='assetList'>Loading Assets...${elements.loading()}</div>`
         },
-        editAsset:(a)=>{
+        editAsset:async(a)=>{
+            await account.load();
             var request = new XMLHttpRequest(); 
             request.onreadystatechange = function() {
                 if (request.readyState === 4) {
@@ -466,10 +531,30 @@ var elements = {
                     let url=m["animation_url"];
                     let iPrice=m.price||0;
                     let assetDetails=`
-                        Created by: ${m.creator||"Illust"}<br><br>
+                        Created by: <a href="app.illust.space#market?creator=${m.creator||"Illust"}">${m.creator||"Illust"}</a><br><br>
                         <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Transaction History</a><br><br>
                     `;
+                    let tags="";
                     
+                    //check for tags
+                    if(m.tags){
+                        let tagList=m.tags.split(" ")
+                        console.log(tagList)
+                        for(t in tagList){
+                            tags+=`<a href="#market?tags=${tagList[t]}">#${tagList[t]}</a> `
+                        }
+                    }
+                    //get description
+                    let description=m.description||"";
+
+                    //get edition
+                    if(m.edition){
+                        description+=`<br><br><b>Edition: ${m.edition}</b>`
+                    }
+                    if(m["ar_type"]){
+                        description+=`<br><br><b>AR Type: ${m["ar_type"]}</b>`
+                    }
+
                     let owner=await assets.invokeERC("getOwner", hash);
                     assetDetails+=`Owner: ${owner}<br><br>`;
                     //<a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
@@ -491,10 +576,12 @@ var elements = {
                             <div id="startPriceBox">Start price: ${m["start_price"]}</div>
                             <br><br>
                         `
+                        market.endTime=m["end_date"];
                         if(endTime.getTime()>timeNow.getTime()){
                             assetDetails+=`
                                     <div id="priceBox">Currenct price: ${m["price"]}<br><br></div>
-                                    <div id="dateBox">End date: ${m["end_date"]}</div>
+                                    <div id="dateBox">End date: ${m["end_date"]}</div><br>
+                                    <div id="countdownBox"></div>
                                     <br><br>
                                     Place your bid:<br>
                                     <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.200000000000000000' value='${Number(m["price"])+0.2}' /> ETH
@@ -510,7 +597,7 @@ var elements = {
                     }
 
                     if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
-                        assetDetails+=`<div class='button' onclick="document.getElementById('assetDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Mangae asset sale":"Sell Asset"}</div>`
+                        assetDetails+=`<div class='button' onclick="document.getElementById('assetDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Manage asset sale":"Sell Asset"}</div>`
                     }
     
                     document.getElementById("assetBox").innerHTML= `
@@ -530,9 +617,11 @@ var elements = {
 
                             </div>
                             <div class="w1">
-                                ${m.description}<br><br>
-                                2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
+                                ${description}<br><br>
+                                Tags: ${tags}<br /><br />
+                                2020 Hand modeled and hand illustrated AR NFT. Hashed mesh.
                                 <br><br>
+                                <a href="app.illust.space#market?creator=${m.creator||"Illust"}">Other works by: ${m.creator||"Illust"}</a><br /><br />
                                 View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
                                     <br>Single Edition
                                 <!--
@@ -543,6 +632,7 @@ var elements = {
                         </div>
                         
                     `
+                    market.countdown();
                 }
             }
             request.open("GET", `https://us-central1-illust.cloudfunctions.net/metadata/${a[1]}`);
@@ -879,7 +969,7 @@ var elements = {
         `
     },
     account:async()=>{
-        let r;
+        let r=elements.loading();
         //await account.load();
         
         console.trace(provider);
