@@ -548,7 +548,7 @@ var elements = {
                     let url=m["animation_url"];
                     let iPrice=m.price||0;
                     let auctionDetails=``;
-                    let tags="";
+                    let editionHTML = ``;
                     let tagsHTML = ``;
 
                     
@@ -566,7 +566,7 @@ var elements = {
 
                     //get edition
                     if(m.edition){
-                        description+=`<br><br><b>Edition: ${m.edition}</b>`
+                        editionHTML+=/*html*/`<div class="lotAsset__attribute">Edition: ${m.edition}</div>`
                     }
                     if(m["ar_type"]){
                         description+=`<br><br><b>AR Type: ${m["ar_type"]}</b>`
@@ -645,7 +645,7 @@ var elements = {
                                 
                                     <div class="lotAsset__details">
                                         <h2 class="lotAsset__name">${name}</h2>
-                                        <div class="lotAsset__attribute">${m.edition}</div>
+                                        ${editionHTML}
                                         <div class="lotAsset__attribute">${owner}</div> 
                                         <div class="lotAsset__attribute">Created By: 
                                             <a href="#market?creator=${m.creator||'Illust'}">${m.creator||"Illust"}</a>

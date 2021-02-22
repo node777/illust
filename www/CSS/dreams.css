@@ -610,6 +610,8 @@ a:active {
     flex-basis: 25%;
     padding-top: 30px;
     text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .lotAsset__model{
     display: block;
