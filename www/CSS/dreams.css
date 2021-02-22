@@ -582,11 +582,11 @@ a:active {
     flex-basis: 75%;
     text-align: center;
 }
-.lotAsset__creator{
+.lotAsset__name{
     position: relative;
     padding-bottom: 8px;
 }
-.lotAsset__creator:before{
+.lotAsset__name:before{
     content: "";
     width: 25px;
     height: 1px;
@@ -637,6 +637,9 @@ a:active {
 .lotAsset__linkouts li{
     display: inline-block;
     margin-left: 10px;
+}
+.lotAsset__tags{
+    display: block;
 }
 .collectionItem__modelViewerWrapper{
     position: relative;

@@ -547,18 +547,18 @@ var elements = {
                     let hash=a[1];
                     let url=m["animation_url"];
                     let iPrice=m.price||0;
-                    let assetDetails=`
-                        Created by: <a href="app.illust.space#market?creator=${m.creator||"Illust"}">${m.creator||"Illust"}</a><br><br>
-                        <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Transaction History</a><br><br>
-                    `;
+                    let auctionDetails=``;
                     let tags="";
+                    let tagsHTML = ``;
+
                     
                     //check for tags
                     if(m.tags){
                         let tagList=m.tags.split(" ")
                         console.log(tagList)
+
                         for(t in tagList){
-                            tags+=`<a href="#market?tags=${tagList[t]}">#${tagList[t]}</a> `
+                            tagsHTML+=`<a href="#market?tags=${tagList[t]}">#${tagList[t]}</a> `
                         }
                     }
                     //get description
@@ -573,7 +573,6 @@ var elements = {
                     }
 
                     let owner=await assets.invokeERC("getOwner", hash);
-                    assetDetails+=`Owner: ${owner}<br><br>`;
                     //<a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
                     
                     
@@ -586,7 +585,7 @@ var elements = {
                         let timeNow=new Date(Date.now());
 
                         console.log(endTime.getTime(),timeNow.getTime())
-                        assetDetails+=`
+                        auctionDetails+=`
                         
                             Top bidder: ${m["top_bidder"]}
                             <br><br>
@@ -595,7 +594,7 @@ var elements = {
                         `
                         market.endTime=m["end_date"];
                         if(endTime.getTime()>timeNow.getTime()){
-                            assetDetails+=`
+                            auctionDetails+=`
                                     <div id="priceBox">Currenct price: ${m["price"]}<br><br></div>
                                     <div id="dateBox">End date: ${m["end_date"]}</div><br>
                                     <div id="countdownBox"></div>
@@ -607,47 +606,61 @@ var elements = {
                                     <div id="userBid"></div>
                             `
                         }else{
-                            assetDetails+=`This sale ended on ${m["end_date"]}`
+                            auctionDetails+=`This sale ended on ${m["end_date"]}`
                         }
                     }else{
-                        assetDetails+="This asset is not for sale"
+                        auctionDetails+="This asset is not for sale"
                     }
 
                     if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
-                        assetDetails+=`<div class='button' onclick="document.getElementById('assetDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Manage asset sale":"Sell Asset"}</div>`
+                        auctionDetails+=`<div class='button' onclick="document.getElementById('js-auctionDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Manage asset sale":"Sell Asset"}</div>`
                     }
     
-                    document.getElementById("assetBox").innerHTML= `
-                        <div id="lotBox">
-                            <h1 style="margin:0">${name}</h1>
-                            <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
-                            <div class="flex wrap w1">
+                    document.getElementById("assetBox").innerHTML= /*html*/`
+                        <div id="lotBox" class="lotAsset">
+                            <h1 class="lotAsset__title">${name}</h1>
+                            <ul class="lotAsset__linkouts">
+                                <li>
+                                    <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}" target="_blank">History</a>
+                                </li>
+                                <li>
+                                    <a href="#market?creator=${m.creator||'Illust'}">Other Works</a>
+                                </li>
+                            </ul>
+                            <div class="lotAsset__wrapper">
+                                <div class="lotAsset__content">
+                                    <div class="lotAsset__viewer">
+                                        <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask"></model-viewer>
+                                        <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${hash}">Wear</a>
+                                        <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">World</a>
+                                        <a class="lotAsset__modelShare" style="font-size:30px" href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share
+                                            <input id="js-share" class="lotAsset__shareInput" aria-hidden="true"/>
+                                            <div class="h-tooltip">Link Copied!</div>
+                                        </a>
+                                        <div class="lotAsset__tags">
+                                            ${tagsHTML}
+                                        </div>
 
-                                <div style="text-align:center">
-                                    <model-viewer ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
-                                    <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}"><b>Try On</b></a>
-                                </div>
+                                    </div>
                                 
-                                <div id="assetDetails" style="text-align:center">
-                                    ${assetDetails}
+                                    <div class="lotAsset__details">
+                                        <h2 class="lotAsset__name">${name}</h2>
+                                        <div class="lotAsset__attribute">${m.edition}</div>
+                                        <div class="lotAsset__attribute">${owner}</div> 
+                                        <div class="lotAsset__attribute">Created By: 
+                                            <a href="#market?creator=${m.creator||'Illust'}">${m.creator||"Illust"}</a>
+                                        </div>
+                                        <div class="lotAsset__attribute">${m.description}</div>
+                                        <div class="lotAsset__attribute">
+                                            <a target="_blank" href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
+                                        </div>
+                                    </div>
                                 </div>
-
-                            </div>
-                            <div class="w1">
-                                ${description}<br><br>
-                                Tags: ${tags}<br /><br />
-                                2020 Hand modeled and hand illustrated AR NFT. Hashed mesh.
-                                <br><br>
-                                <a href="app.illust.space#market?creator=${m.creator||"Illust"}">Other works by: ${m.creator||"Illust"}</a><br /><br />
-                                View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
-                                    <br>Single Edition
-                                <!--
-                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
-                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
-                                If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
+                                <div id="js-auctionDetails" class="lotAsset__auction">
+                                    ${auctionDetails}
+                                </div>
                             </div>
                         </div>
-                        
                     `
                     market.countdown();
                 }
