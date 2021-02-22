@@ -217,20 +217,20 @@ var account={
     wallet:async()=>{
         let m=await elements.walletInfo();
         console.log(m);
-        document.getElementById('accountContent').innerHTML=m;
+        document.getElementById('js-profileContents').innerHTML=m;
     },
     edit:async()=>{
         let m=await elements.editProfile();
-        document.getElementById('accountContent').innerHTML=m;
+        let profileAssetsHtml=await elements.profileAssets();
+        document.getElementById('js-profileInfo').innerHTML=m;
     },
-    select:(r)=>{
+    selectHeader:(r)=>{
         try{
-            document.getElementById('pr').style="";
-            document.getElementById('vw').style="";
-            document.getElementById('cl').style="";
-            document.getElementById('ep').style="";
-            document.getElementById('so').style="";
-            document.getElementById(`${r}`).style="color:var(--color4);";
+            let headerItemArray = Array.from(document.getElementsByClassName('js-profileHeaderItem'));
+            headerItemArray.forEach(element => {
+                element.classList.remove('profileAssets__headerItem--current')
+            });
+            r.classList.add("profileAssets__headerItem--current")
         }catch(e){
             console.log(e);
         }

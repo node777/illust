@@ -9,7 +9,8 @@
 	--color2: #181818;
 	--color3: #242424;
 	--color4: #85782e;
-	--color5: #859142;
+    --color5: #859142;
+    --color6: #ff0033;
   }
 body {
 	color: var(--color1);
@@ -20,7 +21,7 @@ body {
     font-family: 'Poppins', sans-serif;
     /*font-variant: small-caps;*/
     letter-spacing: 2px;
-
+    align-content: flex-start;
     font-weight: 300;
 	-webkit-user-select: none;  /* Chrome all / Safari all */
 	-moz-user-select: none;     /* Firefox all */
@@ -55,6 +56,9 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+::-webkit-calendar-picker-indicator {
+    filter: invert(1);
 }
 
 /* === GLOBALS END === */
@@ -490,6 +494,16 @@ a:active {
     display: flex;
     margin-bottom: 30px;
 }
+.profileInfo__userAttribute > span{
+    margin-left: 5px;
+    cursor:pointer;
+}
+.profileInfo__userAttribute > span:hover:after{
+    content: "✎"
+}
+.profileInfo__userAttribute > span:hover{
+    color: var(--color4);
+}
 .profileInfo__userAttribute > input{
     flex-grow: 2;
     margin: 0px 0px -2px 5px;
@@ -498,20 +512,12 @@ a:active {
     font-weight: bold;
     white-space: nowrap;
 }
-.profileInfo__userAttribute--link{
+
+.profileInfo__logout{
     cursor: pointer;
     font-size: 20px;
 }
-
-.profileInfo__userAttribute--link:hover{
-    color: var(--color4);
-}
-
-.profileInfo__edit{
-    cursor:pointer;
-}
-
-.profileInfo__edit:hover{
+.profileInfo__logout:hover{
     color: var(--color4);
 }
 
@@ -552,10 +558,12 @@ a:active {
 
 /* lotAssets */
 .lotAsset__title{
-    display: block;
+    display: inline-block;
     margin-bottom: 50px;
     position: relative;
     padding-bottom: 15px;
+    width: 50%;
+    vertical-align: top;
 }
 .lotAsset__title:before{
     content: "";
@@ -574,10 +582,25 @@ a:active {
     flex-basis: 75%;
     text-align: center;
 }
-.lotAsset__description{
+.lotAsset__creator{
+    position: relative;
+    padding-bottom: 8px;
+}
+.lotAsset__creator:before{
+    content: "";
+    width: 25px;
+    height: 1px;
+    border-bottom: 1px solid var(--color1);
+    position: absolute;
+    bottom: 0;
+}
+.lotAsset__attribute{
+    margin-bottom: 10px;
+}
+.lotAsset__details{
     flex-basis: 50%;
     text-align: left;
-    padding: 5%;
+    padding: 30px;
 }
 .lotAsset__viewer{
     flex-basis: 50%;
@@ -585,7 +608,8 @@ a:active {
 }
 .lotAsset__auction{
     flex-basis: 25%;
-    padding-top: 5%;
+    padding-top: 30px;
+    text-align: right;
 }
 .lotAsset__model{
     display: block;
@@ -594,7 +618,26 @@ a:active {
     width: 100%;
     padding-bottom: 108%;
 }
-
+.lotAsset__modelShare{
+    margin: 0 5px;
+    position: relative;
+}
+.lotAsset__shareInput{
+    position: absolute;
+    left: -999em;
+}
+.lotAsset__linkouts{
+    display: inline-block;
+    text-align: right;
+    font-size: 24px;
+    width: calc(50% - 7px);
+    padding-left: 0px;
+    font-weight: bold;
+}
+.lotAsset__linkouts li{
+    display: inline-block;
+    margin-left: 10px;
+}
 .collectionItem__modelViewerWrapper{
     position: relative;
     padding-top: 100%;
@@ -625,7 +668,104 @@ a:active {
 .collectionItem__artist{
     flex-basis: 100%;
 }
+.collectionItem__link{
+    cursor: pointer;
+    text-transform: uppercase;
+}
 
+.market__collection{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-right: calc(-5% + 16px);
+    margin-left: calc(-5% + 16px);
+}
+.market__collectionItem{
+    flex-basis: 33%;
+} 
+.market__banner{
+    display: block;
+    width: 100%;
+    padding-left: 5%;
+    padding-right: 5%; 
+
+}
+.market__bannerImage{
+    width: 100%;
+}
+.market__heading{
+    float: left;
+    position: relative;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+.market__heading:after{
+    content: "";
+    width: 65px;
+    height: 1px;
+    border-bottom: 1px solid var(--color1);
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+}
+.loginOption__wrapper{
+    text-align: center;
+    padding-top: 55px;
+}
+.loginOption__image{
+    height: 200px;
+}
+.loginOption__image:hover{
+    cursor: pointer;
+}
+.subhead__nav{
+    list-style-type: none;
+    float: right;
+    padding-left: 0;
+}
+.subhead__navItem{
+    font-weight: bold;
+    text-transform: uppercase;
+    display: inline-block;
+    padding-left: 30px;
+    font-size: 18px;
+}
+.subhead__navItem--active > a{
+    color: var(--color1)
+}
+.auction__input{
+    margin: 0;
+    width: 100%;
+    display: block;
+    text-align: right;
+    margin-bottom: 30px;
+}
+.auction__label{
+    display: block;
+    margin-bottom: 5px;
+}
+.auction__attribute{
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+.auction__bidder{
+    margin-bottom: 10px;
+}
+.auction__history{
+    margin-bottom: 10px;
+    max-height: 200px;
+    overflow: hidden;
+    position: relative;
+}
+.auction__overlay{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    background-image: linear-gradient(to bottom, transparent, var(--color2));
+
+}
 /* "h-*" classes are helper classes that have very few styles that can be used across components.
 helper classes should e used sparingly 
 */
@@ -638,7 +778,38 @@ helper classes should e used sparingly
 .h-flex{
     display: flex;
 }
+.h-tooltip{
+    width: 140px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: -40px;
+    left: 50%;
+    margin-left: -75px;
+    transition: opacity 0.3s;
+    font-size: 16px;
+    opacity: 0;
+    pointer-events: none;
+}
+.h-tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -10px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent #555 transparent;
+  }
 
+.h-form-error{
+    color: var(--color6);
+    font-size: 80%;
+}
 
 @media (orientation: portrait) {
     .mobile{
@@ -696,10 +867,10 @@ helper classes should e used sparingly
     }
     .lotAsset__auction{
         flex-basis: 100%;
-        padding: 5%;
     }
-    .lotAsset__description{
+    .lotAsset__details{
         flex-basis: 100%;
+        padding: 0px;
     }
     .lotAsset__viewer{
         flex-basis: 100%;
@@ -707,10 +878,29 @@ helper classes should e used sparingly
     .lotAsset__content{
         flex-wrap: wrap;
     }
+    .lotAsset__title{
+        width: 100%;
+    }
+    .lotAsset__linkouts{
+        width: 100%;
+    }
+    .lotAsset__auction{
+        text-align: left;
+    }
+    .lotAsset__attribute{
+        max-width: calc(100vw - 50px);
+        overflow: scroll;
+    }
     .collectionItem__wrapper{
         margin: 0 0 5% 0;
     }
-
+    .market__collectionItem{
+        flex-basis: 100%;
+    }
+    .subhead__nav{
+        float: left;
+    }
+}
 #collection #footer{
     display: none;
 }

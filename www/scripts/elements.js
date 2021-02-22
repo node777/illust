@@ -45,6 +45,11 @@ var elements = {
                         m=assets.tokens
                     }
 
+                    //scope variables
+                    let colItemModelUrl
+                    let colItemName
+                    let colItemDesc
+                    let colItemCreator
 
                     for(a in m){
                         console.log(a, m[a])
@@ -52,31 +57,43 @@ var elements = {
                         let vars="";
                         for(v in m[a]){
                             if(v=="animation_url"){
-                                vars+=`
-                                    <model-viewer ar src="${m[a][v]}" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>`
+                                colItemModelUrl = m[a][v]
                             }else if(v=="name"){
-                                name=m[a][v]
+                                colItemName=m[a][v]
                             }else if(v=="description"){
-                                vars+=m[a][v]
+                                colItemDesc =m[a][v]
                             }else if(v=="creator"){
-                                vars+=`Creator ${m[a][v]}<br>`
+                                colItemCreator = m[a][v]
                             }else{
                                 //vars+=`${v}: ${m[a][v]}<br>`
-    
                             }
                         }
-                        r+=`<div>
-                            <h1 style="height:32px">${name}</h1> <br><br>
-                            ${vars}
-                            <div id="owner_${a}">Loading Owner...</div>
-                            <div id="view_${a}" class="button w5" onclick="location.hash='asset?${a}'">View Asset</div>
-                        </div>`
+                        r+=/*html*/`
+                            <div class='market__collectionItem'>
+                                <div class="collectionItem__wrapper">
+                                    <div class="collectionItem__modelViewerWrapper">
+                                        <model-viewer ar ios-src="assets/models/.usdz" src="${colItemModelUrl}" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#">🎭 Try On</a>
+                                    </div>
+                                    <div class="collectionItem__attributes">
+                                        <h3 class="collectionItem__title">${colItemName}</h3>
+                                        <a id="view_${a}" class="collectionItem__link" onclick="location.hash = 'asset?${a}'">MORE</a>
+                                        <a class="collectionItem__artist" href="">${colItemCreator}</a>
+                                        <div id="owner_${a}">Loading Owner...</div>
+                                        
+                                    </div>             
+                                </div>
+                            </div>
+                            `
                         //r+=a
                     }
-                    document.getElementById("listings").innerHTML=r;
+
+                    
+                    document.getElementById("js-listings").innerHTML=r;
                     for(a in m){
                         let assetData=await assets.invokeERC("getData", a);
                         let owner=await assets.invokeERC("getOwner", a);
+                        console.log(owner)
                         if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
                             document.getElementById(`view_${a}`).innerHTML="Edit/Sell Asset"
                         }
@@ -114,7 +131,7 @@ var elements = {
                         </select>
                     </div>
                 </div>
-                <div id="listings">${elements.loading()}</div>
+                <div id="js-listings" class="market__collection">${elements.loading()}</div>
             `
         },
         editAssets:()=>{
@@ -980,24 +997,26 @@ var elements = {
             if(account.info&&account.info.username){
                 console.log("Got Acc info", account.info);
                 a= await elements.profileInfo();
+                profileAssets = await elements.profileAssets()
                 b=account.info.username; 
                 
-                r=`
-                <div class="flex">
-                    <div id="accountContent" style="flex:4;padding:16px;">
-                        ${a}
-                    </div>
-                    <div id="sidebar2">
-                        <img src="assets/icons/account.svg" style="width:90%;padding:0 3%; margin: 0 0 16px;"/>
-                        <b>@${b||"NO USER"}</b><br><br>
-                        <div id="pr" onclick="account.select('pr');account.information()">Profile<br><br></div>
-                        <div id="vw" onclick="account.select(3);account.wallet();">View Wallet<br><br></div>
-                        <div id="cl" onclick="account.select(4);document.getElementById('accountContent').innerHTML=elements.collection()">Collection<br><br></div>
-                        <div id="ep" onclick="account.select(5);account.edit()">Edit Profile<br><br></div>
-                        <div id="so" onclick="account.select(6);account.logout()">Sign Out<br><br></div>
+                r=/*html*/`
+                    <div class="h-flex">
+                        <div id="accountContent" class="accountContent__wrapper" style="padding:16px;">
+                            <h1 style="text-align:left">ACCOUNT INFO</h1>
+                            <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
+                            <div id="js-accountWrapper" class="h-flex wrap h-100pw">
+                                <div id="js-profileInfo" class="profileInfo" >
+                                    ${a}
+                                </div>
+                                <div id="js-profileAssets" class="profileAssets">
+                                    ${profileAssets}
+                                </div>
 
+                            </div>
+                        </div>
+                        
                     </div>
-                </div>
                 `;
             }else{
                 //connectAccount(1);
@@ -1061,24 +1080,29 @@ var elements = {
                 ln=account.info.lastname;
             }
             let c=elements.collection();
-            return `
-                <h1 style="text-align:left">ACCOUNT INFO</h1>
-                <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
-                <div class="flex wrap" style="width:62vw">
-                    <div>
-
-                        <div style="text-align:left">
-                            Username: <b>${b||"NO USER"}</b><br><br>
-                            Email: ${e}<br><br>
-                            Name: ${fn} ${ln}<br><br>
-                            Bio:
-                            <br><br>${account.info.bio||"Welcome to my page, this is my bio"}
-                        </div>
+            return /*html*/`
+                <div>
+                    <img src="assets/icons/account.svg" class="profileInfo__photo" />
+                    <div class="profileInfo__userName" onclick="account.information()">
+                        @${b||"NO USER"}
                     </div>
-                    <div>
-                        <b style="text-decoration: underline;">Collection:</b>
-                        <br><br>${c}
+                    <div class="profileInfo__userAttribute" onclick="account.edit()">
+                        <strong>Email:</strong>
+                        <span>${e}</span>
                     </div>
+                    <div class="profileInfo__userAttribute" onclick="account.edit()">
+                        <strong>First Name:</strong>
+                        <span>${fn}<span>
+                    </div>
+                    <div class="profileInfo__userAttribute" onclick="account.edit()">
+                        <strong>Last Name:</strong>
+                        <span>${ln}</span>
+                    </div>
+                    <div class="profileInfo__userAttribute" onclick="account.edit()">
+                        <strong>Bio:</strong>
+                        <span>${account.info.bio||"Welcome to my page, this is my bio"}</span>
+                    </div>
+                    <div class="profileInfo__logout" id="so" onclick="account.logout()">Sign Out</div>
                 </div>
 
             `;
@@ -1087,6 +1111,23 @@ var elements = {
             return `Account info could not be located`;
 
         }
+    },
+    profileAssets:async()=>{
+        let c=elements.collection();
+
+
+        return /*html*/`
+            <div>
+                <div class="profileAssets__header">
+                    <div id="cl" class="js-profileHeaderItem profileAssets__headerItem profileAssets__headerItem--current" onclick="account.selectHeader(this);document.getElementById('js-profileContents').innerHTML=elements.collection()">Collection<br><br></div>
+                    <div id="vw" class="js-profileHeaderItem profileAssets__headerItem"  onclick="account.selectHeader(this);account.wallet();">view Wallet<br><br></div>
+                    <div  class="js-profileHeaderItem profileAssets__headerItem"  onclick="location.hash = '#market'">Auctions<br><br></div>
+
+                </div>
+                <div id="js-profileContents" class="profileAssets__collection">
+                    <br><br>${c}
+                </div>
+            </div>`;
     },
     editProfile:async()=>{
         try{
@@ -1125,27 +1166,32 @@ var elements = {
                 ln=account.info.lastname;
             }
             let c=elements.collection();
-            return `
-                <h1 style="text-align:left">ACCOUNT INFO</h1>
-                <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
-                <div class="flex" style="width:100%">
-                    <div>
-
-                        <div style="text-align:left">
-                            Username: <input id="usernamei" value='${b||"NO USER"}' /><br><br>
-                            Email: <input id="emaili" value='${e}' /><br><br>
-                            Name: <input id="firstname" value='${fn}' / > <input id="lastname" value='${ln}' /><br><br>
-                            Bio:<br>
-                            <input id='bioi' value='${account.info.bio||"Welcome to my page, this is my bio"}' />
-                        </div>
+            return /*html*/`
+                <div id="js-profileInfo" class="profileInfo" >
+                    <img src="assets/icons/account.svg" class="profileInfo__photo" />
+                    <div class="profileInfo__userName profileInfo__userName--edit">
+                        <label>Profile:</label>
+                        <input id="usernamei" value='${b||"NO USER"}' />
                     </div>
-                    <div>
-                        <b style="text-decoration: underline;">Collection:</b>
-                        <br><br>${c}
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
+                        <label>Email:</label>
+                            <input id="emaili" value='${e}' />
                     </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
+                        <label>First Name:</label>
+                        <input id="firstname" value='${fn}' />
+                    </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--edit">
+                        <label>Last Name:</label>
+                        <input id="lastname" value='${ln}' />
+                    </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--edit"> 
+                        <label>Bio:</label>
+                        <input id='bioi' value='${account.info.bio||"Welcome to my page, this is my bio"}' />
+                    </div>
+                    <div class="profileInfo__userAttribute profileInfo__userAttribute--link" id="so" onclick="account.logout()">Sign Out</div>
+                    <div class="button" onclick="account.create(1);">Update Account Info</div>
                 </div>
-                <div class="button" onclick="account.create(1);">Update Account Info</div>
-
             `;
         }catch(e){
             console.log(e);
