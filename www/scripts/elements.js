@@ -105,8 +105,20 @@ var elements = {
             request.open("GET", "https://us-central1-illust.cloudfunctions.net/metadata");
             request.send();
             
-            return `
-                Illust Marketplace
+            return /*html*/`
+               
+                <div class="market__banner">
+                    <h1 class="market__heading">Market</h1>
+                    <nav>
+                        <ul class="subhead__nav" >
+                            <li class="subhead__navItem subhead__navItem--active"><a href="">Live</a></li>
+                            <li class="subhead__navItem"><a href="">Price</a></li>
+                            <li class="subhead__navItem"><a href="">Featured</a></li>
+                        </ul>
+                    </nav>
+                    <img class="market__bannerImage" src="https://app.illust.space/images/doom4.png"/>
+                </div>
+                    
                 <div id="searchOptions" class="flex">
                     <div>
                         <input id="tagSearch" placeholder="Search by tag"></input>
