@@ -71,14 +71,15 @@ metadataAPI.post('/edit/:a/:s', async(req, res) => {
         }
 
 });
-//nonce
-var userKEYS={}
+//userAPI
+var authTokens={}
 userAPI.get('/:u', (req, res) => {
-    res.send(req.params.u);
+    authTokens[req.params.u] = ethers.BigNumber.from(ethers.utils.randomBytes(32))._hex;
+    res.send(authTokens[req.params.u]);
 });
 userAPI.get('/:u/:sig', (req, res) => {
     try{
-        let address = ethers.utils.verifyMessage("illust login", req.params.sig);
+        let address = ethers.utils.verifyMessage(`illust login ${authTokens[req.params.u]}`, req.params.sig);
         //verify sig
         let qAddress=req.params.u;
         // console.log(address, req.params.u, req.params.sig||"no sig");
@@ -747,111 +748,3 @@ auctionAPI.post('/bid', async(req, res) => {
 });
 
 exports.market = functions.https.onRequest(auctionAPI);
-
-// Automatically allow cross-origin requests
-//functions.use(cors({ origin: true }));
-/*
-exports.queryUser = functions.https.onRequest((req, res) => {
-    cors(req, res, () => {
-        //functions.logger.info("Hello logs!", {structuredData: true});
-        let r=Object.keys(req.query)[0];
-        if(users[r]){
-            res.send(users[r].username);
-        }else{
-            res.send(`No User ${r} could be located`);
-        }
-        console.log();
-    });
-
-});
-admin.initializeApp({
-    apiKey: "AIzaSyCfNihdvP4epfuQFdcCRYoIdGIYlonTaPY",
-    authDomain: "illust-b87a1.firebaseapp.com",
-    databaseURL: "https://illust-b87a1.firebaseio.com",
-    projectId: "illust",
-    storageBucket: "illust.appspot.com",
-    messagingSenderId: "883554071356",
-    appId: "1:883554071356:web:e5b37c5bf5f79be723e439",
-    measurementId: "G-VBJ7RSFPZL"
-  });
-*/
-
-// userAPI.get('/', (req, res) => {
-//     // var ref = db.ref("users");
-//     // ref.on("value", function(snapshot) {
-//     //     console.log(snapshot.val());
-//     //   }, function (errorObject) {
-//     //     console.log("The read failed: " + errorObject.code);
-//     // });
-// });
-// exports.user = functions.https.onCall((data, context) => {
-//     console.log(data);
-//     try{
-//         admin.database().ref('/dele').push({
-//             testuser: "testmsg"
-//         }).then(() => {
-//              console.log(data);
-//             let address = ethers.utils.verifyMessage(JSON.stringify(data.message), data.signature);
-//             console.log(address);
-//             // Returning the sanitized message to the client.
-//             return "No User could be located";
-//         });
-//     }catch(e){
-//         console.log(e);
-//         return "No User could be located";
-//     }
-// });
-// exports.editUser = functions.https.onCall((data, context) => {
-//     console.log(data);
-//     try{
-//         admin.database().ref('/dele').push({
-//             testuser: "testmsg"
-//         }).then(() => {
-//              console.log(data);
-//             let address = ethers.utils.verifyMessage(JSON.stringify(data.message), data.signature);
-//             console.log(address);
-//             // Returning the sanitized message to the client.
-//             return "No User could be located";
-//         });
-//     }catch(e){
-//         console.log(e);
-//         return "No User could be located";
-//     }
-// });
-// exports.editMetadata = functions.https.onCall((data, context) => {
-//     console.log(data);
-//     try{
-//         admin.database().ref('/dele').push({
-//             testuser: "testmsg"
-//         }).then(() => {
-//              console.log(data);
-//             let address = ethers.utils.verifyMessage(JSON.stringify(data.message), data.signature);
-//             console.log(address);
-//             // Returning the sanitized message to the client.
-//             return "No User could be located";
-//         });
-//     }catch(e){
-//         console.log(e);
-//         return "No User could be located";
-//     }
-// });
-// exports.metadata = functions.https.onRequest((req, res) => {
-//     try{
-//         let r=req.url.split("/")[1]
-//         console.log(r)
-//         //console.log(r);
-//         if(r){
-//             res.send( getAsset(r));
-//         }else{
-//             var assetList={};
-//             for(a in assets){
-//                 assetList[a]=getAsset(a);
-//             }
-//             res.send( assetList );
-//         }
-        
-//     }catch(e){
-//         console.log(e);
-//         return "No User could be located";
-//     }
-// });
