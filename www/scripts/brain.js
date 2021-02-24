@@ -109,11 +109,11 @@ var account={
                             }
                         }
                     }
-                    loginRequest.open("GET", `http://localhost:5001/illust/us-central1/users/${provider.provider.selectedAddress}/${sig}`);
+                    loginRequest.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}/${sig}`);
                     loginRequest.send();
                 }
             }
-            request.open("GET", `http://localhost:5001/illust/us-central1/users/${provider.provider.selectedAddress}`);
+            request.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}`);
             request.send();
             
         }
