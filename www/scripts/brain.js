@@ -5,6 +5,7 @@ var signer
 let currentAuth=0;
 let torInt;
 var torus;
+
 var account={
     info:{
     },
@@ -54,25 +55,30 @@ var account={
         
         await account.load();
         if(localStorage.userInfo){
-            let d=JSON.parse(localStorage.userInfo);
-            account.info={
-                username:d.username,
-                firstname:d.firstname,
-                lastname:d.lastname,
-                pronoun:d.pronoun,
-                email:d.email,
-                collection:d.collection,
-                bio:d.bio,
-                bids:{}
-            } 
-            //console.log(account.info)
-            //await changePage();
-            account.information();
-            if(account.loggedIn!=1){
-                changePage();
+            try{
+                let d=JSON.parse(localStorage.userInfo);
+                account.info={
+                    username:d.username,
+                    firstname:d.firstname,
+                    lastname:d.lastname,
+                    pronoun:d.pronoun,
+                    email:d.email,
+                    collection:d.collection,
+                    bio:d.bio,
+                    bids:{}
+                } 
+                //console.log(account.info)
+                //await changePage();
+                account.information();
+                if(account.loggedIn!=1){
+                    changePage();
+                }
+                account.loggedIn=1;
+                //console.log(document.getElementById("content").innerHTML)
+            }catch(e){
+                console.log(e);
+                account.logout();
             }
-            account.loggedIn=1;
-            //console.log(document.getElementById("content").innerHTML)
         }else{
             var request = new XMLHttpRequest(); 
             request.onreadystatechange = async function() {
@@ -80,7 +86,7 @@ var account={
                     let m=request.response;
                     console.log(m);
 
-                    let sig=await account.sign("illust login");
+                    let sig=await account.sign(`illust login ${m}`);
                     
                     var loginRequest = new XMLHttpRequest(); 
                     loginRequest.onreadystatechange = async function(){
@@ -217,20 +223,20 @@ var account={
     wallet:async()=>{
         let m=await elements.walletInfo();
         console.log(m);
-        document.getElementById('js-profileContents').innerHTML=m;
+        document.getElementById('accountContent').innerHTML=m;
     },
     edit:async()=>{
         let m=await elements.editProfile();
-        let profileAssetsHtml=await elements.profileAssets();
-        document.getElementById('js-profileInfo').innerHTML=m;
+        document.getElementById('accountContent').innerHTML=m;
     },
-    selectHeader:(r)=>{
+    select:(r)=>{
         try{
-            let headerItemArray = Array.from(document.getElementsByClassName('js-profileHeaderItem'));
-            headerItemArray.forEach(element => {
-                element.classList.remove('profileAssets__headerItem--current')
-            });
-            r.classList.add("profileAssets__headerItem--current")
+            document.getElementById('pr').style="";
+            document.getElementById('vw').style="";
+            document.getElementById('cl').style="";
+            document.getElementById('ep').style="";
+            document.getElementById('so').style="";
+            document.getElementById(`${r}`).style="color:var(--color4);";
         }catch(e){
             console.log(e);
         }
