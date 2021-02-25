@@ -5,14 +5,17 @@ var elements = {
         },
         market(p){
             var request = new XMLHttpRequest(); 
+
             request.onreadystatechange = async function() {
                 if (request.readyState === 4) {
-                    let r="";
+                    let r=``;
+                    let marketHeaderFilter = ``;
+                    let headerHTML = ``;
                     assets.tokens=JSON.parse(request.response)
-
                     let m={};
                     //check tag search parameter
                     if(p[1]){
+
                         let p1=p[1].split("=")
                         if(p1[0]=="creator"){
                             let creators=p1[1].split("&");
@@ -23,6 +26,7 @@ var elements = {
                                 console.log(creator, creators)
                                 if(creator.toLowerCase()==(creators[0]).toLowerCase()){
                                     m[a]=assets.tokens[a];
+                                    marketHeaderFilter = /*html*/`<div class="market__filterHeading"> | Creator: ${creator}</div>`
                                 }
                             }
                         }
@@ -34,14 +38,19 @@ var elements = {
                                     let assetTags=assets.tokens[a].tags.split(" ")
                                     //console.log(a,assetTags)
                                     if(assetTags.includes(tags[0])){
+                                        marketHeaderFilter = /*html*/`<div class="market__filterHeading"> | Tags: ${tags}</div>`
                                         //console.log(assets.tokens[a])
                                         m[a]=assets.tokens[a];
                                     }
                                 }
                             }
+                        } else {
+                            marketHeaderFilter = /*html*/`<img class="market__bannerImage" src="https://app.illust.space/images/doom4.png"/>`
+                            m=assets.tokens
                         }
-                    }else{
-                        
+                    }
+                    else{
+                        marketHeaderFilter = /*html*/`<img class="market__bannerImage" src="https://app.illust.space/images/doom4.png"/>`
                         m=assets.tokens
                     }
 
@@ -78,7 +87,7 @@ var elements = {
                                     <div class="collectionItem__attributes">
                                         <h3 class="collectionItem__title">${colItemName}</h3>
                                         <a id="view_${a}" class="collectionItem__link" onclick="location.hash = 'asset?${a}'">MORE</a>
-                                        <a class="collectionItem__artist" href="">${colItemCreator}</a>
+                                        <a class="collectionItem__artist" href="">${colItemCreator || 'Illust'}</a>
                                         <div id="owner_${a}">Loading Owner...</div>
                                         
                                     </div>             
@@ -87,9 +96,48 @@ var elements = {
                             `
                         //r+=a
                     }
+                    headerHTML+=/*html*/`
+                        <div class="market__banner">
+                            <h1 class="market__heading">Market</h1>
+                            <nav>
+                                <ul class="subhead__nav" >
+                                    <li class="subhead__navItem subhead__navItem--active"><a href="">Live</a></li>
+                                    <li class="subhead__navItem"><a href="">Price</a></li>
+                                    <li class="subhead__navItem"><a href="">Featured</a></li>
+                                </ul>
+                            </nav>
+                            ${marketHeaderFilter}
+                        </div>
+                            
+                        <div id="searchOptions" class="flex">
+                            <div>
+                                <input id="tagSearch" placeholder="Search by tag"></input>
+                                <div style="width: 120px;padding:4px;margin:auto" class="button" onclick="location.hash='market?tags='+document.getElementById('tagSearch').value">Search</div>
+                            </div>
+                            <div style="font-size:22px">
+                                Sort by:
+                                <select style="font-size:22px" name="sortBy" id="sortBy">
+                                    
+                                    <option default value="">Default</option>
+                                    <option value="">Price</option>
+                                    <option value="">Name</option>
+                                    <option value="">Latest</option>
+                                </select>
+                                <br>
+                                Ar Type
+                                <select style="font-size:22px" name="arType" id="arType">
+                                    <option value="any">Any</option>
+                                    <option value="wearable">Wearable</option>
+                                    <option value="environmental">Wearable</option>
+                                    <option value="sculpture">Sculpture</option>
+                                </select>
+                            </div>
+                        </div>
+                    `
 
-                    
                     document.getElementById("js-listings").innerHTML=r;
+                    document.getElementById("js-marketHeader").innerHTML=headerHTML;
+
                     for(a in m){
                         let assetData=await assets.invokeERC("getData", a);
                         let owner=await assets.invokeERC("getOwner", a);
@@ -104,33 +152,8 @@ var elements = {
             }
             request.open("GET", "https://us-central1-illust.cloudfunctions.net/metadata");
             request.send();
-            
-            return `
-                Illust Marketplace
-                <div id="searchOptions" class="flex">
-                    <div>
-                        <input id="tagSearch" placeholder="Search by tag"></input>
-                        <div style="width: 120px;padding:4px;margin:auto" class="button" onclick="location.hash='market?tags='+document.getElementById('tagSearch').value">Search</div>
-                    </div>
-                    <div style="font-size:22px">
-                        Sort by:
-                        <select style="font-size:22px" name="sortBy" id="sortBy">
-                            
-                            <option default value="">Default</option>
-                            <option value="">Price</option>
-                            <option value="">Name</option>
-                            <option value="">Latest</option>
-                        </select>
-                        <br>
-                        Ar Type
-                        <select style="font-size:22px" name="arType" id="arType">
-                            <option value="any">Any</option>
-                            <option value="wearable">Wearable</option>
-                            <option value="environmental">Wearable</option>
-                            <option value="sculpture">Sculpture</option>
-                        </select>
-                    </div>
-                </div>
+            return /*html*/`
+                <div id="js-marketHeader"></div>
                 <div id="js-listings" class="market__collection">${elements.loading()}</div>
             `
         },
@@ -648,7 +671,7 @@ var elements = {
                                         ${editionHTML}
                                         <div class="lotAsset__attribute">${owner}</div> 
                                         <div class="lotAsset__attribute">Created By: 
-                                            <a href="#market?creator=${m.creator||'Illust'}">${m.creator||"Illust"}</a>
+                                            <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
                                         </div>
                                         <div class="lotAsset__attribute">${m.description}</div>
                                         <div class="lotAsset__attribute">
