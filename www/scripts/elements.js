@@ -87,7 +87,7 @@ var elements = {
                                     <div class="collectionItem__attributes">
                                         <h3 class="collectionItem__title">${colItemName}</h3>
                                         <a id="view_${a}" class="collectionItem__link" onclick="location.hash = 'asset?${a}'">MORE</a>
-                                        <a class="collectionItem__artist" href="">${colItemCreator}</a>
+                                        <a class="collectionItem__artist" href="">${colItemCreator || 'Illust'}</a>
                                         <div id="owner_${a}">Loading Owner...</div>
                                         
                                     </div>             
@@ -671,7 +671,7 @@ var elements = {
                                         ${editionHTML}
                                         <div class="lotAsset__attribute">${owner}</div> 
                                         <div class="lotAsset__attribute">Created By: 
-                                            <a href="#market?creator=${m.creator||'Illust'}">${m.creator||"Illust"}</a>
+                                            <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
                                         </div>
                                         <div class="lotAsset__attribute">${m.description}</div>
                                         <div class="lotAsset__attribute">
