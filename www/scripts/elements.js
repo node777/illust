@@ -595,9 +595,15 @@ var elements = {
                         description+=`<br><br><b>AR Type: ${m["ar_type"]}</b>`
                     }
 
-                    let owner=await assets.invokeERC("getOwner", hash);
+                    let owner
+                    try{
+                        owner = await assets.invokeERC("getOwner", hash)
+                    } catch {
+                        owner = "owner not found"
+                    }
+
                     //<a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
-                    
+                    console.log('owner after' + owner)
                     
                     //let auction=JSON.parse(await illustMarket("r", n[1]));
 
