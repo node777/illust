@@ -1355,13 +1355,20 @@ var elements = {
     },
     connect:()=>{
         let r;
-        r=`
+        r=/*html*/`
             <h1 style="margin:64px 1% 0">Connect</h1>   
             <div class="br" id="connectionMethod" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
             <p style="font-size:12px">Illust Space, a web3.0 application, uses a crypto wallet for buying, selling, and trading augmented reality art. Your account is tied to your wallet. Please select one of the three options below: Torus (on the left), an existing Web3.0 Provider (middle), or an existing Private Key. Torus is an easy to use service for creating your first crypto wallet using an existing email, facebook account, or other online authentication services. Select Web3.0 if you already have a provider on your browser such as MetaMask or Coinbase Wallet; Illust Space does not have access to your private keys, please keep your private key information to yourself as this is highly sensitive information.    
             <div class="flex">
-                    <div onclick="localStorage.setItem('provider','torus');account.login();"><img src="assets/torus.svg" /><div class="br"></div><b id="torusBox">Connect with Torus</b></div>
-                    <div onclick="localStorage.setItem('provider','web3');account.login();clearInterval(torInt);changePage();"><img src="assets/metamask.png" /><div class="br"></div><b>Connect with Web3 Provider</b><br><br>
+                    <div class="loginOption__wrapper" onclick="localStorage.setItem('provider','torus');account.login();">
+                        <img class="loginOption__image" src="assets/torus.svg" />
+                        <div class="br"></div>
+                        <b id="torusBox">Connect with Torus</b>
+                    </div>
+                    <div class="loginOption__wrapper" onclick="localStorage.setItem('provider','web3');account.login();clearInterval(torInt);changePage();">
+                        <img class="loginOption__image" src="assets/metamask.png" />
+                        <div class="br"></div>
+                        <b>Connect with Web3 Provider</b><br><br>
         `
         if(window.ethereum){
             r+= "<p style='font-size:10px'>Web3 Browser Detected</p>";
