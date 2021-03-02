@@ -11,8 +11,10 @@ var elements = {
                     let r=``;
                     let marketHeaderFilter = ``;
                     let headerHTML = ``;
+                    let tagCloudHTML = ``;
                     assets.tokens=JSON.parse(request.response)
                     let m={};
+                    let tagCloudArr = [];
 
                     //TEMP TEST TOKEN WITH FEAUTRE AND PRICE
                     let testToken234234  = {
@@ -30,7 +32,21 @@ var elements = {
                     };
                     assets.tokens['testToken234234'] = testToken234234
 
-
+                    // return list of all used tags 
+                    // this should not be done client side
+                    for (a in assets.tokens){
+                        if (assets.tokens[a].tags){
+                            let eachTag = assets.tokens[a].tags.split(" ")
+                            for(tags in eachTag){
+                                console.log(eachTag[tags])
+                                if (!tagCloudArr.includes(eachTag[tags])){
+                                    tagCloudArr.push(eachTag[tags])
+                                    tagCloudHTML +=/*html*/`<li class="subHead__tagItem"><a href="#market?tags=${eachTag[tags]}">#${eachTag[tags]}</a></li>`
+                                }
+                            }
+                        }
+                    }
+                    console.log(tagCloudArr)
                     // console.log(testToken234234)
                     //check tag search parameter
                     if(p[1]){
@@ -124,44 +140,46 @@ var elements = {
                             `
                         //r+=a
                     }
+
                     headerHTML+=/*html*/`
                         <div class="market__banner">
                             <h1 class="market__heading">Market</h1>
+                            ${marketHeaderFilter}
                             <nav>
                                 <ul class="subhead__nav" >
                                     <li class="subhead__navItem subhead__navItem--active"><a href="">Live</a></li>
                                     <li class="subhead__navItem"><a href="">Price</a></li>
                                     <li class="subhead__navItem"><a href="">Featured</a></li>
                                 </ul>
+                                <ul class="subhead__tagCloud">
+                                    ${tagCloudHTML}
+                                </ul>
+                                
                             </nav>
-                            ${marketHeaderFilter}
                         </div>
-                            
-                        <div id="searchOptions" class="flex">
-                            <div>
-                                <input id="tagSearch" placeholder="Search by tag"></input>
-                                <div style="width: 120px;padding:4px;margin:auto" class="button" onclick="location.hash='market?tags='+document.getElementById('tagSearch').value">Search</div>
-                            </div>
-                            <div style="font-size:22px">
-                                Sort by:
-                                <select style="font-size:22px" name="sortBy" id="sortBy">
-                                    
-                                    <option default value="">Default</option>
-                                    <option value="">Price</option>
-                                    <option value="">Name</option>
-                                    <option value="">Latest</option>
-                                </select>
-                                <br>
-                                Ar Type
-                                <select style="font-size:22px" name="arType" id="arType">
-                                    <option value="any">Any</option>
-                                    <option value="wearable">Wearable</option>
-                                    <option value="environmental">Wearable</option>
-                                    <option value="sculpture">Sculpture</option>
-                                </select>
-                            </div>
-                        </div>
+                  
                     `
+                              
+                        // <div id="searchOptions" class="flex">
+                        //     <div style="font-size:22px">
+                        //         Sort by:
+                        //         <select style="font-size:22px" name="sortBy" id="sortBy">
+                                    
+                        //             <option default value="">Default</option>
+                        //             <option value="">Price</option>
+                        //             <option value="">Name</option>
+                        //             <option value="">Latest</option>
+                        //         </select>
+                        //         <br>
+                        //         Ar Type
+                        //         <select style="font-size:22px" name="arType" id="arType">
+                        //             <option value="any">Any</option>
+                        //             <option value="wearable">Wearable</option>
+                        //             <option value="environmental">Wearable</option>
+                        //             <option value="sculpture">Sculpture</option>
+                        //         </select>
+                        //     </div>
+                        // </div>
 
                     document.getElementById("js-listings").innerHTML=r;
                     document.getElementById("js-marketHeader").innerHTML=headerHTML;
