@@ -914,7 +914,10 @@ helper classes should e used sparingly
         flex-basis: 100%;
     }
     .subhead__nav{
-        float: left;
+        text-align: left;
+    }
+    .subHead__tagCloud{
+        text-align: left;
     }
 }
 #collection #footer{
