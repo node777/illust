@@ -38,7 +38,6 @@ var elements = {
                         if (assets.tokens[a].tags){
                             let eachTag = assets.tokens[a].tags.split(" ")
                             for(tags in eachTag){
-                                console.log(eachTag[tags])
                                 if (!tagCloudArr.includes(eachTag[tags])){
                                     tagCloudArr.push(eachTag[tags])
                                     tagCloudHTML +=/*html*/`<li class="subHead__tagItem"><a href="#market?tags=${eachTag[tags]}">#${eachTag[tags]}</a></li>`
@@ -149,7 +148,7 @@ var elements = {
                                 <ul class="subhead__nav" >
                                     <li class="subhead__navItem subhead__navItem--active"><a href="">Live</a></li>
                                     <li class="subhead__navItem"><a href="">Price</a></li>
-                                    <li class="subhead__navItem"><a href="">Featured</a></li>
+                                    <li class="subhead__navItem"><a href="#market?featured">Featured</a></li>
                                 </ul>
                                 <ul class="subhead__tagCloud">
                                     ${tagCloudHTML}
