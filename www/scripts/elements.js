@@ -131,7 +131,6 @@ var elements = {
                                         <h3 class="collectionItem__title">${colItemName}</h3>
                                         <a id="view_${a}" class="collectionItem__link" onclick="location.hash = 'asset?${a}'">MORE</a>
                                         <a class="collectionItem__artist" href="">${colItemCreator || 'Illust'}</a>
-                                        <div id="owner_${a}">Loading Owner...</div>
                                         
                                     </div>             
                                 </div>
@@ -190,7 +189,7 @@ var elements = {
                         if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
                             document.getElementById(`view_${a}`).innerHTML="Edit/Sell Asset"
                         }
-                        document.getElementById(`owner_${a}`).innerHTML="Owner: "+owner;
+                        // document.getElementById(`owner_${a}`).innerHTML="Owner: "+owner;
                         //console.log(assetData[0])
                     }
                 }
