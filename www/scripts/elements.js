@@ -681,11 +681,28 @@ var elements = {
                         }else{
                             auctionDetails+=`This sale ended on ${m["end_date"]}`
                         }
-
+                        auctionDetails=`<div class="auction__label">Time Remaining</div>
+                        <div class="auction__attribute">00:34:00</div>
+                        <div class="auction__label" >Current Bid</div>
+                        <div class="auction__attribute">0.53 eth</div>
+                        <label class="auction__label">Place Bid</label>
+                        <input style="margin:0;" type='number' step='0.200000000000000000' value='0.0000' /> 
+                        <div class="button" onclick="market.bid()">Place Bid</div>
+                        <div class="auction__history">
+                            <div class="auction__bidder">10:33 @bobbyBoy bid 0.56 eth</div>
+                            <div class="auction__bidder">10:30 @carguy34 bid 0.50 eth</div>
+                            <div class="auction__bidder">09:44 @somenad44 bid 0.46 eth</div>
+                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
+                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
+                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
+                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
+                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
+                            <div class="auction__overlay"></div>
+                        </div>`
 
                     }else{
                         // // TEMP AUCTION INFO
-
+           
                         // expected result
                         // "This asset is not for sale"
 

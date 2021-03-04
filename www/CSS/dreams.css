@@ -653,6 +653,7 @@ a:active {
     left: 5%;
     width: 90%;
     height: 90%;
+    background-color: var(--color2)
 }
 .collectionItem__facePreview{
     position: absolute; 
