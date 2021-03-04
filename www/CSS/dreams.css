@@ -861,13 +861,17 @@ helper classes should e used sparingly
     .profileInfo__userAttribute--edit{
         flex-wrap: wrap;
     }
+
     .profileInfo__userAttribute--edit > * {
-        flex-basis: 100%;
         margin-bottom: 5px;
+        font-size: 16px;
+        margin-bottom: 0;
     }
     .profileInfo__userName--edit > *{
-        flex-basis: 100%;
         margin-bottom: 5px;
+    }
+    .profileInfo__userAttribute > span:after{
+        content: "✎"
     }
     .profileAssets__collection{
         padding: 0px;
@@ -918,6 +922,7 @@ helper classes should e used sparingly
     }
     .subHead__tagCloud{
         text-align: left;
+        padding-left: 15px;
     }
 }
 #collection #footer{

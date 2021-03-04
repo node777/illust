@@ -681,6 +681,8 @@ var elements = {
                         }else{
                             auctionDetails+=`This sale ended on ${m["end_date"]}`
                         }
+
+
                     }else{
                         // // TEMP AUCTION INFO
 
@@ -754,7 +756,6 @@ var elements = {
                                     <div class="lotAsset__viewer">
                                         <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask"></model-viewer>
                                         <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${hash}">Wear</a>
-                                        <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}">World</a>
                                         <a class="lotAsset__modelShare" style="font-size:30px" href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share
                                             <input id="js-share" class="lotAsset__shareInput" aria-hidden="true"/>
                                             <div class="h-tooltip">Link Copied!</div>
@@ -1369,7 +1370,7 @@ var elements = {
     },
     collection:()=>{
         if(account.info.collection){
-            let r="<div class='flex wrap'>"
+            let r=/*html*/`<div class='profileAssets__collectionItem'>`
             
             for(i in account.info.collection){
                 r+=/*html*/`
