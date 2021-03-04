@@ -60,7 +60,7 @@ var elements = {
                                 console.log(creator, creators)
                                 if(creator.toLowerCase()==(creators[0]).toLowerCase()){
                                     m[a]=assets.tokens[a];
-                                    marketHeaderFilter = /*html*/`<div class="market__filterHeading"> | Creator: ${creator}</div>`
+                                    marketHeaderFilter = /*html*/`<div class="market__filterHeading">: ${creator}</div>`
                                 }
                             }
                         }
@@ -72,7 +72,7 @@ var elements = {
                                     let assetTags=assets.tokens[a].tags.split(" ")
                                     //console.log(a,assetTags)
                                     if(assetTags.includes(tags[0])){
-                                        marketHeaderFilter = /*html*/`<div class="market__filterHeading"> | Tags: ${tags}</div>`
+                                        marketHeaderFilter = /*html*/`<div class="market__filterHeading">: ${tags}</div>`
                                         //console.log(assets.tokens[a])
                                         m[a]=assets.tokens[a];
                                     }
@@ -130,7 +130,7 @@ var elements = {
                                     <div class="collectionItem__attributes">
                                         <h3 class="collectionItem__title">${colItemName}</h3>
                                         <a id="view_${a}" class="collectionItem__link" onclick="location.hash = 'asset?${a}'">MORE</a>
-                                        <a class="collectionItem__artist" href="">${colItemCreator || 'Illust'}</a>
+                                        <a class="collectionItem__artist" href="#market?creator=${colItemCreator || 'Illust'}">${colItemCreator || 'Illust'}</a>
                                         
                                     </div>             
                                 </div>

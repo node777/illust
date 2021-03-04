@@ -917,12 +917,24 @@ helper classes should e used sparingly
     .market__collectionItem{
         flex-basis: 100%;
     }
+    .market__filterHeading{
+        font-size: 28px;
+        float:inherit;
+    }
     .subhead__nav{
         text-align: left;
+        margin-top: 40px;
+    }
+    .subhead__navItem:first-of-type{
+        padding-left: 0px;
     }
     .subHead__tagCloud{
         text-align: left;
-        padding-left: 15px;
+        padding-left: 0px;
+    }
+    .subHead__tagItem{
+        margin-left:0px;
+        margin-right: 10px;
     }
 }
 #collection #footer{
