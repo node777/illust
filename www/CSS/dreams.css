@@ -267,7 +267,7 @@ h2{
 
 }
 .popup{
-    padding: 5%;
+    padding: 5% 35% 5% 35%;
     font-size: 16px;
 	color: var(--color1);
 	background-color: var(--color2);
@@ -815,6 +815,10 @@ a:active {
     bottom: 0;
     background-image: linear-gradient(to bottom, transparent, var(--color2));
 
+}
+input.accountCreate__input,  textarea.accountCreate__input {
+    width: 100%;
+    margin: 3% 0%;
 }
 /* "h-*" classes are helper classes that have very few styles that can be used across components.
 helper classes should e used sparingly 
