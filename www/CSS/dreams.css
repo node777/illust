@@ -872,6 +872,9 @@ helper classes should e used sparingly
         padding-left: 5%;
         padding-right: 5%;
     }
+    .loginOption__image{
+        height: 100px;
+    }
     .popup input, .popup textarea{
         width: 80%;
         margin: 3% 10%;
