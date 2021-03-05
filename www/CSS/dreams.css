@@ -524,7 +524,7 @@ a:active {
 .profileAssets{
     flex-grow: 1;
     position: relative;
-    max-width: calc(100% - 50px);
+    max-width: 100%;
 }
 .profileAssets__collection{
     display: flex;
@@ -555,7 +555,7 @@ a:active {
     flex-basis: 50%;
 }
 .accountContent__wrapper{
-    width: calc(100% - 16px);
+    width: 100%;
 }
 
 .wallet__address{
@@ -628,7 +628,7 @@ a:active {
     flex-basis: 50%;
     position: relative;
     padding-top: 50%;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
 }
 .lotAsset__auction{
     flex-basis: 25%;
@@ -893,7 +893,11 @@ helper classes should e used sparingly
     }
     .profileAssets__headerItem{
         margin-left: 0px;
-        margin-right: 30px;
+        margin-right: 20px;
+        font-size: 14px;
+    }
+    .profileAssets__headerItem:last-of-type{
+        margin-right: 0px;
     }
     .profileInfo__userAttribute--edit{
         flex-wrap: wrap;
