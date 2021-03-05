@@ -1035,12 +1035,19 @@ var elements = {
                 <div class="popup">
                     Welcome to Illust Space:<br>
                     Please choose a name to get started<br><br>
-                    <input  class="accountCreate__input" id="usernamei" placeholder="username"></input>
+                    <label for="usernamei">Username</label>
+                    <input  class="accountCreate__input" name="username" id="usernamei"></input>
+                    
+                    <label for="firstname">First Name</label>
+                    <input class="accountCreate__input" name="given-name" id="firstname" ></input>
 
-                    <input class="accountCreate__input" id="firstname" placeholder="first name"></input>
-                    <input class="accountCreate__input" id="lastname" placeholder="last name"></input>
-
-                    <input class="accountCreate__input" id="emaili" placeholder="e-mail"></input>
+                    <label for="lastname">Last Name</label>
+                    <input class="accountCreate__input" name="family-name" id="lastname"></input>
+                    
+                    <label for="emaili">Email</label>
+                    <input class="accountCreate__input" name="email" id="emaili"></input>
+                    
+                    <label for="bioi">Bio</label>
                     <textarea class="accountCreate__input" id="bioi" placeholder="bio (optional)"></textarea><br>
                     <input class="accountCreate__input" type="checkbox" id="verifyTOS" style="width:min-content;margin:8px"/ > I agree to the <a href="https://illust.space/terms-of-service">Terms of Service</a>, the <a href="https://illust.space/privacy-policy">Privacy Policy</a>, and the <a href="https://illust.space/user-agreement">User Agreement</a> <br>
                     <input class="accountCreate__input" type="checkbox" id="verifyCom" style="width:min-content;margin:8px"/ > Yes, I would like to receive email communications from Illust.Space</a> 
