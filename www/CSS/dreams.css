@@ -649,7 +649,8 @@ a:active {
 .lotAsset__modelShare{
     margin: 0 5px;
     position: relative;
-    bottom: -40px;
+    bottom: -50px;
+    font-size: 30px;
 }
 .lotAsset__shareInput{
     position: absolute;
@@ -672,6 +673,8 @@ a:active {
 }
 .lotAsset__tags{
     display: block;
+    position: relative;
+    bottom: -50px;
 }
 .collectionItem__modelViewerWrapper{
     position: relative;
@@ -679,16 +682,16 @@ a:active {
 }
 .collectionItem__modelViewerWrapper > model-viewer{
     position: absolute;
-    top: 5%;
-    left: 5%;
-    width: 90%;
-    height: 90%;
-    background-color: var(--color2)
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
 }
 .collectionItem__facePreview{
     position: absolute; 
     bottom: 5px;
-    right: 5px;
+    left: 5px;
 }
 .collectionItem__attributes{
     display: flex;
@@ -969,6 +972,9 @@ helper classes should e used sparingly
     .lotAsset__attribute{
         max-width: calc(100vw - 50px);
         overflow: scroll;
+    }
+    .lotAsset__modelShare{
+        font-size: 22px;
     }
     .collectionItem__wrapper{
         margin: 0 0 5% 0;

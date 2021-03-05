@@ -124,8 +124,8 @@ var elements = {
                             <div class='market__collectionItem'>
                                 <div class="collectionItem__wrapper">
                                     <div class="collectionItem__modelViewerWrapper">
-                                        <model-viewer ar ios-src="assets/models/.usdz" src="${colItemModelUrl}" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
-                                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#">🎭 Try On</a>
+                                        <model-viewer disable-zoom ar ios-src="assets/models/.usdz" src="${colItemModelUrl}" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭 Try On</a>
                                     </div>
                                     <div class="collectionItem__attributes">
                                         <h3 class="collectionItem__title">${colItemName}</h3>
@@ -757,8 +757,8 @@ var elements = {
                                 <div class="lotAsset__content">
                                     <div class="lotAsset__viewer">
                                         <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls  alt="GreenMask"></model-viewer>
-                                        <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${hash}">Wear</a>
-                                        <a class="lotAsset__modelShare" style="font-size:30px" href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share
+                                        <a class="lotAsset__modelShare" href="https://app.illust.space/ar/faces.html#${hash}">Wear</a>
+                                        <a class="lotAsset__modelShare" href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share
                                             <input id="js-share" class="lotAsset__shareInput" aria-hidden="true"/>
                                             <div class="h-tooltip">Link Copied!</div>
                                         </a>
