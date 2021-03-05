@@ -667,6 +667,9 @@ a:active {
     display: inline-block;
     margin-left: 10px;
 }
+.lotAsset__linkouts li:first-of-type{
+    margin-left: 0px;
+}
 .lotAsset__tags{
     display: block;
 }
@@ -935,15 +938,19 @@ helper classes should e used sparingly
     }
     .lotAsset__viewer{
         flex-basis: 100%;
+        padding-top: 75%;
     }
     .lotAsset__content{
         flex-wrap: wrap;
     }
     .lotAsset__title{
         width: 100%;
+        margin-bottom: 10px;
     }
     .lotAsset__linkouts{
         width: 100%;
+        text-align: left;
+        font-size: 16px;
     }
     .lotAsset__auction{
         text-align: left;
@@ -976,6 +983,9 @@ helper classes should e used sparingly
     .subHead__tagItem{
         margin-left:0px;
         margin-right: 10px;
+    }
+    .auction__attribute{
+        font-size: 16px;
     }
 }
 #collection #footer{
