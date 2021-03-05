@@ -69,6 +69,7 @@ var account={
                 } 
                 //console.log(account.info)
                 //await changePage();
+                console.log('account info')
                 account.information();
                 if(account.loggedIn!=1){
                     changePage();
@@ -217,7 +218,7 @@ var account={
     },
     information:async()=>{
         if(document.getElementById('accountContent')){
-            let m=await elements.profileInfo();
+            let m=await elements.account();
             document.getElementById('accountContent').innerHTML=m;
         }
     },
