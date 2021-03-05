@@ -128,6 +128,7 @@ float: left;
     padding-right: 5%;
     max-width: 1600px;
     margin: 0 auto;
+    box-sizing: border-box;
 
 }
 #footer{
@@ -628,6 +629,8 @@ a:active {
 .lotAsset__viewer{
     flex-basis: 50%;
     position: relative;
+    padding-top: 50%;
+    margin-bottom: 40px;
 }
 .lotAsset__auction{
     flex-basis: 25%;
@@ -639,13 +642,16 @@ a:active {
 .lotAsset__model{
     display: block;
     height: auto;
-    background-color: var(--color1);
+    background-color: transparent;
     width: 100%;
-    padding-bottom: 108%;
+    height: 100%;
+    position: absolute;
+    top: 0;
 }
 .lotAsset__modelShare{
     margin: 0 5px;
     position: relative;
+    bottom: -40px;
 }
 .lotAsset__shareInput{
     position: absolute;

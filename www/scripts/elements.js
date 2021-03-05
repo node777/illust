@@ -1351,7 +1351,6 @@ var elements = {
                 <div class="wallet__address"  onclick="copyText('${provider.provider.selectedAddress}')">${provider.provider.selectedAddress}</div>
                 <div class="wallet__label">Balance:</div>
                 <div class="wallet__attribute" id="balBox"></div>
-                <div class="wallet__label"></div>
                 <div class="wallet__attribute" id="bidList"></div>
                 <div class="wallet__label">Wallet ENS Name:</div>
                 <div class="wallet__attribute">None Claimed</div>
