@@ -148,7 +148,7 @@ var account={
         }
     },
     getBal:async()=>{
-        document.getElementById('balBox').innerHTML="Balance: "+ethers.utils.formatEther(await provider.getBalance(provider.provider.selectedAddress));
+        document.getElementById('balBox').innerHTML=ethers.utils.formatEther(await provider.getBalance(provider.provider.selectedAddress));
     },
     getData:()=>{
         //ref databse

@@ -524,12 +524,15 @@ a:active {
 /* profileAssets */
 .profileAssets{
     flex-grow: 1;
+    position: relative;
+    max-width: calc(100% - 50px);
 }
 .profileAssets__collection{
     display: flex;
     flex-wrap: wrap;
     padding: 5%;
     justify-content: center;
+    max-width: 100%;
 }
 .profileAssets__header{
     text-align: right;
@@ -556,6 +559,26 @@ a:active {
     width: calc(100% - 16px);
 }
 
+.wallet__address{
+    max-width: 100%;
+    user-select:all;
+    overflow: hidden;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.wallet__label{
+    font-weight: bold;
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+.wallet__attribute{
+    display: block;
+    width: 100%;
+    text-align: center;
+}
 /* lotAssets */
 .lotAsset__title{
     display: inline-block;
@@ -791,6 +814,9 @@ helper classes should e used sparingly
 */
 .h-100pw{
     width: 100%;
+}
+.h-prel{
+    position: relative;
 }
 .h-flex-g1{
     flex-grow:1;

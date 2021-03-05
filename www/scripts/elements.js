@@ -1143,7 +1143,7 @@ var elements = {
                         <div id="accountContent" class="accountContent__wrapper" style="padding:16px;">
                             <h1 style="text-align:left">ACCOUNT INFO</h1>
                             <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
-                            <div id="js-accountWrapper" class="h-flex wrap h-100pw">
+                            <div id="js-accountWrapper" class="h-prel h-flex wrap h-100pw h-drel">
                                 <div id="js-profileInfo" class="profileInfo" >
                                     ${a}
                                 </div>
@@ -1346,15 +1346,22 @@ var elements = {
                 console.log(i, account.info.bids[i]);
                 b+=`Bids:<br><a onclick="location.hash='lot?${i}'">${i}</a> ${account.info.bids[i]}<br>`;
             }
-            return `
-                <h1>WALLET INFO</h1>
-                Wallet Address: <br><b style="user-select:all;" onclick="copyText('${provider.provider.selectedAddress}')">${provider.provider.selectedAddress}</b><br><br>
-                <br><div id="balBox"></div><br><br>
-                <div id="bidList">${b}</div>
-                Wallet ENS Name: <br>None Claimed<br><br>
-                Network: <br>${n}<br><br>
-                Provider: <br>${provider.connection.url}<br><br>
-                QR code: <br><div id="qrcode"></div><br><br>
+            return /*html*/`
+                <div class="wallet__label">Wallet Address:</div>
+                <div class="wallet__address"  onclick="copyText('${provider.provider.selectedAddress}')">${provider.provider.selectedAddress}</div>
+                <div class="wallet__label">Balance:</div>
+                <div class="wallet__attribute" id="balBox"></div>
+                <div class="wallet__label"></div>
+                <div class="wallet__attribute" id="bidList"></div>
+                <div class="wallet__label">Wallet ENS Name:</div>
+                <div class="wallet__attribute">None Claimed</div>
+                <div class="wallet__label">Network:</div>
+                <div class="wallet__attribute">${n}</div>
+                <div class="wallet__label">Provider:</div>
+                <div class="wallet__attribute">${provider.connection.url}</div>
+                <div class="wallet__label"></div>
+                <div id="qrcode"></div>
+        
             `;
         }catch(e){
             console.log(e);
@@ -1394,9 +1401,9 @@ var elements = {
             return r;
         }
         else{
-            return `
-                You have no collection:<br>
-                <div onclick="location.hash=''"><a style="color:var(--color4);">Start Collecting</a></div>
+            return /*html*/`
+                <span>You have no collection: <a href="#market" style="color:var(--color4);">Start Collecting</a></span>
+                
             `
         }
     },
