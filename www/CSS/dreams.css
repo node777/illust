@@ -124,8 +124,6 @@ float: left;
     top:96px;
     padding-bottom:64px;
     padding-top: 50px;
-    padding-left: 5%;
-    padding-right: 5%;
     max-width: 1600px;
     margin: 0 auto;
     box-sizing: border-box;
@@ -867,7 +865,10 @@ helper classes should e used sparingly
     .mobile{
         display: initial;
     }
-    
+    #content{
+        padding-left: 5%;
+        padding-right: 5%;
+    }
     .popup input, .popup textarea{
         width: 80%;
         margin: 3% 10%;

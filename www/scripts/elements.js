@@ -1140,7 +1140,7 @@ var elements = {
                 
                 r=/*html*/`
                     <div class="h-flex">
-                        <div id="accountContent" class="accountContent__wrapper" style="padding:16px;">
+                        <div id="accountContent" class="accountContent__wrapper">
                             <h1 style="text-align:left">ACCOUNT INFO</h1>
                             <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
                             <div id="js-accountWrapper" class="h-prel h-flex wrap h-100pw h-drel">
