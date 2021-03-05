@@ -45,13 +45,13 @@ input{
 } */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
   margin: 0;
 }
 
-.input {
-
+model-viewer {
+    --poster-color: transparent
 }
+
 
 /* Firefox */
 input[type=number] {
@@ -765,6 +765,9 @@ a:active {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 30px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .auction__bidder{
     margin-bottom: 10px;

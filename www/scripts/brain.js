@@ -152,13 +152,14 @@ var account={
     },
     getData:()=>{
         //ref databse
+        console.log('getting data')
         try{
             let a = provider.provider.selectedAddress;
-            console.log(a);
+            console.log(a + ' a');
             var userRef = firebase.database().ref('users/' + a);
             userRef.once('value', async function(snapshot){
                 let d=snapshot.val();
-                console.log(d);
+                console.log(d + ' d');
                 console.log(snapshot.val());
                 if(d!==null){
                     //location.hash="account";
@@ -897,7 +898,6 @@ var assets={
 var market={
     countdown(){
         market.timeLeft=new Date(market.endTime).getTime()-Date.now()
-        
         market.timer=setInterval(()=>{
             
             if(document.getElementById("countdownBox")){
@@ -908,7 +908,7 @@ var market={
                 hoursRemaining=Math.floor(market.timeLeft%86400000/3600000)
                 minutesRemaining=Math.floor(market.timeLeft%3600000/60000)
                 secondsRemaining=Math.floor(market.timeLeft%60000/1000)
-                document.getElementById("countdownBox").innerHTML=`Auction closing in: ${daysRemaining} Days, ${hoursRemaining} Hours, ${minutesRemaining} Minutes, ${secondsRemaining} Seconds`
+                document.getElementById("countdownBox").innerHTML=`${daysRemaining} Days ${hoursRemaining}:${minutesRemaining}:${secondsRemaining}`
             }else{
                 clearInterval(market.timer)
             }
