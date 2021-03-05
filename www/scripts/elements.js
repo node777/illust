@@ -1035,25 +1035,27 @@ var elements = {
                 <div class="popup">
                     Welcome to Illust Space:<br>
                     Please choose a name to get started<br><br>
-                    <label for="usernamei">Username</label>
+                    <label class="accountCreate__label" for="usernamei">Username*</label>
                     <input  class="accountCreate__input" name="username" id="usernamei"></input>
                     
-                    <label for="firstname">First Name</label>
+                    <label class="accountCreate__label" for="firstname">First Name*</label>
                     <input class="accountCreate__input" name="given-name" id="firstname" ></input>
 
-                    <label for="lastname">Last Name</label>
+                    <label class="accountCreate__label" for="lastname">Last Name*</label>
                     <input class="accountCreate__input" name="family-name" id="lastname"></input>
                     
-                    <label for="emaili">Email</label>
+                    <label class="accountCreate__label" for="emaili">Email*</label>
                     <input class="accountCreate__input" name="email" id="emaili"></input>
                     
-                    <label for="bioi">Bio</label>
+                    <label class="accountCreate__label" for="bioi">Bio</label>
                     <textarea class="accountCreate__input" id="bioi" placeholder="bio (optional)"></textarea><br>
-                    <input class="accountCreate__input" type="checkbox" id="verifyTOS" style="width:min-content;margin:8px"/ > I agree to the <a href="https://illust.space/terms-of-service">Terms of Service</a>, the <a href="https://illust.space/privacy-policy">Privacy Policy</a>, and the <a href="https://illust.space/user-agreement">User Agreement</a> <br>
+                    <input class="accountCreate__input" type="checkbox" id="verifyTOS" style="width:min-content;margin:8px"/ > *I agree to the <a href="https://illust.space/terms-of-service">Terms of Service</a>, the <a href="https://illust.space/privacy-policy">Privacy Policy</a>, and the <a href="https://illust.space/user-agreement">User Agreement</a> <br>
                     <input class="accountCreate__input" type="checkbox" id="verifyCom" style="width:min-content;margin:8px"/ > Yes, I would like to receive email communications from Illust.Space</a> 
                     <br>Email will be used to notify auction winners.
                     <div  class="button" onclick="account.create()">Create Account</div>
-                    <a onclick="account.logout()">Connect through different method</a>
+                    <br>*Required Fields
+                    <br>
+                    <a href="javascript:void(0)" onclick="account.logout()">Connect through different method</a>
                 </div>
             `
         }catch(e){
