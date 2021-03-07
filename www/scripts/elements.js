@@ -614,18 +614,20 @@ var elements = {
                     let hash=a[1];
                     let url=m["animation_url"];
                     let iPrice=m.price||0;
-                    let auctionDetails=``;
-                    let editionHTML = ``;
-                    let tagsHTML = ``;
-
-                    
+                    let assetDetails=`
+                        Created by: <a href="#market?creator=${m.creator||"Illust"}">${m.creator||"Illust"}</a><br><br>
+                        <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Transaction History</a><br><br>
+                    `;
+                    let tags="";
+                    //get bid status  from blockchain custody contract
+                    let bidStatus=await market.invokeCustody("winningBids", [hash]);
+                    console.log(bidStatus, bidStatus.winner);
                     //check for tags
                     if(m.tags){
                         let tagList=m.tags.split(" ")
                         console.log(tagList)
-
                         for(t in tagList){
-                            tagsHTML+=`<a href="#market?tags=${tagList[t]}">#${tagList[t]}</a> `
+                            tags+=`<a href="#market?tags=${tagList[t]}">#${tagList[t]}</a> `
                         }
                     }
                     //get description
@@ -633,21 +635,22 @@ var elements = {
 
                     //get edition
                     if(m.edition){
-                        editionHTML+=/*html*/`<div class="lotAsset__attribute">Edition: ${m.edition}</div>`
+                        description+=`<br><br><b>Edition: ${m.edition}</b>`
                     }
                     if(m["ar_type"]){
                         description+=`<br><br><b>AR Type: ${m["ar_type"]}</b>`
                     }
-
-                    let owner
+                    //get owner
+                    let owner;
                     try{
-                        owner = await assets.invokeERC("getOwner", hash)
-                    } catch {
-                        owner = "owner not found"
+                        owner=await assets.invokeERC("getOwner", hash);
+                        assetDetails+=`Owner: ${owner}<br><br>`;
+                    }catch(e){
+                        owner="Unknown"
+                        console.log(e);
                     }
-
                     //<a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
-                    console.log('owner after' + owner)
+                    
                     
                     //let auction=JSON.parse(await illustMarket("r", n[1]));
 
@@ -658,155 +661,114 @@ var elements = {
                         let timeNow=new Date(Date.now());
 
                         console.log(endTime.getTime(),timeNow.getTime())
-                        auctionDetails+=`
+                        assetDetails+=`
                         
                             Top bidder: ${m["top_bidder"]}
                             <br><br>
-                            <div id="startPriceBox">Start price: ${m["start_price"]}</div>
-                            <br><br>
+                            <div id="startPriceBox">Start price: ${m["start_price"]} ETH</div>
+                            <br>
                         `
                         market.endTime=m["end_date"];
+                        //if auction is live
                         if(endTime.getTime()>timeNow.getTime()){
-                            auctionDetails+=`
-                                    <div id="priceBox">Currenct price: ${m["price"]}<br><br></div>
+                            assetDetails+=`
+                                    <div id="priceBox">Currenct price: ${m["price"]} ETH<br><br></div>
                                     <div id="dateBox">End date: ${m["end_date"]}</div><br>
                                     <div id="countdownBox"></div>
-                                    <br><br>
-                                    Place your bid:<br>
-                                    <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.200000000000000000' value='${Number(m["price"])+0.2}' /> ETH
-                                    <div class="button w5" onclick="market.bid()">Place Bid</div>
-                                    
-                                    <div id="userBid"></div>
                             `
-                        }else{
-                            auctionDetails+=`This sale ended on ${m["end_date"]}`
+                            try{
+                            //if asset is not owned by user
+                                if(owner.toLowerCase()!=provider.provider.selectedAddress.toLowerCase()){
+                                    assetDetails+=`
+                                    <br><br>
+                                            Place your bid:<br>
+                                            <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.200000000000000000' value='${Number(m["price"])+0.2}' /> ETH
+                                            <div class="button w5" onclick="market.bid()">Place Bid</div>
+                                            
+                                            <div id="userBid"></div>
+                                    `
+                                }
+                                //if user is not logged in
+                            }catch(e){
+                                console.log(e)
+                                assetDetails+=`
+                                    <br><br>Please log in to bid on assets<br>
+                                    <div class="button" onclick="location.hash='account'">Log in</div>
+                                `
+                            }
                         }
-                        auctionDetails=`<div class="auction__label">Time Remaining</div>
-                        <div class="auction__attribute">00:34:00</div>
-                        <div class="auction__label" >Current Bid</div>
-                        <div class="auction__attribute">0.53 eth</div>
-                        <label class="auction__label">Place Bid</label>
-                        <input style="margin:0;" type='number' step='0.200000000000000000' value='0.0000' /> 
-                        <div class="button" onclick="market.bid()">Place Bid</div>
-                        <div class="auction__history">
-                            <div class="auction__bidder">10:33 @bobbyBoy bid 0.56 eth</div>
-                            <div class="auction__bidder">10:30 @carguy34 bid 0.50 eth</div>
-                            <div class="auction__bidder">09:44 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__overlay"></div>
-                        </div>`
-
+                        //if auction is closed
+                        else{
+                            assetDetails+=`
+                                <div id="priceBox">Winning price: ${m["price"]} ETH<br><br></div>
+                                This sale ended on ${m["end_date"]}`
+                            //IF ACC VIEWING IS SELLer
+                            //console.log(`${hash}, ${m.price}, ${m['top_bidder']}`)
+                            console.log(owner)
+                            if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
+                                //if price needs to be finalized
+                                console.log(bidStatus.winner, provider.provider.selectedAddress)
+                                if(bidStatus.winner=="0x0000000000000000000000000000000000000000"||bidStatus.winner!=provider.provider.selectedAddress){
+                                
+                                    assetDetails+=`<br><br>Winner: ${m['top_bidder']}<br>Price: ${m.price}<br><div class='button' onclick="market.invokeCustody('listAsset', [${hash}, ${m.price}, '${m['top_bidder']}'])">Finalize Price</div>`
+                                }
+                            }
+                            //if user won auction
+                            else if(m['top_bidder'].toLowerCase()==provider.provider.selectedAddress.toLowerCase()&&bidStatus.complete==false){
+                                assetDetails+=`<br><br>You have won this auction<br>If seller has finalized price, please pay now<div class='button' onclick="market.invokeCustody('pay', [${hash}, ${m.price}])">Pay Now</div>`
+                            }
+                        }
                     }else{
-                        // // TEMP AUCTION INFO
-           
-                        // expected result
-                        // "This asset is not for sale"
-
-                        // start auction
-                        /*<form id="js-auctionDetails">
-                            <label class="auction__label">Start Date</label>
-                            <input class="auction__input" id="js-start_date" type="datetime-local" value=""/>
-                            <label class="auction__label"><span class="h-form-error">*Date must be after today </span>End Date</label>
-                            <input class="auction__input" id="js-end_date" type="datetime-local" value=""/>
-                            <label class="auction__label">Reserve</label>
-                            <input class="auction__input" id="js-start_price" type='number' step='0.200000000000000000' value='0.0000' /> 
-                            <div class="button" onclick="market.beginAuction()">Begin Auction</div>
-                        </form>
-                        */
-
-                        //Live Auction
-                        /*
-                        <div class="auction__label">Time Remaining</div>
-                        <div class="auction__attribute">00:34:00</div>
-                        <div class="auction__label" >Current Bid</div>
-                        <div class="auction__attribute">0.53 eth</div>
-                        <label class="auction__label">Place Bid</label>
-                        <input style="margin:0;" type='number' step='0.200000000000000000' value='0.0000' /> 
-                        <div class="button" onclick="market.bid()">Place Bid</div>
-                        <div class="auction__history">
-                            <div class="auction__bidder">10:33 @bobbyBoy bid 0.56 eth</div>
-                            <div class="auction__bidder">10:30 @carguy34 bid 0.50 eth</div>
-                            <div class="auction__bidder">09:44 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__overlay"></div>
-                        </div>
-
-                        //   Auction Creation
-                        <form>
-                            <label class="auction__label">Start Date</label>
-                            <input class="auction__input" id="js-start_date" type="datetime-local" value=""/>
-                            <label class="auction__label"><span class="h-form-error">*Date must be after today </span>End Date</label>
-                            <input class="auction__input" id="js-end_date" type="datetime-local" value=""/>
-                            <label class="auction__label">Reserve</label>
-                            <input class="auction__input" id="js-start_price" type='number' step='0.200000000000000000' value='0.0000' /> 
-                            <div class="button" onclick="market.beginAuction()">Begin Auction</div>
-                        </form>
-                        */
-                        auctionDetails+="This asset is not for sale"
+                        assetDetails+="This asset is not for sale"
                     }
-
+                    //if user is owner
                     if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
-                        auctionDetails+=`<div class='button' onclick="document.getElementById('js-auctionDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Manage asset sale":"Sell Asset"}</div>`
+                        //console.log(assets.invokeERC("checkApproval"));
+                        if(await assets.invokeERC("checkApproval")===true){
+                            assetDetails+=`<div class='button' onclick="document.getElementById('assetDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Manage asset sale":"Sell Asset"}</div>`
+                        }else{
+                            assetDetails+=`Illust is not currently approved to transact Ainsoph on your behalf, please set approval. <div class='button' onclick="assets.invokeERC('r')">Set approval for Illust</div>`
+                        }
                     }
     
-                    document.getElementById("assetBox").innerHTML= /*html*/`
-                        <div id="lotBox" class="lotAsset">
-                            <h1 class="lotAsset__title">${name}</h1>
-                            <ul class="lotAsset__linkouts">
-                                <li>
-                                    <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}" target="_blank">History</a>
-                                </li>
-                                <li>
-                                    <a href="#market?creator=${m.creator||'Illust'}">Other Works</a>
-                                </li>
-                            </ul>
-                            <div class="lotAsset__wrapper">
-                                <div class="lotAsset__content">
-                                    <div class="lotAsset__viewer">
-                                        <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask"></model-viewer>
-                                        <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${hash}">Wear</a>
-                                        <a class="lotAsset__modelShare" style="font-size:30px" href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share
-                                            <input id="js-share" class="lotAsset__shareInput" aria-hidden="true"/>
-                                            <div class="h-tooltip">Link Copied!</div>
-                                        </a>
-                                        <div class="lotAsset__tags">
-                                            ${tagsHTML}
-                                        </div>
+                    document.getElementById("assetBox").innerHTML= `
+                        <div id="lotBox">
+                            <h1 style="margin:0">${name}</h1>
+                            <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
+                            <div class="flex wrap w1">
 
-                                    </div>
+                                <div style="text-align:center">
+                                    <model-viewer ar  ios-src="${m['usdz']}" src="${url}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
+                                    <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}"><b>Try On</b></a>
+                                </div>
                                 
-                                    <div class="lotAsset__details">
-                                        <h2 class="lotAsset__name">${name}</h2>
-                                        ${editionHTML}
-                                        <div class="lotAsset__attribute">${owner}</div> 
-                                        <div class="lotAsset__attribute">Created By: 
-                                            <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
-                                        </div>
-                                        <div class="lotAsset__attribute">${m.description}</div>
-                                        <div class="lotAsset__attribute">
-                                            <a target="_blank" href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
-                                        </div>
-                                    </div>
+                                <div id="assetDetails" style="text-align:center">
+                                    ${assetDetails}
                                 </div>
-                                <div id="js-auctionDetails" class="lotAsset__auction">
-                                    ${auctionDetails}
-                                </div>
+
+                            </div>
+                            <div class="w1">
+                                ${description}<br>
+                                ${tags?"<br>Tags: "+tags:""}<br /><br />
+                                2020 Hand modeled and hand illustrated AR NFT. Hashed mesh.
+                                <br><br>
+                                <a href="app.illust.space#market?creator=${m.creator||"Illust"}">Other works by: ${m.creator||"Illust"}</a><br /><br />
+                                View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
+                                    <br>Single Edition
+                                <!--
+                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
+                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
+                                If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
                             </div>
                         </div>
+                        
                     `
                     market.countdown();
                 }
             }
             request.open("GET", `https://us-central1-illust.cloudfunctions.net/metadata/${a[1]}`);
-            request.send();
+            request.send()
+            
             return `<div id="assetBox"></div>`
         },
         asset2:async(a)=>{
@@ -1150,16 +1112,16 @@ var elements = {
             if(account.info&&account.info.username){
                 console.log("Got Acc info", account.info);
                 a= await elements.profileInfo();
-                profileAssets = await elements.profileAssets()
+                var profileAssets = await elements.profileAssets()
                 b=account.info.username; 
-                
+                console.log(a, profileAssets);
                 r=/*html*/`
                     <div class="h-flex">
                         <div id="accountContent" class="accountContent__wrapper" style="padding:16px;">
                             <h1 style="text-align:left">ACCOUNT INFO</h1>
                             <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
                             <div id="js-accountWrapper" class="h-flex wrap h-100pw">
-                                <div id="js-profileInfo" class="profileInfo" >
+                                <div id="js-profileInfo" class="profileInfo">
                                     ${a}
                                 </div>
                                 <div id="js-profileAssets" class="profileAssets">
@@ -1267,7 +1229,7 @@ var elements = {
     },
     profileAssets:async()=>{
         let c=elements.collection();
-
+        console.log(c);
 
         return /*html*/`
             <div>
