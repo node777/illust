@@ -601,6 +601,7 @@ var elements = {
         },
         asset:async(a)=>{
             await account.load()
+            await account.load()
             var request = new XMLHttpRequest(); 
             request.onreadystatechange = async function() {
                 if (request.readyState === 4) {
@@ -723,7 +724,6 @@ var elements = {
                             <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
                             <div class="auction__overlay"></div>
                         </div>
-
                         //   Auction Creation
                         <form>
                             <label class="auction__label">Start Date</label>
@@ -757,15 +757,14 @@ var elements = {
                                 <div class="lotAsset__content">
                                     <div class="lotAsset__viewer">
                                         <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls  alt="GreenMask"></model-viewer>
-                                        <a class="lotAsset__modelShare" href="https://app.illust.space/ar/faces.html#${hash}">Wear</a>
-                                        <a class="lotAsset__modelShare" href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share
+                                        <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${hash}">Wear</a>
+                                        <a class="lotAsset__modelShare" style="font-size:30px" href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share
                                             <input id="js-share" class="lotAsset__shareInput" aria-hidden="true"/>
                                             <div class="h-tooltip">Link Copied!</div>
                                         </a>
                                         <div class="lotAsset__tags">
                                             ${tagsHTML}
                                         </div>
-
                                     </div>
                                 
                                     <div class="lotAsset__details">
@@ -791,7 +790,8 @@ var elements = {
                 }
             }
             request.open("GET", `https://us-central1-illust.cloudfunctions.net/metadata/${a[1]}`);
-            request.send();
+            request.send()
+            
             return `<div id="assetBox"></div>`
         },
         asset2:async(a)=>{
@@ -1144,9 +1144,9 @@ var elements = {
             if(account.info&&account.info.username){
                 console.log("Got Acc info", account.info);
                 a= await elements.profileInfo();
-                profileAssets = await elements.profileAssets()
+                var profileAssets = await elements.profileAssets()
                 b=account.info.username; 
-                
+                console.log(a, profileAssets);
                 r=/*html*/`
                     <div class="h-flex">
                         <div id="accountContent" class="accountContent__wrapper">
@@ -1261,7 +1261,7 @@ var elements = {
     },
     profileAssets:async()=>{
         let c=elements.collection();
-
+        console.log(c);
 
         return /*html*/`
             <div>

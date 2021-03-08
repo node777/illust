@@ -137,7 +137,8 @@ exports.users = functions.https.onRequest(userAPI);
 
 //console.log(hydra.chains.illustMarket);
 
-let provider = ethers.getDefaultProvider('homestead');
+//let provider = ethers.getDefaultProvider('homestead');
+let provider = ethers.getDefaultProvider('ropsten');
 
 var ERCabi = [
     {
@@ -679,7 +680,9 @@ var ERCabi = [
         "type": "function"
     }
 ];
-var ERCaddress = '0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6';
+//MAINNET ADD
+//var ERCaddress = '0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6';
+var ERCaddress = '0xa81ff27ed54f95a637c5a8c48ae0d993139f4ed2';
 var ERCcontract = new ethers.Contract(ERCaddress, ERCabi, provider);
 ERCcontract=ERCcontract.connect(provider);
 auctionAPI.get('/:q', (req, res) => {
@@ -694,18 +697,14 @@ auctionAPI.post('/chains/:chain/invoke/:invoke/:args?', (req, res) => {
 
 auctionAPI.post('/sell', async(req, res) => {
     let m=JSON.parse(req.body)
-    //if(m)
-    console.log(m)
-
     var assetOwner = await ERCcontract.ownerOf(m.message.asset);
     let messageSigner=ethers.utils.verifyMessage(JSON.stringify(m.message), m.sig);
-    
 
-    console.log(m, messageSigner, assetOwner)
     if(messageSigner.toLowerCase()==assetOwner.toLowerCase()){
         var ref = db.ref(`assets/${m.message.asset}`);
         
         var updates = {};
+        updates['/top_bidder'] = assetOwner;
         updates['/price'] = m.message["start_price"];
         updates['/start_price'] = m.message["start_price"];
         updates['/end_date'] = m.message["end_date"];

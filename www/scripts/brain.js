@@ -217,9 +217,9 @@ var account={
 
     },
     information:async()=>{
-        if(document.getElementById('accountContent')){
+        if(document.getElementById('js-profileContents')){
             let m=await elements.account();
-            document.getElementById('accountContent').innerHTML=m;
+            document.getElementById('js-profileContents').innerHTML=m;
         }
     },
     wallet:async()=>{
@@ -289,6 +289,19 @@ var account={
         }else{
             console.log(document.getElementById("verifyTOS").value);
             alert("Please agree to the Terms of Service");
+        }
+    }, 
+    async connectProvider(){
+        if(!provider){
+            try{
+                provider = new ethers.providers.Web3Provider(web3.currentProvider)
+            }catch(e){
+                provider=new ethers.providers.EtherscanProvider();
+            }
+        }
+        if(!signer){
+            
+            signer = await provider.getSigner();
         }
     }
 }
@@ -836,7 +849,10 @@ var assets={
                 "type": "function"
             }
         ];
-        var address = '0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6';
+        //ROPSTEN ADDRESS
+        var address="0xa81ff27ed54f95a637c5a8c48ae0d993139f4ed2";
+        //MAINNET ADDRESS
+        //var address = '0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6';
         var contract = new ethers.Contract(address, abi, provider);
         //mintAsset
         if(w=="a"){
@@ -853,16 +869,26 @@ var assets={
         }
         //setApproval
         if(w=="r"){
-            connectTorus();
+            //connectTorus();
             let signer = provider.getSigner();
             contract=await contract.connect(signer);
             //let assetId=new ethers.BigNumber.from(document.getElementById("assetMintID").value);
             //console.log(assetId, assetId.toString(), assetId.to);
-            var sendPromise = contract.setApprovalForAll("0x7cca737DC640eC07943aA32736E834eCa9E4C4eC", 1);
+            //var sendPromise = contract.setApprovalForAll("0x7cca737DC640eC07943aA32736E834eCa9E4C4eC", 1);
+            var sendPromise = contract.setApprovalForAll("0xA60A90D0FCFc3D1446355BF505B73756EE119B6B", 1);
             console.log(sendPromise)
             sendPromise.then(function(transaction) {
                 document.getElementById("data").innerHTML=(transaction);
             });
+        }
+        else if(w=="checkApproval"){
+            let signer = provider.getSigner();
+            contract=await contract.connect(signer);
+            //console.log(assetId, assetId.toString(), assetId.to);
+            //var sendPromise = contract.setApprovalForAll("0x7cca737DC640eC07943aA32736E834eCa9E4C4eC", 1);
+            var sendPromise = await contract.isApprovedForAll(provider.provider.selectedAddress, "0xA60A90D0FCFc3D1446355BF505B73756EE119B6B");
+            console.log(sendPromise)
+            return sendPromise;
         }
         //check balance of address
         else if(w=="b"){
@@ -936,10 +962,10 @@ var market={
         request.onreadystatechange = function() {
             if (request.readyState === 4) {
                 alert(request.response)
-                location.reload()
+                changePage().then(changePage());
             }
         }
-        //request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/sell`);
+        //request.open("POST", `http://localhost:5001/illust/us-central1/market/sell`);
         request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/sell`);
         request.send(JSON.stringify(r));
     },
@@ -958,12 +984,383 @@ var market={
         request.onreadystatechange = function() {
             if (request.readyState === 4) {
                 alert(request.response)
-                location.reload()
+                changePage().then(changePage())
             }
         }
         //request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/bid`);
         request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/bid`);
         request.send(JSON.stringify(r));
+    },
+    async invokeCustody(fn, p){
+        let abi=[
+            {
+                "inputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "enable",
+                        "type": "bool"
+                    }
+                ],
+                "name": "allowMinting",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "asset",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "winner",
+                        "type": "address"
+                    }
+                ],
+                "name": "listAsset",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenID",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "royaltyReceiver1",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "royaltyReceiver2",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "royaltySplitPercentage",
+                        "type": "uint8"
+                    }
+                ],
+                "name": "mint",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "asset",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "pay",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address payable",
+                        "name": "AinsophContractAddress",
+                        "type": "address"
+                    }
+                ],
+                "name": "setAinsophContract",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address payable",
+                        "name": "royaltyReceiver1",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "royaltyReceiver2",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "royaltyPercentage",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "royaltySplitPercentage",
+                        "type": "uint8"
+                    }
+                ],
+                "name": "setDefaultRoyalties",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "asset",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "enabled",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "automaticPrice",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "firstSale",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "percentage",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "initialRoyaltyPercentage",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "royaltySplitPercentage",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "royaltyReceiver1",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "royaltyReceiver2",
+                        "type": "address"
+                    }
+                ],
+                "name": "setRoyalties",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "asset",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "setTokenPrice",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "reciever",
+                        "type": "address"
+                    }
+                ],
+                "name": "widthdraw",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "assets",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "enabled",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "autoPrice",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "firstSale",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "initialRoyaltyPercentage",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "royaltyPercentage",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "royaltySplitPercentage",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "royaltyReceiver1",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "royaltyReceiver2",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "asset",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getRoyaltyPrice",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "winnigBids",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "enabled",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "winner",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "complete",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ]
+        //ROPSTEN CONTRACT
+        let address="0xA60A90D0FCFc3D1446355BF505B73756EE119B6B";
+
+        await account.connectProvider();
+        var custodyContract = await new ethers.Contract(address, abi, provider);
+
+        custodyContract=await custodyContract.connect(signer);
+        //await contract.connect(signer);
+        console.log(custodyContract)
+
+        if(fn=="listAsset"){
+            let assetID=new ethers.BigNumber.from(p[0]);
+            let assetPrice=(p[1]*(1000000000000000000)).toString();
+            console.log(p[0], assetPrice, ethers.utils.getAddress(p[2]).toString());
+            let r=custodyContract.listAsset(p[0], assetPrice, ethers.utils.getAddress(p[2]).toString());
+            r.then((tx)=>{
+                console.log(tx);
+            });
+        }
+        if(fn=="assets"){
+            let r=await custodyContract.assets(p[0]);
+            console.log(r);
+        }
+        else if(fn=="setContract"){
+            let r=await custodyContract.setAinsophContract(p[0]);
+            console.log(r);
+        }
+        else if(fn=="pay"){
+            let r=await custodyContract.pay(p[0], {
+                value: (p[1]*(1000000000000000000)).toString()
+            });
+            console.log(r);
+        }
+        else if(fn=="winningBids"){
+            let r=await custodyContract.winnigBids(p[0]);
+            return r;
+        }
+
     }
 }
 var auction={
