@@ -775,9 +775,9 @@ var elements = {
 
                                         </div>
                                     </div>
-                                </div>
-                                <div id="js-auctionDetails" class="lotAsset__auction">
+                                    <div id="js-auctionDetails" class="lotAsset__auction">
                                     ${auctionDetails}
+                                </div>
                                 </div>
                             </div>
                         </div>

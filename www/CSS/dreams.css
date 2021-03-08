@@ -601,7 +601,7 @@ a:active {
 }
 .lotAsset__content{
     display: flex;
-    flex-basis: 75%;
+    flex-basis: 100%;
     text-align: center;
 }
 .lotAsset__name{
@@ -620,19 +620,19 @@ a:active {
     margin-bottom: 10px;
 }
 .lotAsset__details{
-    flex-basis: 50%;
+    flex-basis: 33%;
     text-align: left;
     padding: 30px;
     align-self: flex-end;
 }
 .lotAsset__viewer{
-    flex-basis: 50%;
+    flex-basis: 33%;
     position: relative;
     padding-top: 50%;
     margin-bottom: 60px;
 }
 .lotAsset__auction{
-    flex-basis: 25%;
+    flex-basis: 33%;
     padding-top: 30px;
     text-align: right;
     overflow: hidden;
@@ -941,15 +941,15 @@ helper classes should e used sparingly
     .profileInfo__userName--edit{
         flex-wrap: wrap;
     }
-    .lotAsset__content{
-        flex-basis: 100%;
-    }
     .lotAsset__auction{
         flex-basis: 100%;
+        text-align: left;
+        order: 2;
     }
     .lotAsset__details{
         flex-basis: 100%;
         padding: 0px;
+        order: 3;
     }
     .lotAsset__viewer{
         flex-basis: 100%;
@@ -966,9 +966,6 @@ helper classes should e used sparingly
         width: 100%;
         text-align: left;
         font-size: 16px;
-    }
-    .lotAsset__auction{
-        text-align: left;
     }
     .lotAsset__attribute{
         max-width: calc(100vw - 50px);
