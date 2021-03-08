@@ -249,12 +249,12 @@ var account={
         }
     },
     create:async (a)=>{
-        if(a==1|| (document.getElementById("verifyTOS") && 
-            document.getElementById("verifyTOS").checked==true && 
-            !document.getElementById("usernamei").value.isEmpty() &&
-            !document.getElementById("firstname").value.isEmpty() &&
-            !document.getElementById("emaili").value.isEmpty()
-            )){
+        if(a==1|| 
+            (document.getElementById("verifyTOS") &&  document.getElementById("verifyTOS").checked==true)){
+
+                //            !document.getElementById("usernamei").value ||
+           // !document.getElementById("firstname").value ||
+            //!document.getElementById("emaili").value
             account.info.username=document.getElementById("usernamei").value;
             account.info.firstname=document.getElementById("firstname").value;
             account.info.lastname=document.getElementById("lastname").value;
