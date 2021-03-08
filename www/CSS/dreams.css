@@ -45,13 +45,13 @@ input{
 } */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
   margin: 0;
 }
 
-.input {
-
+model-viewer {
+    --poster-color: transparent
 }
+
 
 /* Firefox */
 input[type=number] {
@@ -124,10 +124,9 @@ float: left;
     top:96px;
     padding-bottom:64px;
     padding-top: 50px;
-    padding-left: 5%;
-    padding-right: 5%;
     max-width: 1600px;
     margin: 0 auto;
+    box-sizing: border-box;
 
 }
 #footer{
@@ -268,7 +267,7 @@ h2{
 
 }
 .popup{
-    padding: 5%;
+    padding: 5% 35% 5% 35%;
     font-size: 16px;
 	color: var(--color1);
 	background-color: var(--color2);
@@ -524,12 +523,15 @@ a:active {
 /* profileAssets */
 .profileAssets{
     flex-grow: 1;
+    position: relative;
+    max-width: 100%;
 }
 .profileAssets__collection{
     display: flex;
     flex-wrap: wrap;
     padding: 5%;
     justify-content: center;
+    max-width: 100%;
 }
 .profileAssets__header{
     text-align: right;
@@ -553,9 +555,29 @@ a:active {
     flex-basis: 50%;
 }
 .accountContent__wrapper{
-    width: calc(100% - 16px);
+    width: 100%;
 }
 
+.wallet__address{
+    max-width: 100%;
+    user-select:all;
+    overflow: hidden;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.wallet__label{
+    font-weight: bold;
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+.wallet__attribute{
+    display: block;
+    width: 100%;
+    text-align: center;
+}
 /* lotAssets */
 .lotAsset__title{
     display: inline-block;
@@ -605,6 +627,8 @@ a:active {
 .lotAsset__viewer{
     flex-basis: 50%;
     position: relative;
+    padding-top: 50%;
+    margin-bottom: 60px;
 }
 .lotAsset__auction{
     flex-basis: 25%;
@@ -616,13 +640,17 @@ a:active {
 .lotAsset__model{
     display: block;
     height: auto;
-    background-color: var(--color1);
+    background-color: transparent;
     width: 100%;
-    padding-bottom: 108%;
+    height: 100%;
+    position: absolute;
+    top: 0;
 }
 .lotAsset__modelShare{
     margin: 0 5px;
     position: relative;
+    bottom: -50px;
+    font-size: 30px;
 }
 .lotAsset__shareInput{
     position: absolute;
@@ -640,8 +668,13 @@ a:active {
     display: inline-block;
     margin-left: 10px;
 }
+.lotAsset__linkouts li:first-of-type{
+    margin-left: 0px;
+}
 .lotAsset__tags{
     display: block;
+    position: relative;
+    bottom: -50px;
 }
 .collectionItem__modelViewerWrapper{
     position: relative;
@@ -649,16 +682,16 @@ a:active {
 }
 .collectionItem__modelViewerWrapper > model-viewer{
     position: absolute;
-    top: 5%;
-    left: 5%;
-    width: 90%;
-    height: 90%;
-    background-color: var(--color2)
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
 }
 .collectionItem__facePreview{
     position: absolute; 
     bottom: 5px;
-    right: 5px;
+    left: 5px;
 }
 .collectionItem__attributes{
     display: flex;
@@ -765,6 +798,9 @@ a:active {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 30px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .auction__bidder{
     margin-bottom: 10px;
@@ -783,11 +819,22 @@ a:active {
     background-image: linear-gradient(to bottom, transparent, var(--color2));
 
 }
+input.accountCreate__input,  textarea.accountCreate__input {
+    width: 100%;
+    margin: 1% 0% 5% 0;
+}
+.accountCreate__label{
+    font-weight: bold;
+    font-size: 14px;
+}
 /* "h-*" classes are helper classes that have very few styles that can be used across components.
 helper classes should e used sparingly 
 */
 .h-100pw{
     width: 100%;
+}
+.h-prel{
+    position: relative;
 }
 .h-flex-g1{
     flex-grow:1;
@@ -832,7 +879,13 @@ helper classes should e used sparingly
     .mobile{
         display: initial;
     }
-    
+    #content{
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+    .loginOption__image{
+        height: 100px;
+    }
     .popup input, .popup textarea{
         width: 80%;
         margin: 3% 10%;
@@ -857,7 +910,11 @@ helper classes should e used sparingly
     }
     .profileAssets__headerItem{
         margin-left: 0px;
-        margin-right: 30px;
+        margin-right: 20px;
+        font-size: 14px;
+    }
+    .profileAssets__headerItem:last-of-type{
+        margin-right: 0px;
     }
     .profileInfo__userAttribute--edit{
         flex-wrap: wrap;
@@ -895,15 +952,19 @@ helper classes should e used sparingly
     }
     .lotAsset__viewer{
         flex-basis: 100%;
+        padding-top: 75%;
     }
     .lotAsset__content{
         flex-wrap: wrap;
     }
     .lotAsset__title{
         width: 100%;
+        margin-bottom: 10px;
     }
     .lotAsset__linkouts{
         width: 100%;
+        text-align: left;
+        font-size: 16px;
     }
     .lotAsset__auction{
         text-align: left;
@@ -911,6 +972,9 @@ helper classes should e used sparingly
     .lotAsset__attribute{
         max-width: calc(100vw - 50px);
         overflow: scroll;
+    }
+    .lotAsset__modelShare{
+        font-size: 22px;
     }
     .collectionItem__wrapper{
         margin: 0 0 5% 0;
@@ -936,6 +1000,9 @@ helper classes should e used sparingly
     .subHead__tagItem{
         margin-left:0px;
         margin-right: 10px;
+    }
+    .auction__attribute{
+        font-size: 16px;
     }
 }
 #collection #footer{

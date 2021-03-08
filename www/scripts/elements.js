@@ -124,8 +124,8 @@ var elements = {
                             <div class='market__collectionItem'>
                                 <div class="collectionItem__wrapper">
                                     <div class="collectionItem__modelViewerWrapper">
-                                        <model-viewer ar ios-src="assets/models/.usdz" src="${colItemModelUrl}" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
-                                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#">🎭 Try On</a>
+                                        <model-viewer disable-zoom ar ios-src="assets/models/.usdz" src="${colItemModelUrl}" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭 Try On</a>
                                     </div>
                                     <div class="collectionItem__attributes">
                                         <h3 class="collectionItem__title">${colItemName}</h3>
@@ -601,6 +601,7 @@ var elements = {
         },
         asset:async(a)=>{
             await account.load()
+            await account.load()
             var request = new XMLHttpRequest(); 
             request.onreadystatechange = async function() {
                 if (request.readyState === 4) {
@@ -630,6 +631,7 @@ var elements = {
                     }
                     //get description
                     let description=m.description||"";
+                    console.log(await account.getData(57865929012439140487121611707503616067165767807057435719422353067939485468247) + ' hi')
 
                     //get edition
                     if(m.edition){
@@ -638,6 +640,7 @@ var elements = {
                     if(m["ar_type"]){
                         description+=`<br><br><b>AR Type: ${m["ar_type"]}</b>`
                     }
+
 
                     let owner
                     try{
@@ -656,67 +659,50 @@ var elements = {
                         //setTimeout(auction.loadDate,1);
                         let endTime=new Date(m["end_date"]);
                         let timeNow=new Date(Date.now());
+                        let endTimePretty = endTime.toLocaleString(); 
 
                         console.log(endTime.getTime(),timeNow.getTime())
-                        auctionDetails+=`
-                        
-                            Top bidder: ${m["top_bidder"]}
-                            <br><br>
-                            <div id="startPriceBox">Start price: ${m["start_price"]}</div>
-                            <br><br>
+                        auctionDetails+=/*html*/`
+                            <div class="auction__label">This auction has ended</div>
+                            <div class="auction__attribute">${endTimePretty}</div>
+                            <div class="auction__label" >Top Bidder</div>
+                            <div class="auction__attribute">${m["top_bidder"]}</div>
+                            <label class="auction__label">Closing Price</label>
+                            <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
                         `
                         market.endTime=m["end_date"];
                         if(endTime.getTime()>timeNow.getTime()){
-                            auctionDetails+=`
-                                    <div id="priceBox">Currenct price: ${m["price"]}<br><br></div>
-                                    <div id="dateBox">End date: ${m["end_date"]}</div><br>
-                                    <div id="countdownBox"></div>
-                                    <br><br>
-                                    Place your bid:<br>
-                                    <input style="width:100%;margin:0;" id="bidAmount" type='number' step='0.200000000000000000' value='${Number(m["price"])+0.2}' /> ETH
-                                    <div class="button w5" onclick="market.bid()">Place Bid</div>
+                            auctionDetails=/*html*/`
+                                <div class="auction__label">Time Remaining</div>
+                                <div class="auction__attribute" id="countdownBox"></div>
+                                <div class="auction__label" >Current Bid</div>
+                                <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
+                                <label class="auction__label">Place Bid</label>
+                                <span>ETH</span>
+                                <input style="margin:0;" type='number' step='0.2' value='${Number(m["price"])+0.2}'/>
+                                <div class="button" onclick="market.bid()">Place Bid</div>
+                                <div class="auction__history">
+                                    <div class="auction__bidder">10:33 @bobbyBoy bid 0.56 eth</div>
+                                    <div class="auction__bidder">10:30 @carguy34 bid 0.50 eth</div>
+                                    <div class="auction__bidder">09:44 @somenad44 bid 0.46 eth</div>
+                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
+                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
+                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
+                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
+                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
+                                    <div class="auction__overlay"></div>
+                                </div>
                                     
-                                    <div id="userBid"></div>
+                                <div id="userBid"></div>
                             `
-                        }else{
-                            auctionDetails+=`This sale ended on ${m["end_date"]}`
                         }
-                        auctionDetails=`<div class="auction__label">Time Remaining</div>
-                        <div class="auction__attribute">00:34:00</div>
-                        <div class="auction__label" >Current Bid</div>
-                        <div class="auction__attribute">0.53 eth</div>
-                        <label class="auction__label">Place Bid</label>
-                        <input style="margin:0;" type='number' step='0.200000000000000000' value='0.0000' /> 
-                        <div class="button" onclick="market.bid()">Place Bid</div>
-                        <div class="auction__history">
-                            <div class="auction__bidder">10:33 @bobbyBoy bid 0.56 eth</div>
-                            <div class="auction__bidder">10:30 @carguy34 bid 0.50 eth</div>
-                            <div class="auction__bidder">09:44 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__overlay"></div>
-                        </div>`
-
                     }else{
                         // // TEMP AUCTION INFO
            
                         // expected result
                         // "This asset is not for sale"
 
-                        // start auction
-                        /*<form id="js-auctionDetails">
-                            <label class="auction__label">Start Date</label>
-                            <input class="auction__input" id="js-start_date" type="datetime-local" value=""/>
-                            <label class="auction__label"><span class="h-form-error">*Date must be after today </span>End Date</label>
-                            <input class="auction__input" id="js-end_date" type="datetime-local" value=""/>
-                            <label class="auction__label">Reserve</label>
-                            <input class="auction__input" id="js-start_price" type='number' step='0.200000000000000000' value='0.0000' /> 
-                            <div class="button" onclick="market.beginAuction()">Begin Auction</div>
-                        </form>
-                        */
+                   
 
                         //Live Auction
                         /*
@@ -738,7 +724,6 @@ var elements = {
                             <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
                             <div class="auction__overlay"></div>
                         </div>
-
                         //   Auction Creation
                         <form>
                             <label class="auction__label">Start Date</label>
@@ -771,7 +756,7 @@ var elements = {
                             <div class="lotAsset__wrapper">
                                 <div class="lotAsset__content">
                                     <div class="lotAsset__viewer">
-                                        <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask"></model-viewer>
+                                        <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls  alt="GreenMask"></model-viewer>
                                         <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${hash}">Wear</a>
                                         <a class="lotAsset__modelShare" style="font-size:30px" href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share
                                             <input id="js-share" class="lotAsset__shareInput" aria-hidden="true"/>
@@ -780,7 +765,6 @@ var elements = {
                                         <div class="lotAsset__tags">
                                             ${tagsHTML}
                                         </div>
-
                                     </div>
                                 
                                     <div class="lotAsset__details">
@@ -806,7 +790,8 @@ var elements = {
                 }
             }
             request.open("GET", `https://us-central1-illust.cloudfunctions.net/metadata/${a[1]}`);
-            request.send();
+            request.send()
+            
             return `<div id="assetBox"></div>`
         },
         asset2:async(a)=>{
@@ -1046,22 +1031,31 @@ var elements = {
     `,
     createAccount:()=>{
         try{
-            return `
+            return /*html*/`
                 <div class="popup">
                     Welcome to Illust Space:<br>
                     Please choose a name to get started<br><br>
-                    <input id="usernamei" placeholder="username"></input>
+                    <label class="accountCreate__label" for="usernamei">Username*</label>
+                    <input  class="accountCreate__input" name="username" id="usernamei"></input>
+                    
+                    <label class="accountCreate__label" for="firstname">First Name*</label>
+                    <input class="accountCreate__input" name="given-name" id="firstname" ></input>
 
-                    <input id="firstname" placeholder="first name"></input>
-                    <input id="lastname" placeholder="last name"></input>
-
-                    <input id="emaili" placeholder="e-mail"></input>
-                    <textarea id="bioi" placeholder="bio (optional)"></textarea><br>
-                    <input type="checkbox" id="verifyTOS" style="width:min-content;margin:8px"/ > I agree to the <a href="https://illust.space/terms-of-service">Terms of Service</a>, the <a href="https://illust.space/privacy-policy">Privacy Policy</a>, and the <a href="https://illust.space/user-agreement">User Agreement</a> <br>
-                    <input type="checkbox" id="verifyCom" style="width:min-content;margin:8px"/ > Yes, I would like to receive email communications from Illust.Space</a> 
+                    <label class="accountCreate__label" for="lastname">Last Name*</label>
+                    <input class="accountCreate__input" name="family-name" id="lastname"></input>
+                    
+                    <label class="accountCreate__label" for="emaili">Email*</label>
+                    <input class="accountCreate__input" name="email" id="emaili"></input>
+                    
+                    <label class="accountCreate__label" for="bioi">Bio</label>
+                    <textarea class="accountCreate__input" id="bioi" placeholder="bio (optional)"></textarea><br>
+                    <input class="accountCreate__input" type="checkbox" id="verifyTOS" style="width:min-content;margin:8px"/ > *I agree to the <a href="https://illust.space/terms-of-service">Terms of Service</a>, the <a href="https://illust.space/privacy-policy">Privacy Policy</a>, and the <a href="https://illust.space/user-agreement">User Agreement</a> <br>
+                    <input class="accountCreate__input" type="checkbox" id="verifyCom" style="width:min-content;margin:8px"/ > Yes, I would like to receive email communications from Illust.Space</a> 
                     <br>Email will be used to notify auction winners.
-                    <div class="button" onclick="account.create()">Create Account</div>
-                    <a onclick="account.logout()">Connect through different method</a>
+                    <div  class="button" onclick="account.create()">Create Account</div>
+                    <br>*Required Fields
+                    <br>
+                    <a href="javascript:void(0)" onclick="account.logout()">Connect through different method</a>
                 </div>
             `
         }catch(e){
@@ -1150,15 +1144,15 @@ var elements = {
             if(account.info&&account.info.username){
                 console.log("Got Acc info", account.info);
                 a= await elements.profileInfo();
-                profileAssets = await elements.profileAssets()
+                var profileAssets = await elements.profileAssets()
                 b=account.info.username; 
-                
+                console.log(a, profileAssets);
                 r=/*html*/`
                     <div class="h-flex">
-                        <div id="accountContent" class="accountContent__wrapper" style="padding:16px;">
+                        <div id="accountContent" class="accountContent__wrapper">
                             <h1 style="text-align:left">ACCOUNT INFO</h1>
                             <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
-                            <div id="js-accountWrapper" class="h-flex wrap h-100pw">
+                            <div id="js-accountWrapper" class="h-prel h-flex wrap h-100pw h-drel">
                                 <div id="js-profileInfo" class="profileInfo" >
                                     ${a}
                                 </div>
@@ -1267,7 +1261,7 @@ var elements = {
     },
     profileAssets:async()=>{
         let c=elements.collection();
-
+        console.log(c);
 
         return /*html*/`
             <div>
@@ -1361,15 +1355,21 @@ var elements = {
                 console.log(i, account.info.bids[i]);
                 b+=`Bids:<br><a onclick="location.hash='lot?${i}'">${i}</a> ${account.info.bids[i]}<br>`;
             }
-            return `
-                <h1>WALLET INFO</h1>
-                Wallet Address: <br><b style="user-select:all;" onclick="copyText('${provider.provider.selectedAddress}')">${provider.provider.selectedAddress}</b><br><br>
-                <br><div id="balBox"></div><br><br>
-                <div id="bidList">${b}</div>
-                Wallet ENS Name: <br>None Claimed<br><br>
-                Network: <br>${n}<br><br>
-                Provider: <br>${provider.connection.url}<br><br>
-                QR code: <br><div id="qrcode"></div><br><br>
+            return /*html*/`
+                <div class="wallet__label">Wallet Address:</div>
+                <div class="wallet__address"  onclick="copyText('${provider.provider.selectedAddress}')">${provider.provider.selectedAddress}</div>
+                <div class="wallet__label">Balance:</div>
+                <div class="wallet__attribute" id="balBox"></div>
+                <div class="wallet__attribute" id="bidList"></div>
+                <div class="wallet__label">Wallet ENS Name:</div>
+                <div class="wallet__attribute">None Claimed</div>
+                <div class="wallet__label">Network:</div>
+                <div class="wallet__attribute">${n}</div>
+                <div class="wallet__label">Provider:</div>
+                <div class="wallet__attribute">${provider.connection.url}</div>
+                <div class="wallet__label"></div>
+                <div id="qrcode"></div>
+        
             `;
         }catch(e){
             console.log(e);
@@ -1409,9 +1409,9 @@ var elements = {
             return r;
         }
         else{
-            return `
-                You have no collection:<br>
-                <div onclick="location.hash=''"><a style="color:var(--color4);">Start Collecting</a></div>
+            return /*html*/`
+                <span>You have no collection: <a href="#market" style="color:var(--color4);">Start Collecting</a></span>
+                
             `
         }
     },
@@ -1585,6 +1585,25 @@ var elements = {
             <div class="button" onclick="market.beginAuction()">Begin Auction</div>
             <div class="button" onclick="changePage()">Cancel</div>
         `
+    },
+    shareSheet:(link, el) => {
+
+        //add current url to value of hidden input field and copy it
+        let shareValue = document.getElementById('js-share')
+        shareValue.style.display = "inline-block"
+        shareValue.value = link;
+        
+        shareValue.select()
+        shareValue.setSelectionRange(0, 99999); /* For mobile devices */
+
+        document.execCommand("copy");
+
+        //show and hide tooltip that text was copied
+        let tooltip = el.getElementsByClassName("h-tooltip")[0]
+        tooltip.style.opacity = 0.95;
+        setTimeout( () => tooltip.style.opacity = 0, 3000 )
+
+   
     },
     homeButton:`
         <div class="button" onmousedown="location.hash=''">
