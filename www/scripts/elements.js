@@ -617,18 +617,9 @@ var elements = {
                     let iPrice=m.price||0;
                     let auctionDetails=``;
                     let editionHTML = ``;
-                    let tagsHTML = ``;
 
                     
-                    //check for tags
-                    if(m.tags){
-                        let tagList=m.tags.split(" ")
-                        console.log(tagList)
 
-                        for(t in tagList){
-                            tagsHTML+=`<a href="#market?tags=${tagList[t]}">#${tagList[t]}</a> `
-                        }
-                    }
                     //get description
                     let description=m.description||"";
                     console.log(await account.getData(57865929012439140487121611707503616067165767807057435719422353067939485468247) + ' hi')
@@ -758,25 +749,30 @@ var elements = {
                                     <div class="lotAsset__viewer">
                                         <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls  alt="GreenMask"></model-viewer>
                                         <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${hash}">Wear</a>
-                                        <a class="lotAsset__modelShare" style="font-size:30px" href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share
-                                            <input id="js-share" class="lotAsset__shareInput" aria-hidden="true"/>
-                                            <div class="h-tooltip">Link Copied!</div>
-                                        </a>
-                                        <div class="lotAsset__tags">
-                                            ${tagsHTML}
-                                        </div>
                                     </div>
                                 
                                     <div class="lotAsset__details">
-                                        <h2 class="lotAsset__name">${name}</h2>
+                                        <h2 class="lotAsset__name">
+                                            <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
+                                        </h2>
                                         ${editionHTML}
-                                        <div class="lotAsset__attribute">${owner}</div> 
+                                        <div class="lotAsset__attribute">Owner: ${owner}</div> 
                                         <div class="lotAsset__attribute">Created By: 
                                             <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
                                         </div>
                                         <div class="lotAsset__attribute">${m.description}</div>
-                                        <div class="lotAsset__attribute">
+                                        <div class="lotAsset__attribute">History:
                                             <a target="_blank" href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
+                                        </div>
+                                        <div class="lotAsset__shareWrapper">
+                                            <a href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share Link | 
+                                                <input id="js-share" class="lotAsset__shareInput" aria-hidden="true"/>
+                                                <div class="h-tooltip">Link Copied!</div>
+                                            </a>
+                                            <a class="twitter-share-button" target="_blank" href="https://twitter.com/intent/tweet?text=Checkout%20This%20NFT%20${encodeURIComponent(window.location.href)}">
+                                            tweet</a>
+
+
                                         </div>
                                     </div>
                                 </div>
