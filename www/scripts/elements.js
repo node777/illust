@@ -16,7 +16,6 @@ var elements = {
                     let m={};
                     let tagCloudArr = [];
 
-                    assets.tokens['testToken234234'] = testToken234234
 
                     // return list of all used tags 
                     // this should not be done client side
