@@ -101,7 +101,7 @@ var elements = {
                         let name;
                         let vars="";
                         let displayPrice = ""
-
+                        console.log([a])
                         if(m[a].ar_type){
                             if(m[a].ar_type.includes('Face')){
                                 marketFacePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭</a>`
@@ -624,7 +624,7 @@ var elements = {
                         editionHTML+=/*html*/`<div class="lotAsset__attribute">Edition: ${m.edition}</div>`
                     }
                     if(m["ar_type"] && m["ar_type"].includes("Face")){
-                        facePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭</a>                        `
+                        facePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a.slice(1)}">🎭</a>                        `
                     }
 
 
