@@ -687,8 +687,11 @@ a:active {
     height: 10px;
     margin-right: 5px;
 }
-a.share__twitter{
-    color: var(--color1);
+a.share__twitter{ 
+   color: var(--color1);
+}
+.share__facebookButton{
+    margin-bottom: -4px;
 }
 .collectionItem__modelViewerWrapper{
     position: relative;

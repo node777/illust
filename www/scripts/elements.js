@@ -762,6 +762,8 @@ var elements = {
                                             <span> | </span>
                                             <a class="share__twitter" target="_blank" href="https://twitter.com/intent/tweet?text=Checkout%20This%20NFT%20${encodeURIComponent(window.location.href)}">
                                             <img class="share__twitterIcon" src="/assets/icons/twitter.svg"/>Tweet</a>
+                                            <span> | </span>
+                                            <iframe class="share__facebookButton" src="https://www.facebook.com/plugins/share_button.php?href=${encodeURIComponent(window.location.href)}&layout=button_count&size=small&appId=794158374066212&width=96&height=20" width="96" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
 
 
                                         </div>
