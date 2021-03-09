@@ -447,6 +447,7 @@ a:active {
     flex-basis: 25%;
     flex-grow: 0;
     max-width: 100%;
+    margin-top: 55px;
 }
 .profileInfo__photo{
     display: block;
@@ -532,13 +533,13 @@ a:active {
 .profileAssets__collection{
     display: flex;
     flex-wrap: wrap;
-    padding: 5%;
+    padding: 0 5% 0 5%;
     justify-content: left;
     max-width: 100%;
 }
 .profileAssets__header{
     text-align: right;
-    margin-bottom: 30px;
+    margin-bottom: 0px;
 }
 .profileAssets__headerItem{
     text-transform: uppercase;

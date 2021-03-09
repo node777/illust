@@ -1140,7 +1140,7 @@ var elements = {
                     <div class="h-flex">
                         <div id="accountContent" class="accountContent__wrapper">
                             <h1 style="text-align:left">ACCOUNT INFO</h1>
-                            <div class="br" style="width:64px;float:left;margin:16px calc(98% - 64px) 32px 1%;"></div>
+                            <div class="br" style="width:64px;float:left;margin:0px calc(98% - 64px) 16px 0%;"></div>
                             <div id="js-accountWrapper" class="h-prel h-flex wrap h-100pw h-drel">
                                 <div id="js-profileInfo" class="profileInfo" >
                                     ${a}
@@ -1303,7 +1303,7 @@ var elements = {
             }
             let c=elements.collection();
             return /*html*/`
-                <div id="js-profileInfo" class="profileInfo" >
+                <div >
                     <img src="assets/icons/account.svg" class="profileInfo__photo" />
                     <div class="profileInfo__userName profileInfo__userName--edit">
                         <label>Profile:</label>
