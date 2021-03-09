@@ -628,6 +628,8 @@ a:active {
     text-align: left;
     padding: 30px;
     align-self: flex-end;
+    position: relative;
+
 }
 .lotAsset__viewer{
     flex-basis: 33%;
@@ -856,9 +858,7 @@ helper classes should e used sparingly
     padding: 5px;
     position: absolute;
     z-index: 1;
-    bottom: -40px;
-    left: 50%;
-    margin-left: -75px;
+    bottom: -15px;
     transition: opacity 0.3s;
     font-size: 16px;
     opacity: 0;
