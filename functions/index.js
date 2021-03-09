@@ -73,6 +73,22 @@ metadataAPI.post('/edit/:a/:s', async(req, res) => {
 });
 //userAPI
 var authTokens={}
+userAPI.get('/username/:u', (req, res) => {
+    
+    var ref = db.ref(`users/${req.params.u}`);
+            
+    ref.once("value", function(snapshot) {
+        let info=snapshot.val();
+        if(info==null){
+            res.send(false);
+        }else{
+            res.send(snapshot.val().username);
+        }
+    }, function (errorObject) {
+        console.log("The read failed: " + errorObject.code);
+        res.send(false);
+    });
+});
 userAPI.get('/:u', (req, res) => {
     authTokens[req.params.u] = ethers.BigNumber.from(ethers.utils.randomBytes(32))._hex;
     res.send(authTokens[req.params.u]);
@@ -97,7 +113,7 @@ userAPI.get('/:u/:sig', (req, res) => {
             }, function (errorObject) {
                 console.log("The read failed: " + errorObject.code);
             });
-        }else{ res.send("signature could not be verified")};
+        }else{ res.send(false)};
     }catch(e){
         console.log(e)
         res.send("Could not verify signature")
@@ -702,7 +718,10 @@ auctionAPI.post('/sell', async(req, res) => {
 
     if(messageSigner.toLowerCase()==assetOwner.toLowerCase()){
         var ref = db.ref(`assets/${m.message.asset}`);
-        
+        ref.once("value", (snapshot)=>{
+            let s=snapshot.val()
+            ref.child("currentAuction").set(s.currentAuction++||1)
+        });
         var updates = {};
         updates['/top_bidder'] = assetOwner;
         updates['/price'] = m.message["start_price"];
@@ -726,7 +745,6 @@ auctionAPI.post('/bid', async(req, res) => {
     
     
     var ref = db.ref(`assets/${m.message.asset}`);
-    
     ref.once("value", (snapshot)=>{
         let s=snapshot.val()
         console.log(s);
