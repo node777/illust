@@ -667,7 +667,7 @@ var elements = {
                                 <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
                                 <label class="auction__label">Place Bid</label>
                                 <span>ETH</span>
-                                <input id="js-bidAmount" style="margin:0;" type='number' step='0.2' value='${Number(m["price"])+0.2}'/>
+                                <input id="js-bidAmount" style="margin:0;" type='number' step='0.002' value='${Number(m["price"])+0.2}'/>
                                 <div class="button" onclick="market.bid()">Place Bid</div>
                                     
                                 <div id="userBid"></div>
@@ -1564,7 +1564,7 @@ var elements = {
                 <label class="auction__label">End Date</label>
                 <input class="auction__input" id="js-end_date" type="datetime-local" value="${date}"/>
                 <label class="auction__label">Reserve</label>
-                <input class="auction__input" id="js-start_price" type='number' step='0.200000000000000000' value='0.0000' /> 
+                <input class="auction__input" id="js-start_price" type='number' step='0.002' value='0.0000' /> 
                 <div class="button" onclick="market.beginAuction()">Begin Auction</div>
             </form>
             <a href="javascript(void)" onclick="changePage()">Cancel</a>
