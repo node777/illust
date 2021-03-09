@@ -670,19 +670,8 @@ var elements = {
                                 <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
                                 <label class="auction__label">Place Bid</label>
                                 <span>ETH</span>
-                                <input style="margin:0;" type='number' step='0.2' value='${Number(m["price"])+0.2}'/>
+                                <input id="js-bidAmount" style="margin:0;" type='number' step='0.2' value='${Number(m["price"])+0.2}'/>
                                 <div class="button" onclick="market.bid()">Place Bid</div>
-                                <div class="auction__history">
-                                    <div class="auction__bidder">10:33 @bobbyBoy bid 0.56 eth</div>
-                                    <div class="auction__bidder">10:30 @carguy34 bid 0.50 eth</div>
-                                    <div class="auction__bidder">09:44 @somenad44 bid 0.46 eth</div>
-                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                                    <div class="auction__overlay"></div>
-                                </div>
                                     
                                 <div id="userBid"></div>
                             `
@@ -1571,15 +1560,17 @@ var elements = {
     sellAsset(){
         let date=new Date(new Date().toString().split('GMT')[0]+' UTC').toISOString().split('.')[0]
         console.log(date)
-        return `
-            
-            <h2>Begin Auction</h2><br><br>
-            Starting Bid:
-            <div style="width:100%;margin:0 0 32px 0;"><input style="margin:0;" id="start_price" type='number' step='0.200000000000000000' value='0.000000000000000000' /> ETH</div>
-            Auction Close Time:
-            <input id="end_date" type="datetime-local" value="${date}"></input>
-            <div class="button" onclick="market.beginAuction()">Begin Auction</div>
-            <div class="button" onclick="changePage()">Cancel</div>
+        return /*html*/`
+            <h2>Create Auction</h2>
+            <form>
+                <label class="auction__label">End Date</label>
+                <input class="auction__input" id="js-end_date" type="datetime-local" value="${date}"/>
+                <label class="auction__label">Reserve</label>
+                <input class="auction__input" id="js-start_price" type='number' step='0.200000000000000000' value='0.0000' /> 
+                <div class="button" onclick="market.beginAuction()">Begin Auction</div>
+            </form>
+            <a href="javascript(void)" onclick="changePage()">Cancel</a>
+
         `
     },
     shareSheet:(link, el) => {

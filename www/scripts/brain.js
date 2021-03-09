@@ -952,8 +952,8 @@ var market={
         let r={
             message:{
                 asset:asset,
-                "end_date":document.getElementById("end_date").value,
-                "start_price":document.getElementById("start_price").value
+                "end_date":document.getElementById("js-end_date").value,
+                "start_price":document.getElementById("js-start_price").value
             }
         }
         r.sig = await account.sign(JSON.stringify(r.message))
@@ -974,7 +974,7 @@ var market={
         let r={
             message:{
                 asset:asset,
-                "amount":document.getElementById("bidAmount").value,
+                "amount":document.getElementById("js-bidAmount").value,
                 "timestamp":Date.now()
             }
         }
