@@ -97,15 +97,10 @@ var elements = {
                     let colItemEndDate
 
                     for(a in m){
-                        console.log(m[a])
                         let name;
                         let vars="";
-                        let endDatePretty = ""
                         let displayPrice = ""
-                        if (m[a].end_date) {
-                            endDatePretty = m[a].end_date.toLocaleString();
-                            console.log(endDatePretty)
-                        }
+
                         if(m[a].price){
                             displayPrice = parseFloat(m[a].price).toFixed(4) + ' ETH'
                         }
@@ -122,7 +117,7 @@ var elements = {
                                 //vars+=`${v}: ${m[a][v]}<br>`
                             }
                         }
-                        console.log(m[a].price)
+
                         r+=/*html*/`
                             <div class='market__collectionItem'>
                                 <div class="collectionItem__wrapper">
@@ -145,6 +140,7 @@ var elements = {
                             `
                         //r+=a
                     }
+
 
                     headerHTML+=/*html*/`
                         <div class="market__banner">
@@ -196,11 +192,12 @@ var elements = {
                         let owner=await assets.invokeERC("getOwner", a);
                         console.log(owner)
                         if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
-                            document.getElementById(`view_${a}`).innerHTML="Edit/Sell Asset"
+                            document.getElementById(`fview_${a}`).innerHTML="Edit/Sell Asset"
                         }
                         // document.getElementById(`owner_${a}`).innerHTML="Owner: "+owner;
                         //console.log(assetData[0])
                     }
+
                 }
             }
             request.open("GET", "https://us-central1-illust.cloudfunctions.net/metadata");
@@ -209,6 +206,7 @@ var elements = {
                 <div id="js-marketHeader"></div>
                 <div id="js-listings" class="market__collection">${elements.loading()}</div>
             `
+
         },
         editAssets:()=>{
             
@@ -631,7 +629,6 @@ var elements = {
 
                     //get description
                     let description=m.description||"";
-                    console.log(await account.getData(57865929012439140487121611707503616067165767807057435719422353067939485468247) + ' hi')
 
                     //get edition
                     if(m.edition){
@@ -686,44 +683,7 @@ var elements = {
                             `
                         }
                     }else{
-                        // // TEMP AUCTION INFO
-           
-                        // expected result
-                        // "This asset is not for sale"
 
-                   
-
-                        //Live Auction
-                        /*
-                        <div class="auction__label">Time Remaining</div>
-                        <div class="auction__attribute">00:34:00</div>
-                        <div class="auction__label" >Current Bid</div>
-                        <div class="auction__attribute">0.53 eth</div>
-                        <label class="auction__label">Place Bid</label>
-                        <input style="margin:0;" type='number' step='0.200000000000000000' value='0.0000' /> 
-                        <div class="button" onclick="market.bid()">Place Bid</div>
-                        <div class="auction__history">
-                            <div class="auction__bidder">10:33 @bobbyBoy bid 0.56 eth</div>
-                            <div class="auction__bidder">10:30 @carguy34 bid 0.50 eth</div>
-                            <div class="auction__bidder">09:44 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                            <div class="auction__overlay"></div>
-                        </div>
-                        //   Auction Creation
-                        <form>
-                            <label class="auction__label">Start Date</label>
-                            <input class="auction__input" id="js-start_date" type="datetime-local" value=""/>
-                            <label class="auction__label"><span class="h-form-error">*Date must be after today </span>End Date</label>
-                            <input class="auction__input" id="js-end_date" type="datetime-local" value=""/>
-                            <label class="auction__label">Reserve</label>
-                            <input class="auction__input" id="js-start_price" type='number' step='0.200000000000000000' value='0.0000' /> 
-                            <div class="button" onclick="market.beginAuction()">Begin Auction</div>
-                        </form>
-                        */
                         auctionDetails+="This asset is not for sale"
                     }
 

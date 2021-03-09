@@ -936,16 +936,14 @@ var market={
     countdown(){
         market.timeLeft=new Date(market.endTime).getTime()-Date.now()
         market.timer=setInterval(()=>{
-            
             if(document.getElementById("countdownBox")){
-                //console.log(market.timeLeft)
                 market.timeLeft=market.timeLeft-1000
                 //let timeRemaining=market.timeLeft
                 daysRemaining=Math.floor(market.timeLeft/86400000)
                 hoursRemaining=Math.floor(market.timeLeft%86400000/3600000)
                 minutesRemaining=Math.floor(market.timeLeft%3600000/60000)
                 secondsRemaining=Math.floor(market.timeLeft%60000/1000)
-                document.getElementById("countdownBox").innerHTML=`${daysRemaining} Days ${hoursRemaining}:${minutesRemaining}:${secondsRemaining}`
+                document.getElementById("countdownBox").innerHTML=`${daysRemaining} Days ${hoursRemaining.toString().padStart(2, '0')}:${minutesRemaining.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`
             }else{
                 clearInterval(market.timer)
             }
