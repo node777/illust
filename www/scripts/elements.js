@@ -119,7 +119,7 @@ var elements = {
 
                                     <div class="collectionItem__modelViewerWrapper">
                                         <model-viewer disable-zoom ar ios-src="assets/models/.usdz" src="${colItemModelUrl}" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
-                                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭 Try On</a>
+                                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭</a>
                                     </div>
                                     <div class="collectionItem__attributes" onclick="location.hash = 'asset?${a}'">
                                         <h3 class="collectionItem__title">${colItemName}</h3>

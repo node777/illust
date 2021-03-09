@@ -697,8 +697,17 @@ a:active {
 }
 .collectionItem__facePreview{
     position: absolute; 
-    bottom: 5px;
-    left: 5px;
+    width:40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color1);
+    bottom: 16px;
+    left: 16px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 16px;
+    box-shadow: 0px 0px 4px rgb(0 0 0 / 15%);
+
 }
 .collectionItem__attributes{
     display: flex;
@@ -728,8 +737,6 @@ a:active {
     display: flex;
     flex-wrap: wrap;
     justify-content: left;
-    margin-right: calc(-5% + 16px);
-    margin-left: calc(-5% + 16px);
     width: 100%;
 }
 .market__collectionItem{
@@ -1011,6 +1018,9 @@ helper classes should e used sparingly
     }
     .subhead__navItem:first-of-type{
         padding-left: 0px;
+    }
+    .subhead__navItem{
+        padding-left: 15px;
     }
     .subHead__tagCloud{
         text-align: left;
