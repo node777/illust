@@ -603,10 +603,14 @@ a:active {
     display: flex;
     flex-basis: 100%;
     text-align: center;
+    width: 100%;
 }
 .lotAsset__name{
     position: relative;
     padding-bottom: 8px;
+}
+.lotAsset__name a{
+    color: var(--color1);
 }
 .lotAsset__name:before{
     content: "";
