@@ -751,12 +751,13 @@ var elements = {
                                             <a target="_blank" href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
                                         </div>
                                         <div class="lotAsset__shareWrapper">
-                                            <a href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share Link | 
+                                            <a href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share Link 
                                                 <input id="js-share" class="lotAsset__shareInput" aria-hidden="true"/>
                                                 <div class="h-tooltip">Link Copied!</div>
                                             </a>
-                                            <a class="twitter-share-button" target="_blank" href="https://twitter.com/intent/tweet?text=Checkout%20This%20NFT%20${encodeURIComponent(window.location.href)}">
-                                            tweet</a>
+                                            <span> | </span>
+                                            <a class="share__twitter" target="_blank" href="https://twitter.com/intent/tweet?text=Checkout%20This%20NFT%20${encodeURIComponent(window.location.href)}">
+                                            <img class="share__twitterIcon" src="/assets/icons/twitter.svg"/>Tweet</a>
 
 
                                         </div>
