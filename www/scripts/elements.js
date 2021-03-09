@@ -734,7 +734,7 @@ var elements = {
                                 <div class="lotAsset__content">
                                     <div class="lotAsset__viewer">
                                         <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls  alt="GreenMask"></model-viewer>
-                                        <a class="lotAsset__modelShare" style="font-size:30px" href="https://app.illust.space/ar/faces.html#${hash}">Wear</a>
+                                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭</a>
                                     </div>
                                 
                                     <div class="lotAsset__details">
