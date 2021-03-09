@@ -490,12 +490,13 @@ a:active {
 }
 
 .profileInfo__userAttribute{
-    display: flex;
     margin-bottom: 30px;
 }
 .profileInfo__userAttribute > span{
-    margin-left: 5px;
     cursor:pointer;
+}
+.profileInfo__userAttribute > strong{
+    display: block;
 }
 .profileInfo__userAttribute > span:hover:after{
     content: "✎"
@@ -504,12 +505,13 @@ a:active {
     color: var(--color4);
 }
 .profileInfo__userAttribute > input{
-    flex-grow: 2;
-    margin: 0px 0px -2px 5px;
+    width: 100%;
+    margin: 0px 0px -2px 0px;
 }
 .profileInfo__userAttribute > label{
     font-weight: bold;
     white-space: nowrap;
+    display: block;
 }
 
 .profileInfo__logout{
@@ -525,6 +527,7 @@ a:active {
     flex-grow: 1;
     position: relative;
     max-width: 100%;
+    flex-basis: 75%;
 }
 .profileAssets__collection{
     display: flex;
