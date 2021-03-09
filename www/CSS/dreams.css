@@ -778,6 +778,7 @@ a:active {
     display: inline-block;
     padding-left: 30px;
     font-size: 18px;
+    color: var(--color4);
 }
 .subhead__navItem--active > a{
     color: var(--color1)
@@ -790,6 +791,16 @@ a:active {
     list-style: none;
     display: inline-block;
     margin-left: 15px;
+}
+.subhead__tagSelect{
+    background: transparent;
+    color: var(--color4);
+    text-transform: uppercase;
+    font-family: 'Poppins' sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    border: none;
+    width: 75px;
 }
 .auction__input{
     margin: 0;

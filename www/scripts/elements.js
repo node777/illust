@@ -25,13 +25,11 @@ var elements = {
                             for(tags in eachTag){
                                 if (!tagCloudArr.includes(eachTag[tags])){
                                     tagCloudArr.push(eachTag[tags])
-                                    tagCloudHTML +=/*html*/`<li class="subHead__tagItem"><a href="#market?tags=${eachTag[tags]}">#${eachTag[tags]}</a></li>`
+                                    tagCloudHTML +=/*html*/`<option value="${eachTag[tags]}">${eachTag[tags]}</option>`
                                 }
                             }
                         }
                     }
-                    console.log(tagCloudArr)
-                    // console.log(testToken234234)
                     //check tag search parameter
                     if(p[1]){
 
@@ -130,13 +128,16 @@ var elements = {
                             ${marketHeaderFilter}
                             <nav>
                                 <ul class="subhead__nav" >
-                                    <li class="subhead__navItem subhead__navItem--active"><a href="">Live</a></li>
+                                    <li class="subhead__navItem"><a href="#market">Live</a></li>
                                     <li class="subhead__navItem"><a href="">Price</a></li>
                                     <li class="subhead__navItem"><a href="#market?featured">Featured</a></li>
-                                </ul>
-                                <ul class="subhead__tagCloud">
+                                    <li class="subhead__navItem">
+                                    <select class="subhead__tagSelect" onChange="elements.updateTagUrl(this)" name="tag filter">
+                                        <option disabled selected value>Tags</option>
                                     ${tagCloudHTML}
+                                    </select></li>
                                 </ul>
+                        
                                 
                             </nav>
                         </div>
@@ -1557,6 +1558,11 @@ var elements = {
             <a href="javascript(void)" onclick="changePage()">Cancel</a>
 
         `
+    },
+    updateTagUrl:(tagQuery) => {
+        let newUrl = '#market?tags=' + tagQuery.value
+        console.log(tagQuery)
+        window.location.hash = newUrl;
     },
     shareSheet:(link, el) => {
 
