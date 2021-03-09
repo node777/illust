@@ -231,7 +231,7 @@ var account={
         let m=await elements.editProfile();
         document.getElementById('js-profileInfo').innerHTML=m;
     },
-    selectHeader:(r)=>{
+    selectProfileHeader:(r)=>{
         try{
             let headerItemArray = Array.from(document.getElementsByClassName('js-profileHeaderItem'));
             headerItemArray.forEach(element => {

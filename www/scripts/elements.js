@@ -68,9 +68,18 @@ var elements = {
                                 //check if asset is featured 
                                 if(assets.tokens[a].featured){
                                     m[a]=assets.tokens[a];
+                                    marketHeaderFilter = /*html*/`<div class="market__filterHeading">: featured</div>`
                                 }
                             }
-                        } else {
+                        } else if (p1[0]=="live"){
+                            for(a in assets.tokens){
+                                //check if asset is featured 
+                                if(assets.tokens[a].currentAuction){
+                                    m[a]=assets.tokens[a];
+                                    marketHeaderFilter = /*html*/`<div class="market__filterHeading">: live</div>`
+                                }
+                            }
+                        }else {
                             marketHeaderFilter = /*html*/`<img class="market__bannerImage" src="https://app.illust.space/images/doom4.png"/>`
                             m=assets.tokens
                         }
@@ -142,9 +151,8 @@ var elements = {
                             <h1 class="market__heading">Market</h1>
                             ${marketHeaderFilter}
                             <nav>
-                                <ul class="subhead__nav" >
-                                    <li class="subhead__navItem"><a href="#market">Live</a></li>
-                                    <li class="subhead__navItem"><a href="">Price</a></li>
+                                <ul id="js-subhead-nav" class="subhead__nav" >
+                                    <li class="subhead__navItem"><a href="#market?live">Live</a></li>
                                     <li class="subhead__navItem"><a href="#market?featured">Featured</a></li>
                                     <li class="subhead__navItem">
                                     <select class="subhead__tagSelect" onChange="elements.updateTagUrl(this)" name="tag filter">
@@ -1256,8 +1264,8 @@ var elements = {
         return /*html*/`
             <div>
                 <div class="profileAssets__header">
-                    <div id="cl" class="js-profileHeaderItem profileAssets__headerItem profileAssets__headerItem--current" onclick="account.selectHeader(this);document.getElementById('js-profileContents').innerHTML=elements.collection()">Collection<br><br></div>
-                    <div id="vw" class="js-profileHeaderItem profileAssets__headerItem"  onclick="account.selectHeader(this);account.wallet();">view Wallet<br><br></div>
+                    <div id="cl" class="js-profileHeaderItem profileAssets__headerItem profileAssets__headerItem--current" onclick="account.selectProfileHeader(this);document.getElementById('js-profileContents').innerHTML=elements.collection()">Collection<br><br></div>
+                    <div id="vw" class="js-profileHeaderItem profileAssets__headerItem"  onclick="account.selectProfileHeader(this);account.wallet();">view Wallet<br><br></div>
                     <div  class="js-profileHeaderItem profileAssets__headerItem"  onclick="location.hash = '#market'">Auctions<br><br></div>
 
                 </div>
