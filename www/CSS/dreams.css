@@ -705,11 +705,14 @@ a:active {
     justify-content: space-between;
     flex-wrap: wrap;
     align-items: center;
+    cursor: pointer;
+}
+.collectionItem__attributes:hover{
+    color: var(--color4);
 }
 
 .collectionItem__wrapper{
     margin: 10% 10% 20% 10%;
-
 }
 .collectionItem__artist{
     flex-basis: 100%;
@@ -718,7 +721,9 @@ a:active {
     cursor: pointer;
     text-transform: uppercase;
 }
-
+.collectionItem__price{
+    flex-basis: 100%;
+}
 .market__collection{
     display: flex;
     flex-wrap: wrap;

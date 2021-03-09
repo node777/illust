@@ -85,11 +85,17 @@ var elements = {
                     let colItemName
                     let colItemDesc
                     let colItemCreator
+                    let colItemEndDate
 
                     for(a in m){
-                        console.log(a, m[a])
+                        console.log(m[a])
                         let name;
                         let vars="";
+                        let endDatePretty = ""
+                        if (m[a].end_date) {
+                            endDatePretty = m[a].end_date.toLocaleString();
+                            console.log(endDatePretty)
+                        }
                         for(v in m[a]){
                             if(v=="animation_url"){
                                 colItemModelUrl = m[a][v]
@@ -103,19 +109,24 @@ var elements = {
                                 //vars+=`${v}: ${m[a][v]}<br>`
                             }
                         }
+                        console.log(m[a].price)
                         r+=/*html*/`
                             <div class='market__collectionItem'>
                                 <div class="collectionItem__wrapper">
+                                    <h3 class="collectionItem__artist">
+                                        ${colItemCreator || 'Illust'}
+                                    </h3>
+
                                     <div class="collectionItem__modelViewerWrapper">
                                         <model-viewer disable-zoom ar ios-src="assets/models/.usdz" src="${colItemModelUrl}" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
                                         <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭 Try On</a>
                                     </div>
-                                    <div class="collectionItem__attributes">
+                                    <div class="collectionItem__attributes" onclick="location.hash = 'asset?${a}'">
                                         <h3 class="collectionItem__title">${colItemName}</h3>
-                                        <a id="view_${a}" class="collectionItem__link" onclick="location.hash = 'asset?${a}'">MORE</a>
-                                        <a class="collectionItem__artist" href="#market?creator=${colItemCreator || 'Illust'}">${colItemCreator || 'Illust'}</a>
-                                        
-                                    </div>             
+                                        <div class="collectionItem__link" id="view_${a}">MORE</div>
+                                        <div class="collectionItem__price">${m[a].price + ' ETH' || "not for sale"}</div>
+                                    </div>
+             
                                 </div>
                             </div>
                             `
