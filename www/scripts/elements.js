@@ -16,20 +16,6 @@ var elements = {
                     let m={};
                     let tagCloudArr = [];
 
-                    //TEMP TEST TOKEN WITH FEAUTRE AND PRICE
-                    let testToken234234  = {
-                        animation_url: "https://srv-store3.gofile.io/download/clo3Sb/AinSoph.glb",
-                        ar_type: "wearable",
-                        description: "He knows if you've been bad or good, so be good for goodness sake.",
-                        edition: "1",
-                        end_date: "2021-02-12T18:06:22",
-                        name: "I am a test object",
-                        price: "1.0",
-                        featured: true,
-                        start_price: "1.100000000000000000",
-                        tags: "i am a test",
-                        top_bidder: "0x9CBD55532935ff709B17039C369D5C03d41F2dC4"
-                    };
                     assets.tokens['testToken234234'] = testToken234234
 
                     // return list of all used tags 
