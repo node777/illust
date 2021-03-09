@@ -8,8 +8,8 @@
 	--color1: #ffffff;
 	--color2: #181818;
 	--color3: #242424;
-	--color4: #85782e;
-    --color5: #859142;
+	--color4: #a47a44;
+    --color5: #cfab72;
     --color6: #ff0033;
   }
 body {
@@ -365,6 +365,8 @@ select{
     text-align: center;
     padding: 16px;
     margin: 50px auto;
+    text-transform: uppercase;
+    font-weight: 700;
 }
 #lot .button{
     color: var(--color2);
@@ -373,6 +375,7 @@ select{
 }
 .button:hover{
     color: var(--color4);
+    border: 2px solid var(--color4)
 }
 a:link {
     color: var(--color4);
@@ -387,7 +390,7 @@ a:visited {
     color: var(--color4);
 }
 a:hover {
-    color: var(--color4);
+    color: var(--color5);
 }
 a:active {
 	color: var(--color5);
@@ -805,6 +808,7 @@ a.share__twitter{
     padding-left: 30px;
     font-size: 18px;
     color: var(--color4);
+    cursor: pointer;
 }
 .subhead__navItem--active > a{
     color: var(--color1)
@@ -827,6 +831,7 @@ a.share__twitter{
     font-size: 18px;
     border: none;
     width: 75px;
+    cursor: pointer;
 }
 .auction__input{
     margin: 0;
