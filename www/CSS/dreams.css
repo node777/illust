@@ -571,12 +571,12 @@ a:active {
     margin-top: 20px;
     display: block;
     width: 100%;
-    text-align: center;
+    text-align: left;
 }
 .wallet__attribute{
     display: block;
     width: 100%;
-    text-align: center;
+    text-align: left;
 }
 /* lotAssets */
 .lotAsset__title{

@@ -1379,16 +1379,16 @@ var elements = {
             let r=/*html*/`<div class='profileAssets__collectionItem'>`
             
             for(i in account.info.collection){
+                console.log(account.info.collection[i])
                 r+=/*html*/`
                     <div class="collectionItem__wrapper">
                         <div class="collectionItem__modelViewerWrapper">
                             <model-viewer ar ios-src="assets/models/${i}.usdz" src="assets/models/${i}.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
-                            <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${i}">🎭 Try On</a>
+                            <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${i}">🎭</a>
                         </div>
                         <div class="collectionItem__attributes">
                             <h3 class="collectionItem__title">${account.info.collection[i]}</h3>
                             <a class="collectionItem__link" onclick="location.hash = 'asset?${i}'">more</a>
-                            <a class="collectionItem__artist" href="">Artist Name</a>
                         </div>
                         
                     </div>`
