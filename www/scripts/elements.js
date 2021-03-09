@@ -92,9 +92,13 @@ var elements = {
                         let name;
                         let vars="";
                         let endDatePretty = ""
+                        let displayPrice = ""
                         if (m[a].end_date) {
                             endDatePretty = m[a].end_date.toLocaleString();
                             console.log(endDatePretty)
+                        }
+                        if(m[a].price){
+                            displayPrice = parseFloat(m[a].price).toFixed(4) + ' ETH'
                         }
                         for(v in m[a]){
                             if(v=="animation_url"){
@@ -124,7 +128,7 @@ var elements = {
                                     <div class="collectionItem__attributes" onclick="location.hash = 'asset?${a}'">
                                         <h3 class="collectionItem__title">${colItemName}</h3>
                                         <div class="collectionItem__link" id="view_${a}">MORE</div>
-                                        <div class="collectionItem__price">${m[a].price + ' ETH' || "not for sale"}</div>
+                                        <div class="collectionItem__price">${displayPrice || "not for sale"}</div>
                                     </div>
              
                                 </div>
