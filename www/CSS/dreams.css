@@ -530,7 +530,7 @@ a:active {
     display: flex;
     flex-wrap: wrap;
     padding: 5%;
-    justify-content: center;
+    justify-content: left;
     max-width: 100%;
 }
 .profileAssets__header{
@@ -722,9 +722,10 @@ a:active {
 .market__collection{
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: left;
     margin-right: calc(-5% + 16px);
     margin-left: calc(-5% + 16px);
+    width: 100%;
 }
 .market__collectionItem{
     flex-basis: 33%;
