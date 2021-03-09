@@ -1021,8 +1021,9 @@ var elements = {
     createAccount:()=>{
         try{
             return /*html*/`
-                <div class="popup">
-                    Welcome to Illust Space:<br>
+                <div class="popup accountCreate__popup">
+                    <h2 class="accountCreate__heading">Welcome to Illust Space:</h2 class="accountCrate__heading">
+                    <br>
                     Please choose a name to get started<br><br>
                     <label class="accountCreate__label" for="usernamei">Username*</label>
                     <input  class="accountCreate__input" name="username" id="usernamei"></input>
@@ -1041,7 +1042,7 @@ var elements = {
                     <input class="accountCreate__input" type="checkbox" id="verifyTOS" style="width:min-content;margin:8px"/ > *I agree to the <a href="https://illust.space/terms-of-service">Terms of Service</a>, the <a href="https://illust.space/privacy-policy">Privacy Policy</a>, and the <a href="https://illust.space/user-agreement">User Agreement</a> <br>
                     <input class="accountCreate__input" type="checkbox" id="verifyCom" style="width:min-content;margin:8px"/ > Yes, I would like to receive email communications from Illust.Space</a> 
                     <br>Email will be used to notify auction winners.
-                    <div  class="button" onclick="account.create()">Create Account</div>
+                    <div class="accountCreate__button button" onclick="account.create()">Create Account</div>
                     <br>*Required Fields
                     <br>
                     <a href="javascript:void(0)" onclick="account.logout()">Connect through different method</a>

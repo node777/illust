@@ -250,7 +250,12 @@ var account={
     },
     create:async (a)=>{
         if(a==1|| 
-            (document.getElementById("verifyTOS") &&  document.getElementById("verifyTOS").checked==true)){
+            (document.getElementById("verifyTOS") && 
+            document.getElementById("verifyTOS").checked==true &&
+            document.getElementById("usernamei").value &&
+            document.getElementById("firstname").value &&
+            document.getElementById("lastname").value &&
+            document.getElementById("emaili").value)){
 
                 //            !document.getElementById("usernamei").value ||
            // !document.getElementById("firstname").value ||
@@ -288,7 +293,7 @@ var account={
             
         }else{
             console.log(document.getElementById("verifyTOS").value);
-            alert("Please agree to the Terms of Service");
+            alert("Please complete the required fields*");
         }
     }, 
     async connectProvider(){

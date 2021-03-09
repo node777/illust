@@ -872,6 +872,13 @@ input.accountCreate__input,  textarea.accountCreate__input {
     font-weight: bold;
     font-size: 14px;
 }
+.accountCreate__heading{
+    margin-bottom: -4px;
+    font-size: 22px;;
+}
+div.accountCreate__button, .button{
+    width: calc(100% - 36px);
+}
 /* "h-*" classes are helper classes that have very few styles that can be used across components.
 helper classes should e used sparingly 
 */
@@ -929,9 +936,12 @@ helper classes should e used sparingly
     .loginOption__image{
         height: 100px;
     }
+    .popup{
+        padding: 5%;
+    }
     .popup input, .popup textarea{
-        width: 80%;
-        margin: 3% 10%;
+        width: 100%;
+        margin: 3% 0%;
     }
     .wrap{
         flex-wrap:wrap;
