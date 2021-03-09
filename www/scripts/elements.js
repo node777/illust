@@ -95,11 +95,20 @@ var elements = {
                     let colItemDesc
                     let colItemCreator
                     let colItemEndDate
+                    let marketFacePreviewHTML = ``
 
                     for(a in m){
                         let name;
                         let vars="";
                         let displayPrice = ""
+
+                        if(m[a].ar_type){
+                            if(m[a].ar_type.includes('Face')){
+                                marketFacePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭</a>`
+                            } else {
+                                marketFacePreviewHTML = ``
+                            }
+                        }
 
                         if(m[a].price){
                             displayPrice = parseFloat(m[a].price).toFixed(4) + ' ETH'
@@ -127,7 +136,7 @@ var elements = {
 
                                     <div class="collectionItem__modelViewerWrapper">
                                         <model-viewer disable-zoom ar ios-src="assets/models/.usdz" src="${colItemModelUrl}" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
-                                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭</a>
+                                        ${marketFacePreviewHTML}
                                     </div>
                                     <div class="collectionItem__attributes" onclick="location.hash = 'asset?${a}'">
                                         <h3 class="collectionItem__title">${colItemName}</h3>
@@ -162,27 +171,6 @@ var elements = {
                         </div>
                   
                     `
-                              
-                        // <div id="searchOptions" class="flex">
-                        //     <div style="font-size:22px">
-                        //         Sort by:
-                        //         <select style="font-size:22px" name="sortBy" id="sortBy">
-                                    
-                        //             <option default value="">Default</option>
-                        //             <option value="">Price</option>
-                        //             <option value="">Name</option>
-                        //             <option value="">Latest</option>
-                        //         </select>
-                        //         <br>
-                        //         Ar Type
-                        //         <select style="font-size:22px" name="arType" id="arType">
-                        //             <option value="any">Any</option>
-                        //             <option value="wearable">Wearable</option>
-                        //             <option value="environmental">Wearable</option>
-                        //             <option value="sculpture">Sculpture</option>
-                        //         </select>
-                        //     </div>
-                        // </div>
 
                     document.getElementById("js-listings").innerHTML=r;
                     document.getElementById("js-marketHeader").innerHTML=headerHTML;
@@ -624,6 +612,7 @@ var elements = {
                     let iPrice=m.price||0;
                     let auctionDetails=``;
                     let editionHTML = ``;
+                    let facePreviewHTML = ``;
 
                     
 
@@ -634,8 +623,8 @@ var elements = {
                     if(m.edition){
                         editionHTML+=/*html*/`<div class="lotAsset__attribute">Edition: ${m.edition}</div>`
                     }
-                    if(m["ar_type"]){
-                        description+=`<br><br><b>AR Type: ${m["ar_type"]}</b>`
+                    if(m["ar_type"] && m["ar_type"].includes("Face")){
+                        facePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭</a>                        `
                     }
 
 
@@ -706,7 +695,7 @@ var elements = {
                                 <div class="lotAsset__content">
                                     <div class="lotAsset__viewer">
                                         <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls  alt="GreenMask"></model-viewer>
-                                        <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭</a>
+                                        ${facePreviewHTML}    
                                     </div>
                                 
                                     <div class="lotAsset__details">
