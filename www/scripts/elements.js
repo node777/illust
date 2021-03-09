@@ -506,7 +506,7 @@ var elements = {
                         <model-viewer ar ios-src="assets/models/15656630424036753581450935940596632215884383929372546170587529153151943392229.usdz" src="assets/models/15656630424036753581450935940596632215884383929372546170587529153151943392229.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
 
                         Winner: metalfingers
-                        <div class="button w5" onclick="location.hash='asset2?15656630424036753581450935940596632215884383929372546170587529153151943392229'">View Collection</div>
+                        <div class="button w5" onclick="location.hash='asset?15656630424036753581450935940596632215884383929372546170587529153151943392229'">View Collection</div>
                         
                     </div>
                     <div>
@@ -516,7 +516,7 @@ var elements = {
                         <model-viewer ar ios-src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.usdz" src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
 
                         Winner: Betosk8s
-                        <div class="button w5" onclick="location.hash='asset2?70937556211959927769088791688503419832872233678974511813637293239899188185264'">View Collection</div>
+                        <div class="button w5" onclick="location.hash='asset?70937556211959927769088791688503419832872233678974511813637293239899188185264'">View Collection</div>
                         
                     </div>
                     <div>
@@ -526,7 +526,7 @@ var elements = {
                         <model-viewer ar ios-src="assets/models/8456350751317975846800924683986100177337207567287562046240586730923411985742.usdz" src="assets/models/8456350751317975846800924683986100177337207567287562046240586730923411985742.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
 
                         Winner: kingvanilli
-                        <div class="button w5" onclick="location.hash='asset2?8456350751317975846800924683986100177337207567287562046240586730923411985742'">View Collection</div>
+                        <div class="button w5" onclick="location.hash='asset?8456350751317975846800924683986100177337207567287562046240586730923411985742'">View Collection</div>
                         
                     </div>
                 </div>
@@ -631,7 +631,7 @@ var elements = {
                     }
                     //get description
                     let description=m.description||"";
-                    console.log(await account.getData(57865929012439140487121611707503616067165767807057435719422353067939485468247) + ' hi')
+                    //console.log(await account.getData(57865929012439140487121611707503616067165767807057435719422353067939485468247) + ' hi')
 
                     //get edition
                     if(m.edition){
@@ -645,12 +645,25 @@ var elements = {
                     let owner
                     try{
                         owner = await assets.invokeERC("getOwner", hash)
+                        console.log(owner)
+                        try{
+                            var userRequest = new XMLHttpRequest(); 
+                            userRequest.onreadystatechange = async function() {
+                                if (userRequest.readyState === 4) {
+                                    let m=userRequest.response;
+                                    console.log(m);
+                                    document.getElementById("ownerBox").innerHTML=m?`Owner: ${m}`:""
+                                }
+                            }
+                            userRequest.open("GET", `https://us-central1-illust.cloudfunctions.net/users/username/${owner}`);
+                            userRequest.send();
+                        }catch(e){console.log(e)}
                     } catch {
-                        owner = "owner not found"
+                        owner = ""
                     }
 
                     //<a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
-                    console.log('owner after' + owner)
+                    //console.log('owner after' + owner)
                     
                     //let auction=JSON.parse(await illustMarket("r", n[1]));
 
@@ -661,26 +674,23 @@ var elements = {
                         let timeNow=new Date(Date.now());
                         let endTimePretty = endTime.toLocaleString(); 
 
-                        console.log(endTime.getTime(),timeNow.getTime())
-                        auctionDetails+=/*html*/`
-                            <div class="auction__label">This auction has ended</div>
-                            <div class="auction__attribute">${endTimePretty}</div>
-                            <div class="auction__label" >Top Bidder</div>
-                            <div class="auction__attribute">${m["top_bidder"]}</div>
-                            <label class="auction__label">Closing Price</label>
-                            <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
-                        `
+                        //console.log(endTime.getTime(),timeNow.getTime())
                         market.endTime=m["end_date"];
                         if(endTime.getTime()>timeNow.getTime()){
+                            //console.log((owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()))
                             auctionDetails=/*html*/`
                                 <div class="auction__label">Time Remaining</div>
                                 <div class="auction__attribute" id="countdownBox"></div>
                                 <div class="auction__label" >Current Bid</div>
                                 <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
-                                <label class="auction__label">Place Bid</label>
-                                <span>ETH</span>
-                                <input style="margin:0;" type='number' step='0.2' value='${Number(m["price"])+0.2}'/>
-                                <div class="button" onclick="market.bid()">Place Bid</div>
+                                ${
+                                    //check userr is not owner
+                                    (owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase())?"":`
+                                        <label class="auction__label">Place Bid</label>
+                                        <span>ETH</span>
+                                        <input id="bidAmount" style="margin:0;" type='number' step='0.2' value='${Number(m["price"])+0.2}'/>
+                                        <div class="button" onclick="market.bid()">Place Bid</div>
+                                `}
                                 <div class="auction__history">
                                     <div class="auction__bidder">10:33 @bobbyBoy bid 0.56 eth</div>
                                     <div class="auction__bidder">10:30 @carguy34 bid 0.50 eth</div>
@@ -694,6 +704,15 @@ var elements = {
                                 </div>
                                     
                                 <div id="userBid"></div>
+                            `
+                        }else{
+                            auctionDetails+=/*html*/`
+                                <div class="auction__label">This auction has ended</div>
+                                <div class="auction__attribute">${endTimePretty}</div>
+                                <div class="auction__label" >Top Bidder</div>
+                                <div class="auction__attribute">${m["top_bidder"]}</div>
+                                <label class="auction__label">Closing Price</label>
+                                <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
                             `
                         }
                     }else{
@@ -770,7 +789,7 @@ var elements = {
                                     <div class="lotAsset__details">
                                         <h2 class="lotAsset__name">${name}</h2>
                                         ${editionHTML}
-                                        <div class="lotAsset__attribute">${owner}</div> 
+                                        <div id="ownerBox" class="lotAsset__attribute">${owner?"Owner: "+owner:""}</div> 
                                         <div class="lotAsset__attribute">Created By: 
                                             <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
                                         </div>
@@ -815,7 +834,7 @@ var elements = {
                     `;
                     
                     let owner=await assets.invokeERC("getOwner", hash);
-                    assetDetails+=`Owner: ${owner}<br><br>`;
+                    assetDetails+=`${owner?"Owner: "+owner:""}<br><br>`;
                     //<a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
                     
                     
@@ -974,17 +993,33 @@ var elements = {
         gallery:(p)=>{
             console.log(p);
             try{
+                    
+                var request4 = new XMLHttpRequest(); 
+                request4.onreadystatechange = function() {
+                    if (request4.readyState === 4) {
+                        if(!request4.response){
+                            return `Asset could not be found <div class='button' onclick='location.hash=""'>Home</div>`
+                        }
+                        let m=JSON.parse(request4.response);
+        
+                        console.log(m);
+                        
+                        let url=m["animation_url"];
+                        let usdz=m["usdz"];
+                        document.getElementById("gallery").innerHTML= /*html*/`
+                            <model-viewer ar ios-src="${usdz}" src="${url}" onError="this.onerror=null;this.src='${url}';" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
+                        `
+                    }
+                }
+                request4.open("GET", `https://us-central1-illust.cloudfunctions.net/metadata/${p[1]}`);
+                request4.send()
+                return ''
                 
-                return `
-                    
-                <model-viewer ar ios-src="assets/models/${p[1]}.usdz" src="assets/models/${p[1]}.gltf" onError="this.onerror=null;this.src='assets/models/${p[1]}.glb';" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
-
-                `
             }catch(e){
+                console.log(e);
                 return `
                     
-                <model-viewer ar ios-src="assets/models/${p[1]}.usdz" src="assets/models/${p[1]}.glb" onError="this.onerror=null;this.src='assets/models/${p[1]}.gltf';" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
-
+                <div id="gal"></div>
                 `
 
             }

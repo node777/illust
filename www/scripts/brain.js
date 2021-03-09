@@ -53,7 +53,13 @@ var account={
         //     console.log("already logged in")
         // }
         
-        await account.load();
+        try{
+            await account.load();
+        }catch(e){
+            console.log(e);
+            account.logout();
+        }
+        //if user has signed msg
         if(localStorage.userInfo){
             try{
                 let d=JSON.parse(localStorage.userInfo);
@@ -77,9 +83,11 @@ var account={
                 account.loggedIn=1;
                 //console.log(document.getElementById("content").innerHTML)
             }catch(e){
-                console.log(e);
+                console.trace(e);
+                alert(e);
                 account.logout();
             }
+        //if user has not signed msg yet
         }else{
             var request = new XMLHttpRequest(); 
             request.onreadystatechange = async function() {
@@ -99,10 +107,11 @@ var account={
                                     console.log(request.response)
                                     document.getElementById("content").innerHTML=elements.createAccount();
 
-                                }else if(loginRequest.response!=""&&loginRequest.response!="Could not verify signature"){
+                                }else if(loginRequest.response!=""&&loginRequest.response!="Could not verify signature"&&loginRequest.response!=false&&loginRequest.response!="false"){
+                                    console.log(loginRequest.response)
                                     localStorage.userInfo=loginRequest.response;
                                     account.login();
-                                }else{console.log(request.response)}
+                                }else{console.log(loginRequest.response)}
                             }catch(e){
                                 console.log(loginRequest.response, e)
                                 
@@ -110,11 +119,11 @@ var account={
                             }
                         }
                     }
-                    loginRequest.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}/${sig}`);
+                    loginRequest.open("GET", `http://localhost:5001/illust/us-central1/users/${provider.provider.selectedAddress}/${sig}`);
                     loginRequest.send();
                 }
             }
-            request.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}`);
+            request.open("GET", `http://localhost:5001/illust/us-central1/users/${provider.provider.selectedAddress}`);
             request.send();
             
         }
@@ -131,7 +140,7 @@ var account={
                 document.getElementById("content").innerHTML=elements.loading();
             }else if(localStorage.provider=="torus"){
                 
-                document.getElementById("content").innerHTML=elements.loading();
+                document.getElementById("content").innerHTML=`You will need to sign a message to login. Look for popup. <br>${elements.loading()}<div class="button" onclick="account.logout()">Cancel</div>`;
                 console.log();
                 torus = new Torus();
                 await torus.init();
@@ -930,6 +939,8 @@ var assets={
 var market={
     countdown(){
         market.timeLeft=new Date(market.endTime).getTime()-Date.now()
+        
+        clearInterval(market.timer)
         market.timer=setInterval(()=>{
             
             if(document.getElementById("countdownBox")){
@@ -940,7 +951,8 @@ var market={
                 hoursRemaining=Math.floor(market.timeLeft%86400000/3600000)
                 minutesRemaining=Math.floor(market.timeLeft%3600000/60000)
                 secondsRemaining=Math.floor(market.timeLeft%60000/1000)
-                document.getElementById("countdownBox").innerHTML=`${daysRemaining} Days ${hoursRemaining}:${minutesRemaining}:${secondsRemaining}`
+                console.log(daysRemaining);
+                document.getElementById("countdownBox").innerHTML=`${(daysRemaining==0)?"":`${daysRemaining} Days`} ${hoursRemaining}:${minutesRemaining}:${secondsRemaining}`
             }else{
                 clearInterval(market.timer)
             }

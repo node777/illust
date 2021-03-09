@@ -266,6 +266,9 @@ h2{
     z-index: 20;
 
 }
+#gallery #beebeeate-widget{
+    display: none;
+}
 .popup{
     padding: 5% 35% 5% 35%;
     font-size: 16px;
