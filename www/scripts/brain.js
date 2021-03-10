@@ -99,7 +99,7 @@ var account={
                     
                     var loginRequest = new XMLHttpRequest(); 
                     loginRequest.onreadystatechange = async function(){
-                        if(request.readyState === 4){
+                        if(loginRequest.readyState === 4){
                             console.log(loginRequest.response);
                             try{
                                 console.log(loginRequest.response);
@@ -108,10 +108,20 @@ var account={
                                     document.getElementById("content").innerHTML=elements.createAccount();
 
                                 }else if(loginRequest.response!=""&&loginRequest.response!="Could not verify signature"&&loginRequest.response!=false&&loginRequest.response!="false"){
-                                    console.log(loginRequest.response)
-                                    localStorage.userInfo=loginRequest.response;
-                                    account.login();
-                                }else{console.log(loginRequest.response)}
+                                    try{
+                                        console.log(loginRequest.response)
+                                        localStorage.userInfo=loginRequest.response;
+                                        account.login();
+                                    }catch(e){
+                                        //alert(request.response)
+                                        changePage()
+                                    }
+                                }else{
+                                    //alert(loginRequest.response)
+                                    if(loginRequest.response==false||loginRequest.response=="false"){
+                                        changePage();
+                                    }
+                                }
                             }catch(e){
                                 console.log(loginRequest.response, e)
                                 
@@ -119,11 +129,16 @@ var account={
                             }
                         }
                     }
-                    loginRequest.open("GET", `http://localhost:5001/illust/us-central1/users/${provider.provider.selectedAddress}/${sig}`);
-                    loginRequest.send();
+                    loginRequest.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}/${sig}`);
+                    if(sig!=null&&sig!=undefined&&sig!=""&&sig!="null"){
+                        loginRequest.send();
+                    }
+                    else{
+                        changePage()
+                    }
                 }
             }
-            request.open("GET", `http://localhost:5001/illust/us-central1/users/${provider.provider.selectedAddress}`);
+            request.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}`);
             request.send();
             
         }
