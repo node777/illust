@@ -669,29 +669,15 @@ var elements = {
                                 <div class="auction__attribute" id="countdownBox"></div>
                                 <div class="auction__label" >Current Bid</div>
                                 <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
-                                <label class="auction__label">Place Bid</label>
-                                <span>ETH</span>
-                                <input id="js-bidAmount" style="margin:0;" type='number' step='0.002' value='${Number(m["price"])+0.2}'/>
-                                <div class="button" onclick="market.bid()">Place Bid</div>
+                               
                                 ${
                                     //check userr is not owner
-                                    (owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase())?"":`
+                                    (owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase())?"":/*html*/`
                                         <label class="auction__label">Place Bid</label>
                                         <span>ETH</span>
-                                        <input id="bidAmount" style="margin:0;" type='number' step='0.2' value='${Number(m["price"])+0.2}'/>
+                                        <input id="js-bidAmount" style="margin:0;" type='number' step='0.2' value='${Number(m["price"])+0.2}'/>
                                         <div class="button" onclick="market.bid()">Place Bid</div>
                                 `}
-                                <div class="auction__history">
-                                    <div class="auction__bidder">10:33 @bobbyBoy bid 0.56 eth</div>
-                                    <div class="auction__bidder">10:30 @carguy34 bid 0.50 eth</div>
-                                    <div class="auction__bidder">09:44 @somenad44 bid 0.46 eth</div>
-                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                                    <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
-                                    <div class="auction__overlay"></div>
-                                </div>
                                     
                                 <div id="userBid"></div>
                             `
