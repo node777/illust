@@ -618,10 +618,6 @@ var elements = {
 
                     //get description
                     let description=m.description||"";
-<<<<<<< HEAD
-=======
-                    //console.log(await account.getData(57865929012439140487121611707503616067165767807057435719422353067939485468247) + ' hi')
->>>>>>> 8b60696bb305d7e40b093fc8ed6ff4fd091913fa
 
                     //get edition
                     if(m.edition){
@@ -673,12 +669,10 @@ var elements = {
                                 <div class="auction__attribute" id="countdownBox"></div>
                                 <div class="auction__label" >Current Bid</div>
                                 <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
-<<<<<<< HEAD
                                 <label class="auction__label">Place Bid</label>
                                 <span>ETH</span>
                                 <input id="js-bidAmount" style="margin:0;" type='number' step='0.002' value='${Number(m["price"])+0.2}'/>
                                 <div class="button" onclick="market.bid()">Place Bid</div>
-=======
                                 ${
                                     //check userr is not owner
                                     (owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase())?"":`
@@ -698,7 +692,6 @@ var elements = {
                                     <div class="auction__bidder">09:33 @somenad44 bid 0.46 eth</div>
                                     <div class="auction__overlay"></div>
                                 </div>
->>>>>>> 8b60696bb305d7e40b093fc8ed6ff4fd091913fa
                                     
                                 <div id="userBid"></div>
                             `
@@ -744,11 +737,7 @@ var elements = {
                                             <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
                                         </h2>
                                         ${editionHTML}
-<<<<<<< HEAD
-                                        <div class="lotAsset__attribute">Owner: ${owner}</div> 
-=======
                                         <div id="ownerBox" class="lotAsset__attribute">${owner?"Owner: "+owner:""}</div> 
->>>>>>> 8b60696bb305d7e40b093fc8ed6ff4fd091913fa
                                         <div class="lotAsset__attribute">Created By: 
                                             <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
                                         </div>
