@@ -954,12 +954,7 @@ var market={
                 hoursRemaining=Math.floor(market.timeLeft%86400000/3600000)
                 minutesRemaining=Math.floor(market.timeLeft%3600000/60000)
                 secondsRemaining=Math.floor(market.timeLeft%60000/1000)
-<<<<<<< HEAD
                 document.getElementById("countdownBox").innerHTML=`${daysRemaining} Days ${hoursRemaining.toString().padStart(2, '0')}:${minutesRemaining.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`
-=======
-                console.log(daysRemaining);
-                document.getElementById("countdownBox").innerHTML=`${(daysRemaining==0)?"":`${daysRemaining} Days`} ${hoursRemaining}:${minutesRemaining}:${secondsRemaining}`
->>>>>>> 8b60696bb305d7e40b093fc8ed6ff4fd091913fa
             }else{
                 clearInterval(market.timer)
             }
