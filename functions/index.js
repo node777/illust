@@ -113,13 +113,33 @@ userAPI.get('/:u/:sig', (req, res) => {
             }, function (errorObject) {
                 console.log("The read failed: " + errorObject.code);
             });
-        }else{ res.send(false)};
+        }else{ 
+            try{
+                // //ref database
+                // var ref = db.ref(`users/${address}`);
+                
+                // ref.on("value", function(snapshot) {
+                //     let info=snapshot.val();
+                //     if(info==null){
+                //         res.send("no account");
+                //     }else{
+                //         res.send(snapshot.val());
+                //     }
+                // }, function (errorObject) {
+                //     console.log("The read failed: " + errorObject.code);
+                // });
+
+                res.send(qAddress, address)
+            }catch(e){
+                res.send(qAddress, address)
+            };
+        }
     }catch(e){
         console.log(e)
         res.send("Could not verify signature")
     }
 });
-userAPI.post('/:u/:sig', (req, res) => {
+userAPI.post(':u/:sig', (req, res) => {
     try{
         let address = ethers.utils.verifyMessage("illust account edit", req.params.sig);
         //verify sig
