@@ -49,7 +49,10 @@ input::-webkit-inner-spin-button {
 }
 
 model-viewer {
-    --poster-color: transparent
+    --poster-color: transparent;
+    --progress-bar-height: 5px;
+    --progress-bar-color: var(--color4);
+    --progress-mask: url('images/loader.gif') no-repeat center;
 }
 
 
