@@ -101,13 +101,11 @@ var elements = {
                         let name;
                         let vars="";
                         let displayPrice = ""
-                        console.log([a])
-                        if(m[a].ar_type){
-                            if(m[a].ar_type.includes('Face')){
-                                marketFacePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭</a>`
-                            } else {
-                                marketFacePreviewHTML = ``
-                            }
+                        let marketFacePreviewHTML = ``
+
+                        if(m[a].ar_type && m[a].ar_type.includes('Face')){
+                            marketFacePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭</a>`
+                        
                         }
 
                         if(m[a].price){
@@ -180,7 +178,7 @@ var elements = {
                         let owner=await assets.invokeERC("getOwner", a);
                         console.log(owner)
                         if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
-                            document.getElementById(`fview_${a}`).innerHTML="Edit/Sell Asset"
+                            document.getElementById(`view_${a}`).innerHTML="Edit/Sell Asset"
                         }
                         // document.getElementById(`owner_${a}`).innerHTML="Owner: "+owner;
                         //console.log(assetData[0])
@@ -623,7 +621,7 @@ var elements = {
                     if(m.edition){
                         editionHTML+=/*html*/`<div class="lotAsset__attribute">Edition: ${m.edition}</div>`
                     }
-                    if(m["ar_type"] && m["ar_type"].includes("Face")){
+                    if(m["ar_type"]){
                         facePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a.slice(1)}">🎭</a>                        `
                     }
 
