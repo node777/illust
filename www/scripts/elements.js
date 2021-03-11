@@ -467,7 +467,7 @@ var elements = {
                 <label for="mce-EMAIL">SIGN UP FOR UPDATES</label><br>
                 <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required><br>
                     <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_c6f33ff36317a1dd23746cc23_d8a9f22827" tabindex="-1" value=""></div>
-                    <div><input type="submit" value="SUBSCRIBE" name="subscribe" id="mc-embedded-subscribe" class="button" style="margin:0 25%"></div>
+                    <div><input type="submit" value="SUBSCRIBE" name="subscribe" id="mc-embedded-subscribe" class="button" style="margin:0 25%;width:50%"></div>
                     </div>
                 </form>
                 </div><br><br>

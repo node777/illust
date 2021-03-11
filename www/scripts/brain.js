@@ -62,6 +62,7 @@ var account={
         //if user has signed msg
         if(localStorage.userInfo){
             try{
+
                 let d=JSON.parse(localStorage.userInfo);
                 account.info={
                     username:d.username,
@@ -84,8 +85,8 @@ var account={
                 //console.log(document.getElementById("content").innerHTML)
             }catch(e){
                 console.trace(e);
-                alert(e);
-                account.logout();
+                alert(request.response);
+                account.login();
             }
         //if user has not signed msg yet
         }else{
@@ -114,7 +115,7 @@ var account={
                                         account.login();
                                     }catch(e){
                                         //alert(request.response)
-                                        changePage()
+                                        account.login()
                                     }
                                 }else{
                                     //alert(loginRequest.response)
@@ -274,12 +275,7 @@ var account={
     },
     create:async (a)=>{
         if(a==1|| 
-            (document.getElementById("verifyTOS") && 
-            document.getElementById("verifyTOS").checked==true &&
-            document.getElementById("usernamei").value &&
-            document.getElementById("firstname").value &&
-            document.getElementById("lastname").value &&
-            document.getElementById("emaili").value)){
+            (document.getElementById("verifyTOS") &&  document.getElementById("verifyTOS").checked==true)){
 
                 //            !document.getElementById("usernamei").value ||
            // !document.getElementById("firstname").value ||
@@ -317,7 +313,7 @@ var account={
             
         }else{
             console.log(document.getElementById("verifyTOS").value);
-            alert("Please complete the required fields*");
+            alert("Please agree to the Terms of Service");
         }
     }, 
     async connectProvider(){
@@ -985,6 +981,7 @@ var market={
                 "start_price":document.getElementById("js-start_price").value
             }
         }
+        console.log(r);
         r.sig = await account.sign(JSON.stringify(r.message))
         
         var request = new XMLHttpRequest(); 
