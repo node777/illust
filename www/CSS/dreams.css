@@ -644,7 +644,7 @@ a:active {
 .lotAsset__viewer{
     flex-basis: 33%;
     position: relative;
-    padding-top: 50%;
+    padding-top: 35%;
     margin-bottom: 30px;
 }
 .lotAsset__auction{
