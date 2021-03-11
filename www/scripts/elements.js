@@ -991,22 +991,16 @@ var elements = {
         </div>
         <div class="br" style="margin:1%"></div>
     `,
-    sidebar:`
+    sidebar:/*html*/`
         <div onclick=""><a href="https://illust.space">Exhibitions</a></div>
+        <div><a onclick="location.hash='market';sidebar(1);">Market</a></div>
         <div><a href="https://illust.space/about">About</a></div>
-
-        <div class="br"></div>
-
-        <div onclick="location.hash='';sidebar(1);">Auctions</div>
         <div onclick="location.hash='account';sidebar(1);">Account</div>
-
-        <div class="br"></div>
-        
+        <div><a href="https://illust.space/contact">Contact</a></div>
         <div onclick=""><a href="https://illust.space/faq">FAQ</a></div>
         <div onclick=""><a href="https://illust.space/privacy-policy">Privacy</a></div>
         <div><a href="https://illust.space/user-agreement">User Agreement</a></div>
         <div onclick=""><a href="https://illust.space/terms-of-service">Terms of Service</a></div>
-        <div><a href="https://illust.space/contact">Contact</a></div>
     `,
     footer:`
     ©copyleft 2020

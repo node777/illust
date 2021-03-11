@@ -399,7 +399,7 @@ a:active {
 	color: var(--color5);
 }
 #sidebar>a, #sidebar a:visited, #sidebar a:link{
-    color: var(--color2);
+    color: var(--color1);
 }
 /*mobile*/
 
@@ -414,8 +414,8 @@ a:active {
     margin: 16px 0;
 }
 #sidebar{
-    background-color: var(--color1);
-    color: var(--color2);
+    background-color: var(--color3);
+    color: var(--color1);
     overflow: hidden;
     position: fixed;
     height:100%;
