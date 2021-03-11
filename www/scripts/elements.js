@@ -80,12 +80,12 @@ var elements = {
                                 }
                             }
                         }else {
-                            marketHeaderFilter = /*html*/`<img class="market__bannerImage" src="https://app.illust.space/images/doom4.png"/>`
+                            marketHeaderFilter = /*html*/`<img class="market__bannerImage" alt="black sludge banner 03/11/2021" src="/assets/banner.png"/>`
                             m=assets.tokens
                         }
                     }
                     else{
-                        marketHeaderFilter = /*html*/`<img class="market__bannerImage" src="https://app.illust.space/images/doom4.png"/>`
+                        marketHeaderFilter = /*html*/`<img class="market__bannerImage" alt="black sludge banner 03/11/2021" src="/assets/banner.png"/>`
                         m=assets.tokens
                     }
 
@@ -104,7 +104,9 @@ var elements = {
                         let marketFacePreviewHTML = ``
 
                         if(m[a].ar_type && m[a].ar_type.includes('Face')){
-                            marketFacePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">🎭</a>`
+                            marketFacePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">
+                            <img src="/assets/icons/MaskTryON.png"/>
+                            </a>`
                         
                         }
 
@@ -622,7 +624,9 @@ var elements = {
                         editionHTML+=/*html*/`<div class="lotAsset__attribute">Edition: ${m.edition}</div>`
                     }
                     if(m["ar_type"]){
-                        facePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a.slice(1)}">🎭</a>                        `
+                        facePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a.slice(1)}">
+                        <img src="/assets/icons/MaskTryON.png"/>
+                        </a>                        `
                     }
 
 
