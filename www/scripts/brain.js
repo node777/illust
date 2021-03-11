@@ -129,13 +129,6 @@ var account={
                             }
                         }
                     }
-<<<<<<< HEAD
-                    loginRequest.open("GET", `https://us-central1-illust.cloudfunctions.net/us-central1/users/${provider.provider.selectedAddress}/${sig}`);
-                    loginRequest.send();
-                }
-            }
-            request.open("GET", `https://us-central1-illust.cloudfunctions.net/us-central1/users/${provider.provider.selectedAddress}`);
-=======
                     loginRequest.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}/${sig}`);
                     if(sig!=null&&sig!=undefined&&sig!=""&&sig!="null"){
                         loginRequest.send();
@@ -146,7 +139,6 @@ var account={
                 }
             }
             request.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}`);
->>>>>>> e5d390fc52effaba688a8a8565f515776d6f5cbe
             request.send();
             
         }
