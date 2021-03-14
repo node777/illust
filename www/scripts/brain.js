@@ -17,11 +17,11 @@ var account={
         
             signer=provider.getSigner();
           let signature = await signer.signMessage(msg);
-          console.log(signature);
+         //console.log(signature);
           return signature;
         }
         catch(e){
-          console.log(e);
+         //console.log(e);
           //alert(`Could not sign message \n Got Error ${e}`)
           location.reload();
         }
@@ -30,27 +30,28 @@ var account={
         try{
           //signer=new CustomSigner(provider);
           // let m=Uint8Array.from(msg);
-          // console.log(m, m.length);
+          ////console.log(m, m.length);
           // var a = await web3.eth.getAccounts();
           // let signature = await web3.eth.sign(msg, a);
-          // console.log(signature);
+          ////console.log(signature);
           let signature = await web3.eth.personal.sign(msg, web3.currentProvider.selectedAddress);
           return signature;
         }
         catch(e){
-          console.log(e);
+         //console.log(e);
           //alert(`Could not sign message \n Got Error ${e}`)
           location.reload();
         }
       }
       else{
+          account.logout();
         return "Invalid Sig"
       }
     },
     login:async()=>{
-        console.trace("logging in");
+        console.trace("logging in", localStorage.userInfo);
         // if(account.info!={}){
-        //     console.log("already logged in")
+        //    //console.log("already logged in")
         // }
         
         try{
@@ -58,11 +59,12 @@ var account={
         }catch(e){
             console.log(e);
             account.logout();
+            return true
         }
         //if user has signed msg
         if(localStorage.userInfo){
             try{
-
+                console.log("MSG SIGNED USER INFO FOUND")
                 let d=JSON.parse(localStorage.userInfo);
                 account.info={
                     username:d.username,
@@ -76,7 +78,7 @@ var account={
                 } 
                 //console.log(account.info)
                 //await changePage();
-                console.log('account info')
+               //console.log('account info')
                 account.information();
                 if(account.loggedIn!=1){
                     changePage();
@@ -84,17 +86,19 @@ var account={
                 account.loggedIn=1;
                 //console.log(document.getElementById("content").innerHTML)
             }catch(e){
-                console.trace(e);
-                alert(request.response);
-                account.login();
+                console.trace(localStorage.user);
+                //alert(request.response);
+                account.logout();
             }
         //if user has not signed msg yet
-        }else{
+        }else if(provider&&provider.provider){
+            await account.load()
+            console.log(provider.provider.selectedAddress);
             var request = new XMLHttpRequest(); 
             request.onreadystatechange = async function() {
                 if (request.readyState === 4) {
                     let m=request.response;
-                    console.log(m);
+                   //console.log(m);
 
                     let sig=await account.sign(`illust login ${m}`);
                     
@@ -103,15 +107,15 @@ var account={
                         if(loginRequest.readyState === 4){
                             console.log(loginRequest.response);
                             try{
-                                console.log(loginRequest.response);
+                               //console.log(loginRequest.response);
                                 if(loginRequest.response=="no account"){
-                                    console.log(request.response)
+                                   //console.log(request.response)
                                     document.getElementById("content").innerHTML=elements.createAccount();
 
                                 }else if(loginRequest.response!=""&&loginRequest.response!="Could not verify signature"&&loginRequest.response!=false&&loginRequest.response!="false"){
                                     try{
-                                        console.log(loginRequest.response)
-                                        localStorage.userInfo=loginRequest.response;
+                                       //console.log(loginRequest.response)
+                                        localStorage.userInfo=await loginRequest.response;
                                         account.login();
                                     }catch(e){
                                         //alert(request.response)
@@ -124,7 +128,7 @@ var account={
                                     }
                                 }
                             }catch(e){
-                                console.log(loginRequest.response, e)
+                               //console.log(loginRequest.response, e)
                                 
                                 document.getElementById("content").innerHTML=elements.createAccount();  
                             }
@@ -139,31 +143,39 @@ var account={
                     }
                 }
             }
-            request.open("GET", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}`);
+            let ip=`https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress||torus.provider.selectedAddress}`
+            console.log(ip);
+            request.open("GET", ip);
             request.send();
             
+        }else{
+            console.log(provider.provider.selectedAddress);
+            changePage();
         }
         
     },
     load:async ()=>{
-        if(provider){}else{
+        if(provider&&provider.provider&&provider.provider.selectedAddress){
+
+        }else{
             if(localStorage.provider=="web3"){
                 document.getElementById("content").innerHTML="Please login to web3 provider:<br>"+elements.loading();
                 await window.ethereum.enable();
                 
                 provider = new ethers.providers.Web3Provider(web3.currentProvider);            
-                console.log(provider);
+               //console.log(provider);
                 document.getElementById("content").innerHTML=elements.loading();
+                signer = await provider.getSigner();
             }else if(localStorage.provider=="torus"){
                 
                 document.getElementById("content").innerHTML=`You will need to sign a message to login. Look for popup. <br>${elements.loading()}<div class="button" onclick="account.logout()">Cancel</div>`;
-                console.log();
+                console.log("loading TORUS");
                 torus = new Torus();
                 await torus.init();
                 await torus.login();
                 provider = new ethers.providers.Web3Provider(torus.provider);
                 web3 = new Web3(torus.provider);
-                provider.provider.selectedAddress=torus.provider.selectedAddress;
+                provider.provider.selectedAddress=await torus.provider.selectedAddress;
                 signer = await provider.getSigner();
                 
                 //await account.login();
@@ -178,15 +190,15 @@ var account={
     },
     getData:()=>{
         //ref databse
-        console.log('getting data')
+       //console.log('getting data')
         try{
             let a = provider.provider.selectedAddress;
-            console.log(a + ' a');
+           //console.log(a + ' a');
             var userRef = firebase.database().ref('users/' + a);
             userRef.once('value', async function(snapshot){
                 let d=snapshot.val();
-                console.log(d + ' d');
-                console.log(snapshot.val());
+               //console.log(d + ' d');
+               //console.log(snapshot.val());
                 if(d!==null){
                     //location.hash="account";
                     //await changePage();
@@ -201,26 +213,26 @@ var account={
                         bio:d.bio,
                         bids:{}
                     }
-                    console.log(d.bids);
+                   //console.log(d.bids);
                     for(b in d.bids){
                         account.info.bids[b]=d.bids[b];
                     }
-                    console.log(account.info);
+                   //console.log(account.info);
                     if(document.getElementById("account")){
-                        console.log(provider.provider.selectedAddress);
+                       //console.log(provider.provider.selectedAddress);
                         document.getElementById("content").innerHTML=await elements.account();
                     }
                     else if(document.getElementById("lot")){
                         //set user bid
                         try{
-                            console.log(account.info);
+                           //console.log(account.info);
                             if(account.info.bids[assets.selected]!=undefined){
-                                console.log(account.info.bids[a])
+                               //console.log(account.info.bids[a])
                                 document.getElementById("userBid").innerHTML=`Your current bid: ${account.info.bids[assets.selected]}<br><br>`
                             }
                         }catch(e){console.log(e)}
                     }
-                    console.log(account.info);
+                   //console.log(account.info);
                 }else if(document.getElementById("account")){
                     document.getElementById("content").innerHTML=elements.createAccount();       
                 }
@@ -231,12 +243,14 @@ var account={
     },
     logout:async()=>{
         provider=undefined;
+        localStorage.removeItem("userInfo")
         localStorage.clear();
+        
         account.info=undefined;
         try{
             torus?await torus.logout():()=>{};
         }catch(e){
-            console.log(e);
+           //console.log(e);
         }
         location.reload();
 
@@ -249,7 +263,7 @@ var account={
     },
     wallet:async()=>{
         let m=await elements.walletInfo();
-        console.log(m);
+       //console.log(m);
         document.getElementById('js-profileContents').innerHTML=m;
     },
     edit:async()=>{
@@ -270,7 +284,7 @@ var account={
             // document.getElementById('so').style="";
             // document.getElementById(`${r}`).style="color:var(--color4);";
         }catch(e){
-            console.log(e);
+           //console.log(e);
         }
     },
     create:async (a)=>{
@@ -295,13 +309,13 @@ var account={
             request.onreadystatechange = function() {
                 if (request.readyState === 4) {
                     let m=request.response;
-                    console.log(m);
+                   //console.log(m);
                     var loginRequest = new XMLHttpRequest(); 
                     loginRequest.onreadystatechange = async function(){
                         try{
-                            console.log("account info updated successfully")
+                           //console.log("account info updated successfully")
                         }catch(e){
-                            console.log("Account info not updated successfully", e, loginRequest.response)
+                           //console.log("Account info not updated successfully", e, loginRequest.response)
                         }
                     }
                     loginRequest.open("POST", `https://us-central1-illust.cloudfunctions.net/users/${provider.provider.selectedAddress}/${sig}`);
@@ -312,7 +326,7 @@ var account={
             request.send();
             
         }else{
-            console.log(document.getElementById("verifyTOS").value);
+           //console.log(document.getElementById("verifyTOS").value);
             alert("Please agree to the Terms of Service");
         }
     }, 
@@ -875,9 +889,9 @@ var assets={
             }
         ];
         //ROPSTEN ADDRESS
-        var address="0xa81ff27ed54f95a637c5a8c48ae0d993139f4ed2";
+        //var address="0xa81ff27ed54f95a637c5a8c48ae0d993139f4ed2";
         //MAINNET ADDRESS
-        //var address = '0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6';
+        var address = '0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6';
         var contract = new ethers.Contract(address, abi, provider);
         //mintAsset
         if(w=="a"){
@@ -885,9 +899,9 @@ var assets={
             let signer = await provider.getSigner();
             contract=await contract.connect(signer);
             let assetId=new ethers.BigNumber.from(document.getElementById("assetMintID").value);
-            console.log(assetId, assetId.toString(), assetId.to);
+           //console.log(assetId, assetId.toString(), assetId.to);
             var sendPromise = contract.mintAsset(assetId.toString(), ethers.utils.getAddress(document.getElementById("assetMintUser").value), ethers.utils.getAddress(document.getElementById("recipient1").value), ethers.utils.getAddress(document.getElementById("recipient2").value), Number(document.getElementById("split").value));
-            console.log(sendPromise)
+           //console.log(sendPromise)
             sendPromise.then(function(transaction) {
                 document.getElementById("data").innerHTML=(transaction);
             });
@@ -900,8 +914,8 @@ var assets={
             //let assetId=new ethers.BigNumber.from(document.getElementById("assetMintID").value);
             //console.log(assetId, assetId.toString(), assetId.to);
             //var sendPromise = contract.setApprovalForAll("0x7cca737DC640eC07943aA32736E834eCa9E4C4eC", 1);
-            var sendPromise = contract.setApprovalForAll("0xA60A90D0FCFc3D1446355BF505B73756EE119B6B", 1);
-            console.log(sendPromise)
+            var sendPromise = contract.setApprovalForAll("0x3EdCea6B637B1d308C74B4F89B17D951995a7a68", 1);
+           //console.log(sendPromise)
             sendPromise.then(function(transaction) {
                 document.getElementById("data").innerHTML=(transaction);
             });
@@ -911,8 +925,8 @@ var assets={
             contract=await contract.connect(signer);
             //console.log(assetId, assetId.toString(), assetId.to);
             //var sendPromise = contract.setApprovalForAll("0x7cca737DC640eC07943aA32736E834eCa9E4C4eC", 1);
-            var sendPromise = await contract.isApprovedForAll(provider.provider.selectedAddress, "0xA60A90D0FCFc3D1446355BF505B73756EE119B6B");
-            console.log(sendPromise)
+            var sendPromise = await contract.isApprovedForAll(provider.provider.selectedAddress, "0x3EdCea6B637B1d308C74B4F89B17D951995a7a68");
+           //console.log(sendPromise)
             return sendPromise;
         }
         //check balance of address
@@ -921,7 +935,7 @@ var assets={
             let signer = provider.getSigner();
             contract=contract.connect(signer);
             var sendPromise = contract.balanceOf(ethers.utils.getAddress("0xDc4c460577951Df59161467C2E4Ea41078c8D184", true));
-            console.log(ethers.utils.getAddress("0xDc4c460577951Df59161467C2E4Ea41078c8D184", true));
+           //console.log(ethers.utils.getAddress("0xDc4c460577951Df59161467C2E4Ea41078c8D184", true));
             sendPromise.then(function(transaction) {
                 document.getElementById("data").innerHTML=(transaction);
             });        
@@ -950,12 +964,78 @@ var assets={
             return o;
         }
     },
-    tokens:{}
+    tokens:{},
+    displayAsset(a, m){
+       //console.log(m[a]);
+        //scope variables
+        let colItemModelUrl
+        let colItemName
+        let colItemDesc
+        let colItemCreator
+        let colItemEndDate
+        let marketFacePreviewHTML = ``
+
+        let r="";
+        let name;
+        let vars="";
+        let displayPrice = ""
+        console.log(m,a);
+        if(m[a]){
+            if(m[a].try_on){
+                marketFacePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="${m[a].try_on}">
+                <img src="/assets/icons/MaskTryON.png"/>
+                </a>`
+            
+            }
+
+            let endTime=new Date(m["end_date"]);
+            let timeNow=new Date(Date.now());
+            if(m[a].price&&endTime.getTime()>timeNow.getTime()){
+                displayPrice = parseFloat(m[a].price).toFixed(4) + ' ETH'
+            }
+            for(v in m[a]){
+                if(v=="animation_url"){
+                    colItemModelUrl = m[a][v]
+                }else if(v=="name"){
+                    colItemName=m[a][v]
+                }else if(v=="description"){
+                    colItemDesc =m[a][v]
+                }else if(v=="creator"){
+                    colItemCreator = m[a][v] || 'Illust'
+                }else{
+                    //vars+=`${v}: ${m[a][v]}<br>`
+                }
+            }
+            //console.log(m, m.usdz)
+
+            r+=/*html*/`
+                <div class='market__collectionItem'>
+                    <div class="collectionItem__wrapper">
+                        <h3 class="collectionItem__artist">
+                            ${colItemCreator || 'Illust'}
+                        </h3>
+                        ${(m[a].ending)?`<h3 style="color:#cfab72;text-align:right;margin:-48px 0 0">${m[a].ending}</h3>`:""}
+                        <div class="collectionItem__modelViewerWrapper">
+                            <model-viewer disable-zoom ar ios-src="${m[a].usdz||''}" src="${colItemModelUrl}" auto-rotate camera-controls background-color="#455A64"></model-viewer>
+                            ${marketFacePreviewHTML}
+                        </div>
+                        <div class="collectionItem__attributes" onclick="location.hash = 'asset?${m[a].hash||a}'">
+                            <h3 class="collectionItem__title">${colItemName}</h3>
+                            <div class="collectionItem__link" id="view_${a}">MORE</div>
+                            <div class="collectionItem__price">${displayPrice || "not for sale"}</div>
+                        </div>
+
+                    </div>
+                </div>
+                `
+        }
+        return r
+    }
 }
 var market={
     countdown(){
-        market.timeLeft=new Date(market.endTime).getTime()-Date.now()
-        
+        market.timeLeft=new Date(market.endTime).getTime()-new Date(Date.now()).getTime();
+        console.log(market.timeLeft)
         clearInterval(market.timer)
         market.timer=setInterval(()=>{
             if(document.getElementById("countdownBox")){
@@ -965,7 +1045,11 @@ var market={
                 hoursRemaining=Math.floor(market.timeLeft%86400000/3600000)
                 minutesRemaining=Math.floor(market.timeLeft%3600000/60000)
                 secondsRemaining=Math.floor(market.timeLeft%60000/1000)
-                document.getElementById("countdownBox").innerHTML=`${daysRemaining} Days ${hoursRemaining.toString().padStart(2, '0')}:${minutesRemaining.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`
+                if(secondsRemaining<=0&&minutesRemaining<=0&&hoursRemaining<=0&daysRemaining<=0){
+                    changePage()
+                }else{
+                    document.getElementById("countdownBox").innerHTML=`${daysRemaining} Days ${hoursRemaining.toString().padStart(2, '0')}:${minutesRemaining.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`
+                }
             }else{
                 clearInterval(market.timer)
             }
@@ -977,13 +1061,13 @@ var market={
         let r={
             message:{
                 asset:asset,
-                "end_date":document.getElementById("js-end_date").value,
+                "end_date":new Date(document.getElementById("js-end_date").value).getTime(),
                 "start_price":document.getElementById("js-start_price").value
             }
         }
-        console.log(r);
+       //console.log(r);
         r.sig = await account.sign(JSON.stringify(r.message))
-        
+        console.log(r);
         var request = new XMLHttpRequest(); 
         request.onreadystatechange = function() {
             if (request.readyState === 4) {
@@ -1349,44 +1433,274 @@ var market={
                 "type": "function"
             }
         ]
-        //ROPSTEN CONTRACT
-        let address="0xA60A90D0FCFc3D1446355BF505B73756EE119B6B";
+        //MAIN CONTRACT
+        let address="0x3EdCea6B637B1d308C74B4F89B17D951995a7a68";
 
+        //ROPSTEN CONTRACT
+        //let address="0xA60A90D0FCFc3D1446355BF505B73756EE119B6B";
         await account.connectProvider();
         var custodyContract = await new ethers.Contract(address, abi, provider);
 
         custodyContract=await custodyContract.connect(signer);
         //await contract.connect(signer);
-        console.log(custodyContract)
+       //console.log(custodyContract)
 
         if(fn=="listAsset"){
-            let assetID=new ethers.BigNumber.from(p[0]);
+            let assetID=new ethers.BigNumber.from(location.hash.split("?")[1])
+            console.log(assetID);
             let assetPrice=(p[1]*(1000000000000000000)).toString();
-            console.log(p[0], assetPrice, ethers.utils.getAddress(p[2]).toString());
-            let r=custodyContract.listAsset(p[0], assetPrice, ethers.utils.getAddress(p[2]).toString());
+           //console.log(p[0], assetPrice, ethers.utils.getAddress(p[2]).toString());
+            let r=custodyContract.listAsset(assetID, assetPrice, ethers.utils.getAddress(p[2]).toString());
             r.then((tx)=>{
-                console.log(tx);
+               console.log(tx);
+               alert("Item price successfully finalized");
             });
         }
         if(fn=="assets"){
             let r=await custodyContract.assets(p[0]);
-            console.log(r);
+           //console.log(r);
         }
         else if(fn=="setContract"){
             let r=await custodyContract.setAinsophContract(p[0]);
-            console.log(r);
+           //console.log(r);
         }
         else if(fn=="pay"){
-            let r=await custodyContract.pay(p[0], {
+            account.load()
+            //console.log(p[0].toString(), p[0], location.hash.split("?")[1].toString())
+            let assetID=new ethers.BigNumber.from(location.hash.split("?")[1])
+            let r=await custodyContract.pay(assetID, {
+                gasLimit: 750000,
                 value: (p[1]*(1000000000000000000)).toString()
             });
-            console.log(r);
+            r.then((tx)=>{
+               console.log(tx);
+               alert(tx);
+            }),(e)=>{
+                console.log(e);
+            };
+        }
+        else if(fn=="claim"){
+            let ill="0x9CBD55532935ff709B17039C369D5C03d41F2dC4"
+            await account.load()
+            //console.log(p[0].toString(), p[0], location.hash.split("?")[1].toString())
+            //let assetID=new ethers.BigNumber.from(location.hash.split("?")[1])
+            let v = new ethers.BigNumber.from((p[1]*(1000000000000000000)).toString());
+            signer.sendTransaction({
+                to: ill,
+                gasLimit: 400000,
+                value: v
+            });
+            // let r=await custodyContract.pay(assetID, {
+            //     value: (p[1]*(1000000000000000000)).toString()
+            // });
+            // r.then((tx)=>{
+            //    console.log(tx);
+            //    alert(tx);
+            // }),(e)=>{
+            //     console.log(e);
+            // };
         }
         else if(fn=="winningBids"){
             let r=await custodyContract.winnigBids(p[0]);
             return r;
         }
 
+    },
+    getAssets(p,callback){
+        
+        var request = new XMLHttpRequest(); 
+
+        request.onreadystatechange = async function() {
+            if (request.readyState === 4) {
+                assets.tokens=JSON.parse(request.response)
+                callback(p);
+
+            }
+        }
+        request.open("GET", "https://us-central1-illust.cloudfunctions.net/metadata");
+        request.send();
+    },
+    async displayAssets(p){
+        
+        let r=``;
+        let marketHeaderFilter = ``;
+        let headerHTML = ``;
+        let tagCloudHTML = ``;
+        let m=[];
+        let tagCloudArr = [];
+
+
+        // return list of all used tags 
+        // this should not be done client side
+        // for (a in assets.tokens){
+        //     if (assets.tokens[a].tags){
+        //         let eachTag = assets.tokens[a].tags.split(" ")
+        //         for(tags in eachTag){
+        //             if (!tagCloudArr.includes(eachTag[tags])){
+        //                 tagCloudArr.push(eachTag[tags])
+        //                 tagCloudHTML +=/*html*/`<option value="${eachTag[tags]}">${eachTag[tags]}</option>`
+        //             }
+        //         }
+        //     }
+        // }
+        //check tag search parameter
+        if(p[1]){
+
+            let p1=p[1].split("=")
+            if(p1[0]=="creator"){
+                let creators=p1[1].split("&");
+                for(a in assets.tokens){
+                    //\check if asset has tags 
+                    
+                    let creator=assets.tokens[a].creator||"Illust"
+                   //console.log(creator, creators)
+                    if(creator.toLowerCase()==(creators[0]).toLowerCase()){
+                        m[a]=assets.tokens[a];
+                        marketHeaderFilter = /*html*/`<div class="market__filterHeading">: ${creator}</div>`
+                    }
+                }
+            }
+            else if(p1[0]=="tags"){
+                let tags=p1[1].split("&");
+                for(a in assets.tokens){
+                    //check if asset has tags 
+                    if(assets.tokens[a].tags){
+                        let assetTags=assets.tokens[a].tags.split(" ")
+                        //console.log(a,assetTags)
+                        if(assetTags.includes(tags[0])){
+                            if(tags[0]=="DOOM"){
+                                marketHeaderFilter = /*html*/`<img class="market__bannerImage" alt="black sludge banner 03/11/2021" src="/assets/banner.png"/>`
+                            }else{
+                                marketHeaderFilter = /*html*/`<div class="market__filterHeading">: ${tags}</div>`
+                                //console.log(assets.tokens[a])
+                            }
+                            m[a]=assets.tokens[a];
+                        }
+                    }
+                }
+            } 
+            else if(p1[0]=="featured"){
+                // let featured=p1[1].split("&");
+                for(a in assets.tokens){
+                    //check if asset is featured 
+                    if(assets.tokens[a].featured){
+                        m[a]=assets.tokens[a];
+                        marketHeaderFilter = /*html*/`<div class="market__filterHeading">: featured</div>`
+                    }
+                }
+            } else if (p1[0]=="live"){
+                
+                marketHeaderFilter = /*html*/`<img class="market__bannerImage" alt="black sludge banner 03/11/2021" src="/assets/banner.png"/>`
+                for(a in assets.tokens){
+                    //check if asset is featured 
+                    if(assets.tokens[a].currentAuction&&a!=777){
+                        m[a]=assets.tokens[a];
+                    }
+                }
+            }else {
+                marketHeaderFilter = /*html*/`<img class="market__bannerImage" alt="black sludge banner 03/11/2021" src="/assets/banner.png"/>`
+                m=assets.tokens
+            }
+        }
+        else{
+            marketHeaderFilter = /*html*/`<img class="market__bannerImage" alt="black sludge banner 03/11/2021" src="/assets/banner.png"/>`
+            m=assets.tokens
+        }
+
+        //sort
+        let assetArray=[];
+        for(a in m){
+            assetArray.push(m[a]);
+            m[a].hash=a;
+        }
+        console.log(assetArray);
+        try{
+            m=assetArray.sort((a,b)=>{ 
+                    var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+                    if (nameA < nameB) //sort string ascending
+                        return -1 
+                    if (nameA > nameB)
+                        return 1
+                    return 0 //default return value (no sorting)
+            });
+        }catch(e){
+            m=assetArray
+        }
+    
+
+
+        //display assets
+        for(a in m){
+           //console.log(a, m);
+            r+=assets.displayAsset(a, m);
+        }
+
+
+        headerHTML+=/*html*/`
+            <div class="market__banner">
+                <h1 class="market__heading">Market</h1>
+                ${marketHeaderFilter}
+                <nav>
+                    <ul id="js-subhead-nav" class="subhead__nav" >
+                        <li class="subhead__navItem"><a href="#market?live">Live</a></li>
+                        <li class="subhead__navItem"><a href="#market?featured">Featured</a></li>
+                        <li class="subhead__navItem">
+                        <select class="subhead__tagSelect" onChange="elements.updateTagUrl(this)" name="tag filter">
+                            <option disabled selected value>Tags</option>
+                        ${tagCloudHTML}
+                        </select></li>
+                    </ul>
+            
+                    
+                </nav>
+            </div>
+      
+        `
+
+        document.getElementById("js-listings").innerHTML=r;
+        document.getElementById("js-marketHeader").innerHTML=headerHTML;
+        //get owners
+        // for(a in m){
+        //     //let assetData=await assets.invokeERC("getData", a);
+        // //     let owner=await assets.invokeERC("getOwner", a);
+        // //    //console.log(owner)
+        // //     if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
+        // //         document.getElementById(`view_${a}`).innerHTML="Edit/Sell Asset"
+        // //     }
+        //     // document.getElementById(`owner_${a}`).innerHTML="Owner: "+owner;
+        //     //console.log(assetData[0])
+        // }
+    },
+    async displayCollection(p){
+        //console.log(assets.tokens)
+        if(assets.tokens&&assets.tokens!={}&&Object.keys(assets.tokens).length>0){
+            //console.log(assets.tokens, account.info.collection);
+            if(account.info.collection){
+                console.log("collection found")
+                let r=/*html*/`<div class='profileAssets__collectionItem'>`
+                for(a in account.info.collection){
+                    //console.log(a, assets.tokens, assets.tokens[a])
+                    r+=assets.displayAsset(a, assets.tokens);
+                }
+                r+="</div>"
+                document.getElementById('js-profileContents')?document.getElementById('js-profileContents').innerHTML=r:()=>{};
+                console.log(r);
+                return r;
+            }
+            else{
+                console.log("NO COLLECTION");
+                return /*html*/`
+                    <span>You have no collection: <a href="https://app.illust.space" style="color:var(--color4);">Start Collecting</a></span>
+                    
+                `
+            }
+        }
+        else{
+            console.log("fetching data")
+            market.getAssets(p, market.displayCollection);
+            return elements.loading();
+        }
+        
     }
 }
 var auction={
@@ -1440,7 +1754,7 @@ async function connectTorus(){
     // await torus.ethereum.enable()
     //const web3 = new Web3(torus.provider);
     await account.load();
-    console.log(provider);
+    //console.log(provider);
 
 }
 function connectAccount(q){
@@ -1452,7 +1766,7 @@ function connectAccount(q){
             provider = new ethers.providers.Web3Provider(web3.currentProvider);
             changePage();
         }catch(e){
-            console.log(e);
+            //console.log(e);
         }
     
     }
@@ -1463,8 +1777,8 @@ function connectAccount(q){
             var userRef = firebase.database().ref('users/' + provider.provider.selectedAddress);
             userRef.on('value', async function(snapshot) {
                 let d=snapshot.val();
-                console.log(d);
-                console.log(snapshot.val());
+               //console.log(d);
+               //console.log(snapshot.val());
                 if(d!==null){
                     //location.hash="account";
                     //await changePage();
@@ -1479,7 +1793,7 @@ function connectAccount(q){
                         bids:d.bids
                     }
                     document.getElementById("content").innerHTML=await elements.account();
-                    console.log(account.info);
+                   //console.log(account.info);
                 }
                 else if(provider&&provider.provider.selectedAddress){
                     document.getElementById("content").innerHTML=elements.createAccount();
@@ -1487,14 +1801,14 @@ function connectAccount(q){
             });
         }
     }catch(e){
-        console.log(e);
+       //console.log(e);
     }
 }
 async function placeBid(a){
     try{
         await account.load();
         /*
-        console.log(a);
+       //console.log(a);
         firebase.functions().useFunctionsEmulator("http://localhost:5001");
         var addBid = firebase.functions().httpsCallable('placeBid');
         addBid(
@@ -1505,27 +1819,27 @@ async function placeBid(a){
             }
         ).then(function(result) {
         // Read result of the Cloud Function.
-        console.log("data");
+       //console.log("data");
         //var sanitizedMessage = result.data.text;
-        console.log(result);
+       //console.log(result);
         }).catch(function(error) {
             // Getting the Error details.
             var code = error.code;
             var message = error.message;
             var details = error.details;
             // ...
-            console.log(error);
+           //console.log(error);
         });
             */
         invoke('b', a).then((result)=>{
             let am=document.getElementById("bidAmount").value.toString();
-            console.log(result,a,am);
+           //console.log(result,a,am);
             firebase.database().ref('users/' + provider.provider.selectedAddress+"/bids/"+a).set(am);
         });
         //account.info.bids[a]=(document.getElementById("bidAmount").value);
     }catch(e){
         //alert("Could not execute bid, make sure your wallet is populated, the auction is live, and your bid price is high enough");
-        console.log(e);
+       //console.log(e);
     }
 }
 function changeAuth(){
@@ -1561,13 +1875,13 @@ async function upload(){
     
     let fr = new FileReader();
     const selectedFile = document.getElementById('assetInput').files[0];
-    console.log(selectedFile);
+   //console.log(selectedFile);
     fr.readAsText(selectedFile);
     //let a=new Int8Array(selectedFile);
     //console.log(h);
     fr.onload = async function(event) {
         if(location.hash=="#editAssets"){
-            console.log(event.target.result);
+           //console.log(event.target.result);
             
             let a=(event.target.result);
             let h=ethers.utils.id(a);
@@ -1579,9 +1893,9 @@ async function upload(){
 }
 async function readFileAsString(f) {
     files = this.files;
-    console.log(this.files);
+   //console.log(this.files);
     if (files.length === 0) {
-        console.log('No file is selected');
+       //console.log('No file is selected');
         return;
     }
 
@@ -1591,9 +1905,9 @@ async function readFileAsString(f) {
         let p9 = reader.readAsText(files[0]);
         // Closure to capture the file information.
         
-        console.log(p9, files[0].stream);
+       //console.log(p9, files[0].stream);
         reader.onload = (function(theFile) {
-              console.log( theFile );
+             //console.log( theFile );
           })(f);
     
         let h = await web3.utils.sha3(f);
@@ -1638,11 +1952,11 @@ function addAsset(){
     location.hash=`editAsset?${document.getElementById("asset_id").value}`
 }
 async function editAsset(a){
-    console.log(assetData)
+   //console.log(assetData)
     //a is the asset ID
     a=new ethers.BigNumber.from(a)
     for(v in assetData){
-        console.log(`asset_${v}`)
+       //console.log(`asset_${v}`)
         assetData[v]=document.getElementById(`asset_${v}`).value;
     }
     let s;
@@ -1652,7 +1966,7 @@ async function editAsset(a){
         alert("Please login as illust admin")
         return
     }
-    console.log(a,s);
+   //console.log(a,s);
     var request = new XMLHttpRequest(); 
     request.onreadystatechange = function() {
         if (request.readyState === 4) {
@@ -1675,7 +1989,7 @@ function displayCamera(){
 }
 function register(){
     let d={"Name": document.getElementById("name").value, "Author": document.getElementById("author").value, "Licence":document.getElementById("licence").value};
-    console.log(files[0]);
+   //console.log(files[0]);
     formData.append("model", files[0]);
     formData.append("info", JSON.stringify(d));
     var request = new XMLHttpRequest(); 
@@ -1806,9 +2120,9 @@ async function invoke(w, m){
         let signer = provider.getSigner();
         contract=contract.connect(signer);
         let b =ethers.utils.parseEther(Number(document.getElementById("bidAmount").value).toFixed(17));
-        console.log(b);
+       //console.log(b);
         let a =document.getElementById("bidAsset")?document.getElementById("bidAsset").value:m;
-        console.log(b,a);
+       //console.log(b,a);
         if(b==""){
             alert("Please enter bid value");
         }else{
@@ -1817,7 +2131,7 @@ async function invoke(w, m){
                 await sendPromise;
                 alert(`Thank you for Bidding (${document.getElementById("bidAmount").value} ETH). Please note, your bid will be confirmed as soon as the Ethereum network has updated. If bid is not confirmed, gas will be returned to your wallet.`);
             }catch(e){
-                console.log(e);
+               //console.log(e);
                 alert("Could not execute bid. Smart contract rejected transaction, make sure your wallet has enough ETH, and you are bidding high enough");
             }
         }
@@ -1828,7 +2142,7 @@ async function invoke(w, m){
         //let a=Number(document.getElementById("lotID").value);
         var callPromise = contract.Auctions(m);
         callPromise.then(function(result) {
-            console.log(ethers.utils.getAddress(result[1]));
+           //console.log(ethers.utils.getAddress(result[1]));
 
             document.getElementById("topBidder").innerHTML=`Top bidder: ${result[1]}<br /><br />`;
             //set price
@@ -1894,7 +2208,7 @@ async function invoke(w, m){
 
                 var today = new Date();
                 assets.countdown=(Date.parse(d)/1000)-(Date.parse(today)/1000);
-                console.log(Date.parse(d), Date.parse(today), assets.countdown);
+               //console.log(Date.parse(d), Date.parse(today), assets.countdown);
                 clearInterval(assets.time);
                 assets.time=setInterval(()=>{
                     try{
@@ -1906,7 +2220,7 @@ async function invoke(w, m){
                 },1000);
                 document.getElementById("countdownBox").innerHTML=`${assets.countdown}<br><br />`;
             }catch(e){
-                console.log(result, e);
+               //console.log(result, e);
             }
         });
     }
@@ -2048,7 +2362,7 @@ async function invokeCos(w, m){
         contract=contract.connect(signer);
         var sendPromise = contract.winnigBids(ethers.BigNumber.from(m));
         sendPromise.then(function(r) {
-            console.log(r);
+           //console.log(r);
             document.getElementById("itemData").innerHTML=`
                 Winning address: ${r[0]}<br />
                 Token Owner: ${r[1]} (DOOM)<br />
@@ -2066,13 +2380,13 @@ async function invokeCos(w, m){
         var sendPromise = contract.winnigBids(ethers.BigNumber.from(m));
         let r = await sendPromise;
         let v=r[2];
-        console.log(m, v);
+       //console.log(m, v);
         var payPromise = contract.pay(ethers.BigNumber.from(m), {
             gasLimit: 420000,
             value: v
         });
         payPromise.then(function(pr) {
-            console.log(pr);
+           //console.log(pr);
             alert("Thank you for claiming this item, it will appear in your wallet shortly");
             location.hash="account";
         });
@@ -2102,9 +2416,9 @@ async function testFunction(){
         signature:await signer.signMessage(JSON.stringify(m))
     }).then(function(result) {
       // Read result of the Cloud Function.
-      console.log("data");
+     //console.log("data");
       //var sanitizedMessage = result.data.text;
-      console.log(result);
+     //console.log(result);
     }).catch(function(error) {
       // Getting the Error details.+
 
@@ -2112,7 +2426,7 @@ async function testFunction(){
       var message = error.message;
       var details = error.details;
       // ...
-      console.log(error);
+     //console.log(error);
     });
 }
 async function illustMarket(i, p){
@@ -2122,7 +2436,7 @@ async function illustMarket(i, p){
         await hydra.post(ip, d);
     }else if(i=="r"){
         var u =hydra.chains[0]+"/query/read/"+p;
-        console.log(hydra.get(u));
+       //console.log(hydra.get(u));
         return await hydra.get(u);
     }else if(i=="bid"){
         var u =hydra.chains[0]+"/invoke/bid";

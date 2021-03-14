@@ -1,195 +1,11 @@
 var elements = {
     pages:{
-        default: ()=>{
-            return elements.pages.winners2();
+        default: (p)=>{
+            p[1]="live"
+            return elements.pages.market(p);
         },
         market(p){
-            var request = new XMLHttpRequest(); 
-
-            request.onreadystatechange = async function() {
-                if (request.readyState === 4) {
-                    let r=``;
-                    let marketHeaderFilter = ``;
-                    let headerHTML = ``;
-                    let tagCloudHTML = ``;
-                    assets.tokens=JSON.parse(request.response)
-                    let m={};
-                    let tagCloudArr = [];
-
-
-                    // return list of all used tags 
-                    // this should not be done client side
-                    for (a in assets.tokens){
-                        if (assets.tokens[a].tags){
-                            let eachTag = assets.tokens[a].tags.split(" ")
-                            for(tags in eachTag){
-                                if (!tagCloudArr.includes(eachTag[tags])){
-                                    tagCloudArr.push(eachTag[tags])
-                                    tagCloudHTML +=/*html*/`<option value="${eachTag[tags]}">${eachTag[tags]}</option>`
-                                }
-                            }
-                        }
-                    }
-                    //check tag search parameter
-                    if(p[1]){
-
-                        let p1=p[1].split("=")
-                        if(p1[0]=="creator"){
-                            let creators=p1[1].split("&");
-                            for(a in assets.tokens){
-                                //\check if asset has tags 
-                                
-                                let creator=assets.tokens[a].creator||"Illust"
-                                console.log(creator, creators)
-                                if(creator.toLowerCase()==(creators[0]).toLowerCase()){
-                                    m[a]=assets.tokens[a];
-                                    marketHeaderFilter = /*html*/`<div class="market__filterHeading">: ${creator}</div>`
-                                }
-                            }
-                        }
-                        else if(p1[0]=="tags"){
-                            let tags=p1[1].split("&");
-                            for(a in assets.tokens){
-                                //check if asset has tags 
-                                if(assets.tokens[a].tags){
-                                    let assetTags=assets.tokens[a].tags.split(" ")
-                                    //console.log(a,assetTags)
-                                    if(assetTags.includes(tags[0])){
-                                        marketHeaderFilter = /*html*/`<div class="market__filterHeading">: ${tags}</div>`
-                                        //console.log(assets.tokens[a])
-                                        m[a]=assets.tokens[a];
-                                    }
-                                }
-                            }
-                        } 
-                        else if(p1[0]=="featured"){
-                            // let featured=p1[1].split("&");
-                            for(a in assets.tokens){
-                                //check if asset is featured 
-                                if(assets.tokens[a].featured){
-                                    m[a]=assets.tokens[a];
-                                    marketHeaderFilter = /*html*/`<div class="market__filterHeading">: featured</div>`
-                                }
-                            }
-                        } else if (p1[0]=="live"){
-                            for(a in assets.tokens){
-                                //check if asset is featured 
-                                if(assets.tokens[a].currentAuction){
-                                    m[a]=assets.tokens[a];
-                                    marketHeaderFilter = /*html*/`<div class="market__filterHeading">: live</div>`
-                                }
-                            }
-                        }else {
-                            marketHeaderFilter = /*html*/`<img class="market__bannerImage" alt="black sludge banner 03/11/2021" src="/assets/banner.png"/>`
-                            m=assets.tokens
-                        }
-                    }
-                    else{
-                        marketHeaderFilter = /*html*/`<img class="market__bannerImage" alt="black sludge banner 03/11/2021" src="/assets/banner.png"/>`
-                        m=assets.tokens
-                    }
-
-                    //scope variables
-                    let colItemModelUrl
-                    let colItemName
-                    let colItemDesc
-                    let colItemCreator
-                    let colItemEndDate
-                    let marketFacePreviewHTML = ``
-
-                    for(a in m){
-                        let name;
-                        let vars="";
-                        let displayPrice = ""
-                        let marketFacePreviewHTML = ``
-
-                        if(m[a].ar_type && m[a].ar_type.includes('Face')){
-                            marketFacePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a}">
-                            <img src="/assets/icons/MaskTryON.png"/>
-                            </a>`
-                        
-                        }
-
-                        if(m[a].price){
-                            displayPrice = parseFloat(m[a].price).toFixed(4) + ' ETH'
-                        }
-                        for(v in m[a]){
-                            if(v=="animation_url"){
-                                colItemModelUrl = m[a][v]
-                            }else if(v=="name"){
-                                colItemName=m[a][v]
-                            }else if(v=="description"){
-                                colItemDesc =m[a][v]
-                            }else if(v=="creator"){
-                                colItemCreator = m[a][v]
-                            }else{
-                                //vars+=`${v}: ${m[a][v]}<br>`
-                            }
-                        }
-
-                        r+=/*html*/`
-                            <div class='market__collectionItem'>
-                                <div class="collectionItem__wrapper">
-                                    <h3 class="collectionItem__artist">
-                                        ${colItemCreator || 'Illust'}
-                                    </h3>
-
-                                    <div class="collectionItem__modelViewerWrapper">
-                                        <model-viewer disable-zoom ar ios-src="assets/models/.usdz" src="${colItemModelUrl}" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
-                                        ${marketFacePreviewHTML}
-                                    </div>
-                                    <div class="collectionItem__attributes" onclick="location.hash = 'asset?${a}'">
-                                        <h3 class="collectionItem__title">${colItemName}</h3>
-                                        <div class="collectionItem__link" id="view_${a}">MORE</div>
-                                        <div class="collectionItem__price">${displayPrice || "not for sale"}</div>
-                                    </div>
-             
-                                </div>
-                            </div>
-                            `
-                        //r+=a
-                    }
-
-
-                    headerHTML+=/*html*/`
-                        <div class="market__banner">
-                            <h1 class="market__heading">Market</h1>
-                            ${marketHeaderFilter}
-                            <nav>
-                                <ul id="js-subhead-nav" class="subhead__nav" >
-                                    <li class="subhead__navItem"><a href="#market?live">Live</a></li>
-                                    <li class="subhead__navItem"><a href="#market?featured">Featured</a></li>
-                                    <li class="subhead__navItem">
-                                    <select class="subhead__tagSelect" onChange="elements.updateTagUrl(this)" name="tag filter">
-                                        <option disabled selected value>Tags</option>
-                                    ${tagCloudHTML}
-                                    </select></li>
-                                </ul>
-                        
-                                
-                            </nav>
-                        </div>
-                  
-                    `
-
-                    document.getElementById("js-listings").innerHTML=r;
-                    document.getElementById("js-marketHeader").innerHTML=headerHTML;
-
-                    for(a in m){
-                        let assetData=await assets.invokeERC("getData", a);
-                        let owner=await assets.invokeERC("getOwner", a);
-                        console.log(owner)
-                        if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
-                            document.getElementById(`view_${a}`).innerHTML="Edit/Sell Asset"
-                        }
-                        // document.getElementById(`owner_${a}`).innerHTML="Owner: "+owner;
-                        //console.log(assetData[0])
-                    }
-
-                }
-            }
-            request.open("GET", "https://us-central1-illust.cloudfunctions.net/metadata");
-            request.send();
+            market.getAssets(p, market.displayAssets);
             return /*html*/`
                 <div id="js-marketHeader"></div>
                 <div id="js-listings" class="market__collection">${elements.loading()}</div>
@@ -211,7 +27,7 @@ var elements = {
                     }
                     let m=JSON.parse(request.response);
                     let r=""
-                    console.log(m);
+                   //console.log(m);
                     for(a in m){
                         let vars="";
                         for(v in m[a]){
@@ -280,8 +96,8 @@ var elements = {
                     }
                     let r=""
                     let vars=""
-                    console.log(m);
-                    console.log(assetData)
+                   //console.log(m);
+                   //console.log(assetData)
                     if(assetData==undefined){
                         assetData={};
                     }
@@ -536,7 +352,7 @@ var elements = {
         claimItem:(i)=>{
             a=i[1];
             p=i[2];
-            console.log(i, a, p);
+           //console.log(i, a, p);
             if(localStorage.provider){
                 account.load().then(()=>{
                     setTimeout(invokeCos("b", a),1000);
@@ -581,13 +397,13 @@ var elements = {
                     </div>
                     <div class="box">
                         <h1>Lot 2</h1><br>
-                        <model-viewer ar ios-src="assets/Astronaut.usdz" src="assets/Astronaut.glb" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                        <model-viewer ar ios-src="assets/Astronaut.usdz" src="assets/Astronaut.glb" auto-rotate camera-controls background-color="#455A64"></model-viewer>
                         Vivamus felis lectus, efficitur vitae porttitor tempor, sodales id tortor. Aliquam tempus eleifend ex eget condimentum. Donec ac dapibus augue. Donec ac suscipit tellus. Nam viverra sit amet tellus eu blandit. Proin sed sem quis arcu faucibus sodales ac condimentum lectus. Quisque lacinia vel turpis in feugiat. Maecenas hendrerit vulputate tempus. Nulla vel nulla varius, ultricies ligula quis, aliquam ligula. Curabitur scelerisque feugiat ligula, tristique dignissim risus efficitur non. Morbi vitae mi et nibh rutrum ultrices a a velit. Aliquam erat volutpat. Nulla in nulla vulputate, tincidunt risus quis, accumsan ipsum.
                         <div class="button" onclick="location.hash='lot?2'">View Lot</div>
                     </div>
                     <div class="box">
                         <h1>Lot 3</h1><br>
-                        <model-viewer ar ios-src="assets/Astronaut.usdz" src="assets/Astronaut.glb" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                        <model-viewer ar ios-src="assets/Astronaut.usdz" src="assets/Astronaut.glb" auto-rotate camera-controls  background-color="#455A64"></model-viewer>
                         Vivamus felis lectus, efficitur vitae porttitor tempor, sodales id tortor. Aliquam tempus eleifend ex eget condimentum. Donec ac dapibus augue. Donec ac suscipit tellus. Nam viverra sit amet tellus eu blandit. Proin sed sem quis arcu faucibus sodales ac condimentum lectus. Quisque lacinia vel turpis in feugiat. Maecenas hendrerit vulputate tempus. Nulla vel nulla varius, ultricies ligula quis, aliquam ligula. Curabitur scelerisque feugiat ligula, tristique dignissim risus efficitur non. Morbi vitae mi et nibh rutrum ultrices a a velit. Aliquam erat volutpat. Nulla in nulla vulputate, tincidunt risus quis, accumsan ipsum.
                         <div class="button" onclick="location.hash='lot?3'">View Lot</div>
                     </div>
@@ -595,16 +411,18 @@ var elements = {
             `
         },
         asset:async(a)=>{
-            await account.load()
-            await account.load()
+            // await account.load()
+            console.log("loading asset",`https://us-central1-illust.cloudfunctions.net/metadata/${a[1]}`)
+            // await account.load()
             var request = new XMLHttpRequest(); 
             request.onreadystatechange = async function() {
                 if (request.readyState === 4) {
+                    console.log(request.response);
                     if(!request.response){
                         return `Asset could not be found <div class='button' onclick='location.hash=""'>Home</div>`
                     }
                     let m=JSON.parse(request.response);
-                    console.log(m);
+                   //console.log(m);
                     let b="<br>";
                     let name=m.name;
                     let hash=a[1];
@@ -623,8 +441,8 @@ var elements = {
                     if(m.edition){
                         editionHTML+=/*html*/`<div class="lotAsset__attribute">Edition: ${m.edition}</div>`
                     }
-                    if(m["ar_type"]){
-                        facePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${a.slice(1)}">
+                    if(m["try_on"]){
+                        facePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="${m["try_on"]}">
                         <img src="/assets/icons/MaskTryON.png"/>
                         </a>                        `
                     }
@@ -633,14 +451,16 @@ var elements = {
                     let owner
                     try{
                         owner = await assets.invokeERC("getOwner", hash)
-                        console.log(owner)
+                        //console.log(owner)
                         try{
                             var userRequest = new XMLHttpRequest(); 
                             userRequest.onreadystatechange = async function() {
                                 if (userRequest.readyState === 4) {
-                                    let m=userRequest.response;
-                                    console.log(m);
-                                    document.getElementById("ownerBox").innerHTML=m?`Owner: ${m}`:""
+                                    let us=userRequest.response;
+                                   //console.log(m);
+                                //    if(us){
+                                //     document.getElementById("ownerBox").innerHTML=us?`Owner: ${us}`:""
+                                //    }
                                 }
                             }
                             userRequest.open("GET", `https://us-central1-illust.cloudfunctions.net/users/username/${owner}`);
@@ -656,25 +476,59 @@ var elements = {
                     //let auction=JSON.parse(await illustMarket("r", n[1]));
 
                     if(m["end_date"]){
-                        console.log(m)
+                       //console.log(m)
                         //setTimeout(auction.loadDate,1);
                         let endTime=new Date(m["end_date"]);
                         let timeNow=new Date(Date.now());
                         let endTimePretty = endTime.toLocaleString(); 
 
+                        console.log(endTime.getTime(),Date.now())
                         //console.log(endTime.getTime(),timeNow.getTime())
                         market.endTime=m["end_date"];
                         if(endTime.getTime()>timeNow.getTime()){
+                            let bidHistory=`
+                            <div class="auction__history">
+                            `
+                            console.log(hash);
+                            if(hash=="47365374795336020801871236186558194024311745115267511752163356511372176907504"){
+                                let bidArray=[]
+                                for(bid in m.bids){
+                                    bidArray.push(m.bids[bid])
+                                }
+                                bidArray=bidArray.sort((a,b)=>{
+                                    return Number(b.amount)-Number(a.amount)
+                                });
+                                console.log(bidArray);
+                                
+                                for(bid in bidArray){
+                                    //console.log(bid, m.bids[bid])
+                                    let timeLeft=Date.now()-new Date(bidArray[bid].timestamp).getTime();
+                                    bidHistory+=`
+                                    
+                                        <div class="auction__bidder">
+                                            ${(Math.floor(timeLeft/86400000))?`${Math.floor(timeLeft/86400000)} Days`:``} 
+                                            ${(Math.floor(timeLeft%86400000/3600000))?`${Math.floor(timeLeft%86400000/3600000)} Hours`:``} 
+                                            ${(Math.floor(timeLeft%3600000/60000))?`${Math.floor(timeLeft%3600000/60000)} Minutes`:``} 
+                                            ${(Math.floor(timeLeft%60000/1000))?`${Math.floor(timeLeft%60000/1000)} Seconds`:``} 
+                                            ago:<br>
+                                            @${bidArray[bid].bidder||"Anonymous"} bid ${bidArray[bid].amount} ETH</div>
+                                    `
+                                }
+                            }
+
+                            bidHistory+=`
+                            <div class="auction__overlay"></div>
+                            </div>`
                             //console.log((owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()))
                             auctionDetails=/*html*/`
                                 <div class="auction__label">Time Remaining</div>
                                 <div class="auction__attribute" id="countdownBox"></div>
-                                <div class="auction__label" >Current Bid</div>
+                                <div class="auction__label" >${(m.price==m["start_price"])?"Reserve price":"Current Bid"}</div>
                                 <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
                                
                                 ${
                                     //check userr is not owner
-                                    (owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase())?"":/*html*/`
+                                    (provider&&provider.provider&&provider.provider.selectedAddress&&owner&&owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase())?"":/*html*/`
                                         <label class="auction__label">Place Bid</label>
                                         <span>ETH</span>
                                         <input id="js-bidAmount" style="margin:0;" type='number' step='0.2' value='${Number(m["price"])+0.2}'/>
@@ -682,7 +536,12 @@ var elements = {
                                 `}
                                     
                                 <div id="userBid"></div>
+                                <div id="bidHistory">
+                                ${bidHistory}
+                                </div>
                             `
+                        }else if(m.price==m["start_price"]){
+                            auctionDetails+="This asset is not for sale"
                         }else{
                             auctionDetails+=/*html*/`
                                 <div class="auction__label">This auction has ended</div>
@@ -692,13 +551,23 @@ var elements = {
                                 <label class="auction__label">Closing Price</label>
                                 <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
                             `
+                            try{
+                                if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
+                                    auctionDetails+=`Winner: ${m['top_bidder']}<br>Price: ${m.price}<br><div class='button' onclick="market.invokeCustody('listAsset', [${hash}, ${m.price}, '${m['top_bidder']}'])">Finalize Price</div>`
+                                }
+                                else if(m['top_bidder'].toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
+                                    auctionDetails+=`You have won this auction<br>If seller has finalized price, please pay now<div class='button' onclick="market.invokeCustody('claim', [${hash}, ${m.price}])">Pay Now</div>`
+                                }
+                            }catch(e){
+                                console.log(e);
+                            }
                         }
                     }else{
 
                         auctionDetails+="This asset is not for sale"
                     }
 
-                    if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
+                    if(owner&&owner!=""&&provider&&provider.provider&&owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
                         auctionDetails+=`<div class='button' onclick="document.getElementById('js-auctionDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Manage asset sale":"Sell Asset"}</div>`
                     }
     
@@ -716,7 +585,7 @@ var elements = {
                             <div class="lotAsset__wrapper">
                                 <div class="lotAsset__content">
                                     <div class="lotAsset__viewer">
-                                        <model-viewer class="lotAsset__model" ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls  alt="GreenMask"></model-viewer>
+                                        <model-viewer class="lotAsset__model" ar  ios-src="${m.usdz||''}" src="${url}" auto-rotate camera-controls  alt="GreenMask"></model-viewer>
                                         ${facePreviewHTML}    
                                     </div>
                                 
@@ -725,7 +594,7 @@ var elements = {
                                             <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
                                         </h2>
                                         ${editionHTML}
-                                        <div id="ownerBox" class="lotAsset__attribute">${owner?"Owner: "+owner:""}</div> 
+                                        <div id="ownerBox" class="lotAsset__attribute"></div> 
                                         <div class="lotAsset__attribute">Created By: 
                                             <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
                                         </div>
@@ -762,105 +631,231 @@ var elements = {
             
             return `<div id="assetBox"></div>`
         },
-        asset2:async(a)=>{
-            await account.load()
+        claim:async(a)=>{
+            // await account.load()
+            console.log("loading asset",`https://us-central1-illust.cloudfunctions.net/metadata/${a[1]}`)
+            // await account.load()
             var request = new XMLHttpRequest(); 
             request.onreadystatechange = async function() {
                 if (request.readyState === 4) {
+                    console.log(request.response);
                     if(!request.response){
                         return `Asset could not be found <div class='button' onclick='location.hash=""'>Home</div>`
                     }
                     let m=JSON.parse(request.response);
-                    console.log(m);
+                    //console.log(m);
                     let b="<br>";
                     let name=m.name;
                     let hash=a[1];
                     let url=m["animation_url"];
                     let iPrice=m.price||0;
-                    let assetDetails=`
-                        Created by: ${m.creator||"Illust"}<br><br>
-                        <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Transaction History</a><br><br>
-                    `;
+                    let auctionDetails=``;
+                    let editionHTML = ``;
+                    let facePreviewHTML = ``;
+
                     
-                    let owner=await assets.invokeERC("getOwner", hash);
-                    assetDetails+=`${owner?"Owner: "+owner:""}<br><br>`;
+
+                    //get description
+                    let description=m.description||"";
+
+                    //get edition
+                    if(m.edition){
+                        editionHTML+=/*html*/`<div class="lotAsset__attribute">Edition: ${m.edition}</div>`
+                    }
+                    if(m["try_on"]){
+                        facePreviewHTML = /*html*/`<a class="collectionItem__facePreview"  href="${m["try_on"]}">
+                        <img src="/assets/icons/MaskTryON.png"/>
+                        </a>                        `
+                    }
+
+
+                    let owner
+                    try{
+                        owner = await assets.invokeERC("getOwner", hash)
+                        //console.log(owner)
+                        try{
+                            var userRequest = new XMLHttpRequest(); 
+                            userRequest.onreadystatechange = async function() {
+                                if (userRequest.readyState === 4) {
+                                    let us=userRequest.response;
+                                   //console.log(m);
+                                //    if(us){
+                                //     document.getElementById("ownerBox").innerHTML=us?`Owner: ${us}`:""
+                                //    }
+                                }
+                            }
+                            userRequest.open("GET", `https://us-central1-illust.cloudfunctions.net/users/username/${owner}`);
+                            userRequest.send();
+                        }catch(e){console.log(e)}
+                    } catch {
+                        owner = ""
+                    }
+
                     //<a>Created by: <img style="width:70px; object-fit: cover;height:58px;margin-bottom:-25px" src="images/doom2.png"></img> DOOM</a><br><br>
-                    
+                    //console.log('owner after' + owner)
                     
                     //let auction=JSON.parse(await illustMarket("r", n[1]));
 
                     if(m["end_date"]){
-                        console.log(m)
+                       //console.log(m)
                         //setTimeout(auction.loadDate,1);
                         let endTime=new Date(m["end_date"]);
                         let timeNow=new Date(Date.now());
+                        let endTimePretty = endTime.toLocaleString(); 
 
-                        console.log(endTime.getTime(),timeNow.getTime())
-                        assetDetails+=`
-                        
-                            Top bidder: ${m["top_bidder"]}
-                            <br><br>
-                            <div id="startPriceBox">Start price: ${m["start_price"]}</div>
-                            <br><br>
-                        `
+                        console.log(endTime.getTime(),Date.now())
+                        //console.log(endTime.getTime(),timeNow.getTime())
+                        market.endTime=m["end_date"];
+                        //if auction is live
+                        if(endTime.getTime()>timeNow.getTime()){
+                            let bidHistory=`
+                            <div class="auction__history">
+                            `
+                            console.log(hash);
+                            if(hash=="47365374795336020801871236186558194024311745115267511752163356511372176907504"){
+                                let bidArray=[]
+                                for(bid in m.bids){
+                                    bidArray.push(m.bids[bid])
+                                }
+                                bidArray=bidArray.sort((a,b)=>{
+                                    return Number(b.amount)-Number(a.amount)
+                                });
+                                console.log(bidArray);
+                                
+                                for(bid in bidArray){
+                                    //console.log(bid, m.bids[bid])
+                                    let timeLeft=Date.now()-new Date(bidArray[bid].timestamp).getTime();
+                                    bidHistory+=`
+                                    
+                                        <div class="auction__bidder">
+                                            ${(Math.floor(timeLeft/86400000))?`${Math.floor(timeLeft/86400000)} Days`:``} 
+                                            ${(Math.floor(timeLeft%86400000/3600000))?`${Math.floor(timeLeft%86400000/3600000)} Hours`:``} 
+                                            ${(Math.floor(timeLeft%3600000/60000))?`${Math.floor(timeLeft%3600000/60000)} Minutes`:``} 
+                                            ${(Math.floor(timeLeft%60000/1000))?`${Math.floor(timeLeft%60000/1000)} Seconds`:``} 
+                                            ago:<br>
+                                            @${bidArray[bid].bidder||"Anonymous"} bid ${bidArray[bid].amount} ETH</div>
+                                    `
+                                }
+                            }
+
+                            bidHistory+=`
+                            <div class="auction__overlay"></div>
+                            </div>`
+                            //console.log((owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()))
+                            auctionDetails=/*html*/`
+                                <div class="auction__label">Time Remaining</div>
+                                <div class="auction__attribute" id="countdownBox"></div>
+                                <div class="auction__label" >${(m.price==m["start_price"])?"Reserve price":"Current Bid"}</div>
+                                <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
+                               
+                                ${
+                                    //check userr is not owner
+                                    (provider&&provider.provider&&provider.provider.selectedAddress&&owner&&owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase())?"":/*html*/`
+                                        <label class="auction__label">Place Bid</label>
+                                        <span>ETH</span>
+                                        <input id="js-bidAmount" style="margin:0;" type='number' step='0.2' value='${Number(m["price"])+0.2}'/>
+                                        <div class="button" onclick="market.bid()">Place Bid</div>
+                                `}
+                                    
+                                <div id="userBid"></div>
+                                <div id="bidHistory">
+                                ${bidHistory}
+                                </div>
+                            `
+                        }else if(m.price==m["start_price"]){
+                            auctionDetails+="This asset is not for sale"
+                        }else{
+                            auctionDetails+=/*html*/`
+                                <div class="auction__label">This auction has ended</div>
+                                <div class="auction__attribute">${endTimePretty}</div>
+                                <div class="auction__label" >Top Bidder</div>
+                                <div class="auction__attribute">${m["top_bidder"]}</div>
+                                <label class="auction__label">Closing Price</label>
+                                <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
+                            `
+                            try{
+                                if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
+                                    auctionDetails+=`Winner: ${m['top_bidder']}<br>Price: ${m.price}<br><div class='button' onclick="market.invokeCustody('listAsset', [${hash}, ${m.price}, '${m['top_bidder']}'])">Finalize Price</div>`
+                                }
+                                else if(m['top_bidder'].toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
+                                    auctionDetails+=`You have won this auction<br>If seller has finalized price, please pay now<div class='button' onclick="market.invokeCustody('claim', [${hash}, ${m.price}])">Pay Now</div>`
+                                }
+                            }catch(e){
+                                console.log(e);
+                            }
+                        }
+                        //if auction is not live
                     }else{
-                        assetDetails+="This asset is not for sale"
+
+                        auctionDetails+="This asset is not for sale"
                     }
 
+                    if(owner&&owner!=""&&provider&&provider.provider&&owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
+                        auctionDetails+=`<div class='button' onclick="document.getElementById('js-auctionDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Manage asset sale":"Sell Asset"}</div>`
+                    }
     
-                    document.getElementById("assetBox").innerHTML= `
-                        <div id="lotBox">
-                            <h1 style="margin:0">${name}</h1>
-                            <div class="br" style="width:64px;float:left;margin:0;padding:0;"></div>
-                            <div class="flex wrap w1">
-
-                                <div style="text-align:center">
-                                    <model-viewer ar  ios-src="assets/models/${hash}.usdz" src="${url}" auto-rotate camera-controls alt="GreenMask" background-color="#455A64" style="width:100%;height:43vw;"></model-viewer>
-                                    <a style="font-size:30px" href="https://app.illust.space/ar/faces.html#${name}"><b>Try On</b></a>
-                                </div>
+                    document.getElementById("assetBox").innerHTML= /*html*/`
+                        <div id="lotBox" class="lotAsset">
+                            <h1 class="lotAsset__title">${name}</h1>
+                            <ul class="lotAsset__linkouts">
+                                <li>
+                                    <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}" target="_blank">History</a>
+                                </li>
+                                <li>
+                                    <a href="#market?creator=${m.creator||'Illust'}">Other Works</a>
+                                </li>
+                            </ul>
+                            <div class="lotAsset__wrapper">
+                                <div class="lotAsset__content">
+                                    <div class="lotAsset__viewer">
+                                        <model-viewer class="lotAsset__model" ar  ios-src="${m.usdz||''}" src="${url}" auto-rotate camera-controls  alt="GreenMask"></model-viewer>
+                                        ${facePreviewHTML}    
+                                    </div>
                                 
-                                <div id="assetDetails" style="text-align:center">
-                                    ${assetDetails}
-                                </div>
+                                    <div class="lotAsset__details">
+                                        <h2 class="lotAsset__name">
+                                            <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
+                                        </h2>
+                                        ${editionHTML}
+                                        <div id="ownerBox" class="lotAsset__attribute"></div> 
+                                        <div class="lotAsset__attribute">Created By: 
+                                            <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
+                                        </div>
+                                        <div class="lotAsset__attribute">${m.description}</div>
+                                        <div class="lotAsset__attribute">History:
+                                            <a target="_blank" href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
+                                        </div>
+                                        <div class="lotAsset__shareWrapper">
+                                            <a href="javascript:void(0)" onclick="elements.shareSheet(window.location.href, this)">Share Link 
+                                                <input id="js-share" class="lotAsset__shareInput" aria-hidden="true"/>
+                                                <div class="h-tooltip">Link Copied!</div>
+                                            </a>
+                                            <span> | </span>
+                                            <a class="share__twitter" target="_blank" href="https://twitter.com/intent/tweet?text=Checkout%20This%20NFT%20${encodeURIComponent(window.location.href)}">
+                                            <img class="share__twitterIcon" src="/assets/icons/twitter.svg"/>Tweet</a>
+                                            <span> | </span>
+                                            <iframe class="share__facebookButton" src="https://www.facebook.com/plugins/share_button.php?href=${encodeURIComponent(window.location.href)}&layout=button_count&size=small&appId=794158374066212&width=96&height=20" width="96" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
 
-                            </div>
-                            <div class="w1">
-                                ${m.description}<br><br>
-                                2020 Hand modeled and hand illustrated AR NFT. Hashed mesh. Single edition - signed.
-                                <br><br>
-                                View on <a href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
-                                    <br>Single Edition
-                                <!--
-                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Watch</div>
-                                <div class="button w5" onclick="alert('This lot is not currently availible for purchase')">Share</div>--><br><br>
-                                If you'd rather place a bid through one of our auctioneers, please get in touch at  +1 (310) 294-8615 or you can also reach us on our <a href="https://discord.gg/98qqje5">discord</a>.
+
+                                        </div>
+                                    </div>
+                                    <div id="js-auctionDetails" class="lotAsset__auction">
+                                    ${auctionDetails}
+                                </div>
+                                </div>
                             </div>
                         </div>
-                        
                     `
+                    market.countdown();
                 }
             }
             request.open("GET", `https://us-central1-illust.cloudfunctions.net/metadata/${a[1]}`);
-            request.send();
+            request.send()
+            
             return `<div id="assetBox"></div>`
         },
         collections:()=>{
             return elements.DOOM2();
-        },
-        collection:(n)=>{
-            if(n[1]=="DOOM"){
-                return elements.DOOM();
-            }else{
-                return `
-                    <div id="collectionBox">
-                        <h1>Collection ${n[1]}</h1>
-                        <br>
-                        <model-viewer ar ios-src="assets/models/Aur.usdz" src="assets/Astronaut.glb" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
-                        Vivamus felis lectus, efficitur vitae porttitor tempor, sodales id tortor. Aliquam tempus eleifend ex eget condimentum. Donec ac dapibus augue. Donec ac suscipit tellus. Nam viverra sit amet tellus eu blandit. Proin sed sem quis arcu faucibus sodales ac condimentum lectus. Quisque lacinia vel turpis in feugiat. Maecenas hendrerit vulputate tempus. Nulla vel nulla varius, ultricies ligula quis, aliquam ligula. Curabitur scelerisque feugiat ligula, tristique dignissim risus efficitur non. Morbi vitae mi et nibh rutrum ultrices a a velit. Aliquam erat volutpat. Nulla in nulla vulputate, tincidunt risus quis, accumsan ipsum.
-                    </div>
-                    
-                `
-            }
         },
         admin:async()=>{
             return `
@@ -869,7 +864,7 @@ var elements = {
                     Data Output:<br>
                     <div id="data"></div>
                 </div>
-                <model-viewer style="margin:auto;height:30vh;position:relative" ar ios-src="assets/models/green.usdz" src="assets/models/green.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
+                <model-viewer style="margin:auto;height:30vh;position:relative" ar ios-src="assets/models/green.usdz" src="assets/models/green.gltf" auto-rotate camera-controls background-color="#455A64"></model-viewer>
 
                 <div class="box">
                     Data Toolset
@@ -940,7 +935,7 @@ var elements = {
             `
         },
         gallery:(p)=>{
-            console.log(p);
+           //console.log(p);
             try{
                     
                 var request4 = new XMLHttpRequest(); 
@@ -951,7 +946,7 @@ var elements = {
                         }
                         let m=JSON.parse(request4.response);
         
-                        console.log(m);
+                       //console.log(m);
                         
                         let url=m["animation_url"];
                         let usdz=m["usdz"];
@@ -965,7 +960,7 @@ var elements = {
                 return ''
                 
             }catch(e){
-                console.log(e);
+               //console.log(e);
                 return `
                     
                 <div id="gal"></div>
@@ -995,7 +990,7 @@ var elements = {
     `,
     sidebar:/*html*/`
         <div onclick=""><a href="https://illust.space">Exhibitions</a></div>
-        <div><a onclick="location.hash='market';sidebar(1);">Market</a></div>
+        <div><a onclick="location.hash='';sidebar(1);">Market</a></div>
         <div><a href="https://illust.space/about">About</a></div>
         <div onclick="location.hash='account';sidebar(1);">Account</div>
         <div><a href="https://illust.space/contact">Contact</a></div>
@@ -1115,58 +1110,60 @@ var elements = {
         let r=elements.loading();
         //await account.load();
         
-        console.trace(provider);
-        if(provider&&provider.provider&&provider.provider.selectedAddress!=null&&provider.provider.selectedAddress!=undefined){
-            //console.log(provider.provider.selectedAddress);
-            let a;
-            let b;
-            if(account.info&&account.info.username){
-                console.log("Got Acc info", account.info);
-                a= await elements.profileInfo();
-                var profileAssets = await elements.profileAssets()
-                b=account.info.username; 
-                console.log(a, profileAssets);
-                r=/*html*/`
-                    <div class="h-flex">
-                        <div id="accountContent" class="accountContent__wrapper">
-                            <h1 style="text-align:left">ACCOUNT INFO</h1>
-                            <div class="br" style="width:64px;float:left;margin:0px calc(98% - 64px) 16px 0%;"></div>
-                            <div id="js-accountWrapper" class="h-prel h-flex wrap h-100pw h-drel">
-                                <div id="js-profileInfo" class="profileInfo" >
-                                    ${a}
-                                </div>
-                                <div id="js-profileAssets" class="profileAssets">
-                                    ${profileAssets}
-                                </div>
+        //console.trace(provider);
+        try{
+            if(provider&&provider.provider&&provider.provider.selectedAddress!=null&&provider.provider.selectedAddress!=undefined){
+                //console.log(provider.provider.selectedAddress);
+                let a;
+                let b;
+                if(account.info&&account.info.username){
+                //console.log("Got Acc info", account.info);
+                    a= await elements.profileInfo();
+                    var profileAssets = await elements.profileAssets()
+                    b=account.info.username; 
+                    console.log(a, profileAssets);
+                    r=/*html*/`
+                        <div class="h-flex">
+                            <div id="accountContent" class="accountContent__wrapper">
+                                <h1 style="text-align:left">ACCOUNT INFO</h1>
+                                <div class="br" style="width:64px;float:left;margin:0px calc(98% - 64px) 16px 0%;"></div>
+                                <div id="js-accountWrapper" class="h-prel h-flex wrap h-100pw h-drel">
+                                    <div id="js-profileInfo" class="profileInfo" >
+                                        ${a}
+                                    </div>
+                                    <div id="js-profileAssets" class="profileAssets">
+                                        ${profileAssets}
+                                    </div>
 
+                                </div>
                             </div>
+                            
                         </div>
-                        
-                    </div>
-                `;
+                    `;
+                }else{
+                    //connectAccount(1);
+                    //await account.load();
+                //console.log("Loading Acc info");
+                console.log("Logging in");
+                    account.login();
+                    //a= await elements.profileInfo();
+                    
+                    r=elements.loading();
+                }
             }else{
-                //connectAccount(1);
-                //await account.load();
-                console.log("Loading Acc info");
-                account.login();
-                //a= await elements.profileInfo();
-                
-                r=elements.loading();
+            //console.log("No provider");
+                if(localStorage.userInfo){
+                //console.log("User found");
+                    account.login();
+                }else{
+                //console.log("No user could be found")
+                    r=elements.connect();
+                }
             }
-        }else{
-            console.log("No provider");
-            if(localStorage.userInfo){
-                console.log("User found");
-                account.login();
-            }else{
-                console.log("No user could be found")
-                r=elements.connect();
-            }
+        }catch(e){
+            r=elements.connect();
+           //console.log(e);
         }
-        // }catch(e){
-        //     r=elements.connect();
-        //     console.log(e);
-        // }
         return r;
     },
     profileInfo:async()=>{
@@ -1197,7 +1194,7 @@ var elements = {
                 }
                 b=await web3.eth.getBalance(provider.provider.selectedAddress,console.log);
             }catch(e){
-                console.log(e);
+               //console.log(e);
             }
             if(account.info){
                 b=account.info.username;
@@ -1205,7 +1202,7 @@ var elements = {
                 fn=account.info.firstname;
                 ln=account.info.lastname;
             }
-            let c=elements.collection();
+            let c=await elements.collection();
             return /*html*/`
                 <div>
                     <img src="assets/icons/account.svg" class="profileInfo__photo" />
@@ -1233,21 +1230,21 @@ var elements = {
 
             `;
         }catch(e){
-            console.log(e);
+           //console.log(e);
             return `Account info could not be located`;
 
         }
     },
     profileAssets:async()=>{
-        let c=elements.collection();
-        console.log(c);
+        let c=await elements.collection();
+       //console.log(c);
 
         return /*html*/`
             <div>
                 <div class="profileAssets__header">
-                    <div id="cl" class="js-profileHeaderItem profileAssets__headerItem profileAssets__headerItem--current" onclick="account.selectProfileHeader(this);document.getElementById('js-profileContents').innerHTML=elements.collection()">Collection<br><br></div>
+                    <div id="cl" class="js-profileHeaderItem profileAssets__headerItem profileAssets__headerItem--current" onclick="account.selectProfileHeader(this);(async()=>{document.getElementById('js-profileContents').innerHTML=await elements.collection()})()">Collection<br><br></div>
                     <div id="vw" class="js-profileHeaderItem profileAssets__headerItem"  onclick="account.selectProfileHeader(this);account.wallet();">view Wallet<br><br></div>
-                    <div  class="js-profileHeaderItem profileAssets__headerItem"  onclick="location.hash = '#market'">Auctions<br><br></div>
+                    <div  class="js-profileHeaderItem profileAssets__headerItem"  onclick="location.hash = ''">Auctions<br><br></div>
 
                 </div>
                 <div id="js-profileContents" class="profileAssets__collection">
@@ -1283,7 +1280,7 @@ var elements = {
                 }
                 b=await web3.eth.getBalance(provider.provider.selectedAddress);
             }catch(e){
-                console.log(e);
+               //console.log(e);
             }
             if(account.info){
                 b=account.info.username;
@@ -1291,7 +1288,7 @@ var elements = {
                 fn=account.info.firstname;
                 ln=account.info.lastname;
             }
-            let c=elements.collection();
+            let c=await elements.collection();
             return /*html*/`
                 <div >
                     <img src="assets/icons/account.svg" class="profileInfo__photo" />
@@ -1320,7 +1317,7 @@ var elements = {
                 </div>
             `;
         }catch(e){
-            console.log(e);
+           //console.log(e);
             return `Account info could not be located`;
 
         }
@@ -1331,7 +1328,7 @@ var elements = {
             setTimeout(()=>{account.getBal()}, 100);
             let b="";
             for(i in account.info.bids){
-                console.log(i, account.info.bids[i]);
+               //console.log(i, account.info.bids[i]);
                 b+=`Bids:<br><a onclick="location.hash='lot?${i}'">${i}</a> ${account.info.bids[i]}<br>`;
             }
             return /*html*/`
@@ -1351,7 +1348,7 @@ var elements = {
         
             `;
         }catch(e){
-            console.log(e);
+           //console.log(e);
             return `Account info could not be located`;
 
         }
@@ -1364,35 +1361,10 @@ var elements = {
             </div>
         `
     },
-    collection:()=>{
-        if(account.info.collection){
-            let r=/*html*/`<div class='profileAssets__collectionItem'>`
-            
-            for(i in account.info.collection){
-                console.log(account.info.collection[i])
-                r+=/*html*/`
-                    <div class="collectionItem__wrapper">
-                        <div class="collectionItem__modelViewerWrapper">
-                            <model-viewer ar ios-src="assets/models/${i}.usdz" src="assets/models/${i}.gltf" auto-rotate camera-controls alt="Chair" background-color="#455A64"></model-viewer>
-                            <a class="collectionItem__facePreview"  href="https://app.illust.space/ar/faces.html#${i}">🎭</a>
-                        </div>
-                        <div class="collectionItem__attributes">
-                            <h3 class="collectionItem__title">${account.info.collection[i]}</h3>
-                            <a class="collectionItem__link" onclick="location.hash = 'asset?${i}'">more</a>
-                        </div>
-                        
-                    </div>`
-                
-            }
-            r+="</div>"
-            return r;
-        }
-        else{
-            return /*html*/`
-                <span>You have no collection: <a href="#market" style="color:var(--color4);">Start Collecting</a></span>
-                
-            `
-        }
+    collection:async()=>{
+        let res=await market.displayCollection()
+        return res;
+    
     },
     auction:()=>{
         return `
@@ -1407,7 +1379,7 @@ var elements = {
             <div class="br" id="connectionMethod" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
             <p style="font-size:12px">Illust Space, a web3.0 application, uses a crypto wallet for buying, selling, and trading augmented reality art. Your account is tied to your wallet. Please select one of the three options below: Torus (on the left), an existing Web3.0 Provider (middle), or an existing Private Key. Torus is an easy to use service for creating your first crypto wallet using an existing email, facebook account, or other online authentication services. Select Web3.0 if you already have a provider on your browser such as MetaMask or Coinbase Wallet; Illust Space does not have access to your private keys, please keep your private key information to yourself as this is highly sensitive information.    
             <div class="flex">
-                    <div class="loginOption__wrapper" onclick="localStorage.setItem('provider','torus');account.login();">
+                    <div class="loginOption__wrapper" onclick="(async()=>{await localStorage.setItem('provider','torus');account.login();})()">
                         <img class="loginOption__image" src="assets/torus.svg" />
                         <div class="br"></div>
                         <b id="torusBox">Connect with Torus</b>
@@ -1430,130 +1402,9 @@ var elements = {
         torInt = setInterval(changeAuth, 2000);
         return r;
     },
-    DOOM:()=>{
-        
-        return `
-            <h1 style="margin:64px 1% 0">MF DOOM COLLECTION</h1>   
-            <div class="br" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
-            <br>
-            <div class="flex w1" style="font-size:80%;z-index:4">
-                <div>
-                    <h2>Collection</h2>
-                    MF DOOM Halloween Collection
-                </div>
-                <div>
-                    <h2>What</h2>
-                    Exclusive MF DOOM AR NFTs
-                </div>
-                <div>
-                    <h2>Launch</h2>
-                    October 23rd 2020
-                </div>
-                <div>
-                    <h2>Auction</h2>
-                    Limited Run NFT AR Pieces
-                </div>
-            </div>
-            <div class="w1" style="background-image:url('images/doom2.png'); height:50vw; margin:-10vw 0 -15vw 0;background-size:40%;background-repeat:no-repeat;background-position:50% 0"></div>
-            <div class="flex  wrap w1">
-                <div class="flex wrap w1">
-                    <div style="">
-                        <h1>Lot 90007</h1>
-                        <div class="br" style="float:left;width:64px;"></div>
-            
-
-                        <model-viewer ar ios-src="assets/models/green.usdz" src="assets/models/green.glb" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
-
-
-                        <div class="button w5" onclick="location.hash='lot?90007'">Place Bid</div>
-                        
-                    </div>
-                    <div>
-                        <h1>Lot 90008</h1>
-                        <div class="br" style="float:left;width:64px;"></div>
-
-                        <model-viewer ar ios-src="assets/models/blue.usdz" src="assets/models/blue.glb" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
-
-                        <div class="button w5" onclick="location.hash='lot?90008'">Place Bid</div>
-                        
-                    </div>
-                </div>
-                <div>
-                    <h1>MF DOOM</h1>
-                    Halloween Collection Volume One<br><br>
-
-                Till the end of days he will be the ill Doomsayer… The days are strung up on that cross-quarter half light, Samhain, All souls - Halloween. And as the darkness draws in and the evenings give way to fire-spit crackle; long shadowed children (perhaps wearing masks on top of masks) search for plague free treats. In a period of seasonal shift, the prophet of doom always sounds louder, perhaps it is the cold slowing atoms, amplifying rhymes - perhaps it really is the end times. Time will tell. But a mask is suddenly far more desirable and if the streets are infected we can provide a panacea. Drawing on the golden age comic inspiration of the original Metal Face, the first Halloween auction consists of two extremely limited hand crafted masks, redolent of the original Dr (he of namesake and tentacle) they reflect the two aspects - shadow and growth. Hand drawn textures conjure comic pages, upturned eyes assure you that they are still something that the baddest villain of them all would wear apocalypse or not.
-                    </div>
-            </div>
-        `
-    },
-    DOOM2:()=>{
-        return `
-            <h1 style="margin:64px 1% 0">MF DOOM COLLECTION 2</h1>   
-            <div class="br" style="width:64px;float:left;margin:64px calc(98% - 64px) 64px 1%;"></div>
-            <br>
-            <div class="flex w1" style="font-size:80%;z-index:4">
-                <div>
-                    <h2>Collection</h2>
-                    MF DOOM Halloween Collection
-                </div>
-                <div>
-                    <h2>What</h2>
-                    Exclusive MF DOOM AR NFTs
-                </div>
-                <div>
-                    <h2>Auction closes</h2>
-                    October 30th 2020 6:00pm PDT
-                </div>
-                <div>
-                    <h2>Auction</h2>
-                    Limited Run NFT AR Pieces
-                </div>
-            </div>
-            <div class="w1">
-                <div class="w1" style="background-image:url('images/doom2.png'); height:50vw; margin:-11vw 0 -20vw;background-size:40%;background-repeat:no-repeat;background-position:50% 0"></div>
-
-                <div class="flex wrap w1" style="margin-bottom:180px;">
-                    <div>
-                        <h1>Lot MF-09</h1>
-                        <div class="br" style="float:left;width:64px;"></div>
-
-                        <model-viewer ar ios-src="assets/models/15656630424036753581450935940596632215884383929372546170587529153151943392229.usdz" src="assets/models/15656630424036753581450935940596632215884383929372546170587529153151943392229.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
-
-                        <div class="button w5" onclick="location.hash='lot?609'">Place Bid</div>
-                        
-                    </div>
-                    <div>
-                        <h1>Lot MF-10</h1>
-                        <div class="br" style="float:left;width:64px;"></div>
-                        <model-viewer ar ios-src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.usdz" src="assets/models/70937556211959927769088791688503419832872233678974511813637293239899188185264.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
-                        <div class="button w5" onclick="location.hash='lot?610'">Place Bid</div>
-                        
-                    </div>
-                    <div style="">
-                        <h1>Lot MF-11</h1>
-                        <div class="br" style="float:left;width:64px;"></div>
-            
-
-                        <model-viewer ar ios-src="assets/models/8456350751317975846800924683986100177337207567287562046240586730923411985742.usdz" src="assets/models/8456350751317975846800924683986100177337207567287562046240586730923411985742.gltf" style="position:relative;" auto-rotate camera-controls alt="Ain" background-color="#455A64"></model-viewer>
-
-
-                        <div class="button w5" onclick="location.hash='lot?611'">Place Bid</div>
-                        
-                    </div>
-                </div>
-                <div>
-                    <h1>MF DOOM</h1>
-                    Halloween Collection Volume Two<br><br>
-
-                Till the end of days he will be the ill Doomsayer… The days are strung up on that cross-quarter half light, Samhain, All souls - Halloween. And as the darkness draws in and the evenings give way to fire-spit crackle; long shadowed children (perhaps wearing masks on top of masks) search for plague free treats. In a period of seasonal shift, the prophet of doom always sounds louder, perhaps it is the cold slowing atoms, amplifying rhymes - perhaps it really is the end times. Time will tell. But a mask is suddenly far more desirable and if the streets are infected we can provide a panacea. Drawing on the golden age comic inspiration of the original Metal Face, the first Halloween auction consists of two extremely limited hand crafted masks, redolent of the original Dr (he of namesake and tentacle) they reflect the two aspects - shadow and growth. Hand drawn textures conjure comic pages, upturned eyes assure you that they are still something that the baddest villain of them all would wear apocalypse or not.
-                    </div>
-            </div>
-        `
-    },
     sellAsset(){
         let date=new Date(new Date().toString().split('GMT')[0]+' UTC').toISOString().split('.')[0]
-        console.log(date)
+       //console.log(date)
         return /*html*/`
             <h2>Create Auction</h2>
             <form>
@@ -1563,13 +1414,13 @@ var elements = {
                 <input class="auction__input" id="js-start_price" type='number' step='0.002' value='0.0000' /> 
                 <div class="button" onclick="market.beginAuction()">Begin Auction</div>
             </form>
-            <a href="javascript(void)" onclick="changePage()">Cancel</a>
+            <a onclick="changePage()">Cancel</a>
 
         `
     },
     updateTagUrl:(tagQuery) => {
         let newUrl = '#market?tags=' + tagQuery.value
-        console.log(tagQuery)
+       //console.log(tagQuery)
         window.location.hash = newUrl;
     },
     shareSheet:(link, el) => {

@@ -112,26 +112,27 @@ userAPI.get('/:u/:sig', (req, res) => {
                 }
             }, function (errorObject) {
                 console.log("The read failed: " + errorObject.code);
+                res.send("no account");
             });
         }else{ 
             try{
-                // //ref database
+                //ref database
                 // var ref = db.ref(`users/${address}`);
                 
                 // ref.on("value", function(snapshot) {
                 //     let info=snapshot.val();
                 //     if(info==null){
-                //         res.send("no account");
+                //         res.send(qAddress, address)
                 //     }else{
                 //         res.send(snapshot.val());
                 //     }
                 // }, function (errorObject) {
                 //     console.log("The read failed: " + errorObject.code);
+                //     res.send(qAddress, address)
                 // });
-
-                res.send(qAddress, address)
+                res.send(address);
             }catch(e){
-                res.send(qAddress, address)
+                res.send(address)
             };
         }
     }catch(e){
@@ -174,7 +175,7 @@ exports.users = functions.https.onRequest(userAPI);
 //console.log(hydra.chains.illustMarket);
 
 //let provider = ethers.getDefaultProvider('homestead');
-let provider = ethers.getDefaultProvider('ropsten');
+let provider = ethers.getDefaultProvider('homestead');
 
 var ERCabi = [
     {
@@ -717,8 +718,9 @@ var ERCabi = [
     }
 ];
 //MAINNET ADD
-//var ERCaddress = '0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6';
-var ERCaddress = '0xa81ff27ed54f95a637c5a8c48ae0d993139f4ed2';
+var ERCaddress = '0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6';
+//ROP ADD
+//var ERCaddress = '0xa81ff27ed54f95a637c5a8c48ae0d993139f4ed2';
 var ERCcontract = new ethers.Contract(ERCaddress, ERCabi, provider);
 ERCcontract=ERCcontract.connect(provider);
 auctionAPI.get('/:q', (req, res) => {
@@ -738,17 +740,22 @@ auctionAPI.post('/sell', async(req, res) => {
 
     if(messageSigner.toLowerCase()==assetOwner.toLowerCase()){
         var ref = db.ref(`assets/${m.message.asset}`);
-        ref.once("value", (snapshot)=>{
-            let s=snapshot.val()
-            ref.child("currentAuction").set(s.currentAuction++||1)
-        });
-        var updates = {};
-        updates['/top_bidder'] = assetOwner;
-        updates['/price'] = m.message["start_price"];
-        updates['/start_price'] = m.message["start_price"];
-        updates['/end_date'] = m.message["end_date"];
+        try{
+            ref.once("value", (snapshot)=>{
+                let s=snapshot.val()
+                ref.child("currentAuction").set(s.currentAuction++||1)
+            });
+            var updates = {};
+            updates['/top_bidder'] = assetOwner;
+            updates['/price'] = m.message["start_price"];
+            updates['/start_price'] = m.message["start_price"];
+            updates['/end_date'] = m.message["end_date"];
 
-        ref.update(updates);
+
+            ref.update(updates);
+        }catch(e){
+            res.send(e)
+        }
                 
         res.send("Item successfully listed")
     }else{
@@ -762,26 +769,37 @@ auctionAPI.post('/bid', async(req, res) => {
     console.log(m)
     
     let messageSigner=ethers.utils.verifyMessage(JSON.stringify(m.message), m.sig);
-    
-    
-    var ref = db.ref(`assets/${m.message.asset}`);
-    ref.once("value", (snapshot)=>{
-        let s=snapshot.val()
-        console.log(s);
-        if(Number(m.message.amount)>Number(s.price)){
-            var userRef = db.ref(`users/${messageSigner}/bids/${m.message.asset}`);
-            userRef.set(m.message.amount);
-            var updates = {};
-            updates['/price'] = m.message["amount"];
-            updates['/top_bidder'] = messageSigner;
+    //const balance = await provider.getBalance(messageSigner);
 
-            ref.update(updates);
-                    
-            res.send("Bid successfully placed")
-        }else{
-            res.send(`Bid not placed, please bid more than ${s.price} ETH`)
-        }
-    });
+        var ref = db.ref(`assets/${m.message.asset}`);
+        ref.once("value", (snapshot)=>{
+            
+
+            let s=snapshot.val()
+            console.log(s);
+            if(Number(m.message.amount)>Number(s.price)){
+                var postsRef = ref.child("bids");
+                var newPostRef = postsRef.push();
+                m.message.bidder=messageSigner;
+                newPostRef.set(m.message);
+
+                try{
+                    var userRef = db.ref(`users/${messageSigner}/bids/${m.message.asset}`);
+                    userRef.set(m.message.amount);
+                }catch(e){
+                    console.log("could not find user");
+                }
+                var updates = {};
+                updates['/price'] = m.message["amount"];
+                updates['/top_bidder'] = messageSigner;
+
+                ref.update(updates);
+                        
+                res.send("Bid successfully placed")
+            }else{
+                res.send(`Bid not placed, please bid more than ${s.price} ETH`)
+            }
+        });
 });
 
 exports.market = functions.https.onRequest(auctionAPI);
