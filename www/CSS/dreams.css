@@ -125,9 +125,7 @@ float: left;
 }
 #content{
     top:96px;
-    padding-bottom:64px;
-    padding-top: 50px;
-    max-width: 1600px;
+    padding: 50px 96px 64px;
     margin: 0 auto;
     box-sizing: border-box;
 
@@ -636,14 +634,13 @@ a:active {
     flex-basis: 33%;
     text-align: left;
     padding: 30px;
-    align-self: flex-end;
+    /*align-self: flex-end;*/
     position: relative;
 
 }
 .lotAsset__viewer{
     flex-basis: 33%;
     position: relative;
-    padding-top: 35%;
     margin-bottom: 30px;
 }
 .lotAsset__auction{
@@ -929,6 +926,9 @@ helper classes should e used sparingly
     font-size: 80%;
 }
 
+.footerImg{
+    width: 25%;
+}
 @media (orientation: portrait) {
     .mobile{
         display: initial;
@@ -1060,6 +1060,9 @@ helper classes should e used sparingly
     }
     .auction__attribute{
         font-size: 16px;
+    }
+    .footerImg{
+        width: 100%;
     }
 }
 #collection #footer{

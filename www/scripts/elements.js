@@ -1,11 +1,19 @@
 var elements = {
     pages:{
         default: (p)=>{
-            p[1]="live"
-            return elements.pages.market(p);
+            if(provider&&provider.provider&&provider.provider.selectedAddress&&provider.provider.selectedAddress.toLowerCase()=="0x68291fa38468685fc27b612D48c6e46C06BAc0cE"){
+                alert("You have winning bids from the Brian Ziff collection. Please contact rob@illustagency.com to settle")
+            }
+            r=""
+            p[1]="creator=Brian%20Ziff"
+            r+= elements.pages.market(p);
+            // p[1]="creator=DOOM"
+            // r+= elements.pages.market(p);
+            return r
         },
         market(p){
             market.getAssets(p, market.displayAssets);
+            console.log(p);
             return /*html*/`
                 <div id="js-marketHeader"></div>
                 <div id="js-listings" class="market__collection">${elements.loading()}</div>
@@ -60,8 +68,8 @@ var elements = {
                                 Mint new asset (ERC721 smart contract)<br>
                                 <input id="assetMintID" placeholder="assetID" />
                                 <input id="assetMintUser" placeholder="User to mint asset ID under" />
-                                <input id="recipient1" placeholder="Fee recipient 1" />
-                                <input id="recipient2" placeholder="Fee recipient 2" />
+                                <input id="recipient1" placeholder="Fee recipient 1" value="0x1e958A0526B9F52a34e8D3930941B661784f242e" />
+                                <input id="recipient2" placeholder="Fee recipient 2" value="0x1e958A0526B9F52a34e8D3930941B661784f242e" />
                                 <input id="split" placeholder="Recipient 1 pecent / 100" />
                                 <div class="button" onclick="assets.invokeERC('a');">Mint Asset</div>
                             </div>
@@ -98,9 +106,7 @@ var elements = {
                     let vars=""
                    //console.log(m);
                    //console.log(assetData)
-                    if(assetData==undefined){
-                        assetData={};
-                    }
+                    assetData={};
                     for(v in m){
                         assetData[v]=m[v];
                         vars+=`${v}: <input id="asset_${v}" value="${m[v]}"></input><br>`
@@ -114,8 +120,25 @@ var elements = {
                             ${vars}
                         </div>
                         <div class="box">
+                            Add custom field
+                            <input id="fieldName" placeholder="Field Name"></input>
+                            <div class="button" onclick="addField(${a[1]})">add field</div>
+                        </div>
+                        <div class="box" style="background-color:#f6d397">
+                            Set Royalties
+                            Enabled (0/1):
+                            <input id="enabled" placeholder="Enabled (0/1)" value="1"></input>
+                            First sale (0/1):
+                            <input id="first_sale" ></input>
+                            Primary Percentage(Aggregate/100):
+                            <input id="primary_percentage" ></input>
+                            Secondary Percentage(Aggregate/100):
+                            <input id="percentage" ></input>
+                            <div class="button" onclick="market.invokeCustody('setRoyalties')">Set Royalties</div>
+                        </div>
+                        <div class="box">
                             Add animation_url (.gltf file)
-                            <div class="button" onclick="window.open('https://gofile.io/uploadFiles', '_blank');/*addField('animation_url');*/">Upload .gltf on Gofile</div>
+                            <div class="button" onclick="window.open('https://pinata.cloud', '_blank');/*addField('animation_url');*/">Upload .gltf</div>
                         </div>
                         <div class="box">
                             Begin Auction
@@ -123,11 +146,6 @@ var elements = {
                             Auction Close Time:
                             <input id="auction_close" type="datetime-local"></input>
                             <div class="button" onclick="auction.beginAuction()">Begin Auction</div>
-                        </div>
-                        <div class="box">
-                            Add custom field
-                            <input id="fieldName" placeholder="Field Name"></input>
-                            <div class="button" onclick="addField(${a[1]})">add field</div>
                         </div>
                         <div class="button" onclick="editAsset(${"'"+new ethers.BigNumber.from(a[1])+"'"})">Save Asset</div>
                     </div>
@@ -372,6 +390,10 @@ var elements = {
             }
         },
         account:async()=>{
+            
+            if(provider&&provider.provider&&provider.provider.selectedAddress&&provider.provider.selectedAddress.toLowerCase()=="0x68291fa38468685fc27b612D48c6e46C06BAc0cE"){
+                alert("You have winning bids from the Brian Ziff collection. Please contact rob@illustagency.com to settle")
+            }
             //document.getElementById("content").innerHTML=elements.connect();
             try{
                 //await account.login();
@@ -411,7 +433,12 @@ var elements = {
             `
         },
         asset:async(a)=>{
-            // await account.load()
+            account.load().then(()=>{
+            
+                if(provider&&provider.provider&&provider.provider.selectedAddress&&provider.provider.selectedAddress.toLowerCase()=="0x68291fa38468685fc27b612D48c6e46C06BAc0cE"){
+                    alert("You have winning bids from the Brian Ziff collection. Please contact rob@illustagency.com to settle")
+                }
+            })
             console.log("loading asset",`https://us-central1-illust.cloudfunctions.net/metadata/${a[1]}`)
             // await account.load()
             var request = new XMLHttpRequest(); 
@@ -490,7 +517,7 @@ var elements = {
                             <div class="auction__history">
                             `
                             console.log(hash);
-                            if(hash=="47365374795336020801871236186558194024311745115267511752163356511372176907504"){
+                            if(1){
                                 let bidArray=[]
                                 for(bid in m.bids){
                                     bidArray.push(m.bids[bid])
@@ -523,8 +550,12 @@ var elements = {
                             auctionDetails=/*html*/`
                                 <div class="auction__label">Time Remaining</div>
                                 <div class="auction__attribute" id="countdownBox"></div>
-                                <div class="auction__label" >${(m.price==m["start_price"])?"Reserve price":"Current Bid"}</div>
+                                <div class="auction__label" >${(m.price==m["start_price"])?"Starting price":"Current Bid"}</div>
                                 <div class="auction__attribute" id="priceBox">${m["price"]} ETH</div>
+                                ${(m.reserve)?`
+                                <div class="auction__label" >Reserve Price</div>
+                                <div class="auction__attribute">${m["reserve"]} ETH</div>
+                                `:""}
                                
                                 ${
                                     //check userr is not owner
@@ -553,10 +584,16 @@ var elements = {
                             `
                             try{
                                 if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
-                                    auctionDetails+=`Winner: ${m['top_bidder']}<br>Price: ${m.price}<br><div class='button' onclick="market.invokeCustody('listAsset', [${hash}, ${m.price}, '${m['top_bidder']}'])">Finalize Price</div>`
+                                    if(await assets.invokeERC('checkApproval')){
+                                        auctionDetails+=`Winner: ${m['top_bidder']}<br>Price: ${m.price}<br><div class='button' onclick="market.invokeCustody('listAsset', [${hash}, ${m.price}, '${m['top_bidder']}'])">Finalize Price</div>`
+
+                                    }else{
+                                        auctionDetails+=`You have not yet approved illust to trasact tokens on your behalf: please allow automatic transfer<br><div class='button' onclick="assets.invokeERC('r')">Allow transfer</div>`
+
+                                    }
                                 }
                                 else if(m['top_bidder'].toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
-                                    auctionDetails+=`You have won this auction<br>If seller has finalized price, please pay now<div class='button' onclick="market.invokeCustody('claim', [${hash}, ${m.price}])">Pay Now</div>`
+                                    auctionDetails+=`You have won this auction<br>If seller has finalized price, please pay now<div class='button' onclick="market.invokeCustody('pay', [${hash}, ${m.price}])">Pay Now</div>`
                                 }
                             }catch(e){
                                 console.log(e);
@@ -567,11 +604,11 @@ var elements = {
                         auctionDetails+="This asset is not for sale"
                     }
 
-                    if(owner&&owner!=""&&provider&&provider.provider&&owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
+                    if(owner&&owner!=""&&provider&&provider.provider&&provider.provider.selectedAddress&&owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
                         auctionDetails+=`<div class='button' onclick="document.getElementById('js-auctionDetails').innerHTML=elements.sellAsset()">${m["end_date"]?"Manage asset sale":"Sell Asset"}</div>`
                     }
     
-                    document.getElementById("assetBox").innerHTML= /*html*/`
+                    document.getElementById("content").innerHTML= /*html*/`
                         <div id="lotBox" class="lotAsset">
                             <h1 class="lotAsset__title">${name}</h1>
                             <ul class="lotAsset__linkouts">
@@ -584,11 +621,22 @@ var elements = {
                             </ul>
                             <div class="lotAsset__wrapper">
                                 <div class="lotAsset__content">
+                                           
                                     <div class="lotAsset__viewer">
-                                        <model-viewer class="lotAsset__model" ar  ios-src="${m.usdz||''}" src="${url}" auto-rotate camera-controls  alt="GreenMask"></model-viewer>
-                                        ${facePreviewHTML}    
-                                    </div>
+                                        ${//if there is an mp4 
+                                            m.mp4?`
+                                            
+                                            <video id="video" autoplay loop muted style="width:100%">
+                                                <source src="${m.mp4}" type="video/mp4">
+                                                Your browser does not support HTML video.
+                                            </video>
+                                        `://if there is no mp4
+                                        `
+                                            <model-viewer class="lotAsset__model" ar  ios-src="${m.usdz||''}" src="${url}" auto-rotate camera-controls  alt="GreenMask"></model-viewer>
+                                            ${facePreviewHTML}    
                                 
+                                        `}
+                                    </div>
                                     <div class="lotAsset__details">
                                         <h2 class="lotAsset__name">
                                             <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
@@ -598,7 +646,7 @@ var elements = {
                                         <div class="lotAsset__attribute">Created By: 
                                             <a href="#market?creator=${m.creator||'Illust'}">${m.creator||'Illust'}</a>
                                         </div>
-                                        <div class="lotAsset__attribute">${m.description}</div>
+                                        <div class="lotAsset__attribute">${m.description}${m.description2||""}</div>
                                         <div class="lotAsset__attribute">History:
                                             <a target="_blank" href="https://etherscan.io/token/0x40bd6c4d83dcf55c4115226a7d55543acb8a73a6?a=${hash}">Etherscan</a>
                                         </div>
@@ -617,18 +665,25 @@ var elements = {
                                         </div>
                                     </div>
                                     <div id="js-auctionDetails" class="lotAsset__auction">
-                                    ${auctionDetails}
+                                        ${auctionDetails}
+                                    </div>
                                 </div>
-                                </div>
+                            </div>
+                            <div>
+                                ${m.footer||""}
+                                ${(m.footer_img)?`
+                                    <img src='${m.footer_img}' class='footerImg'/ >
+                                `:""}
                             </div>
                         </div>
                     `
                     market.countdown();
+                    //changePage()
                 }
             }
             request.open("GET", `https://us-central1-illust.cloudfunctions.net/metadata/${a[1]}`);
             request.send()
-            
+            //changePage();
             return `<div id="assetBox"></div>`
         },
         claim:async(a)=>{
@@ -777,8 +832,14 @@ var elements = {
                                 if(owner.toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
                                     auctionDetails+=`Winner: ${m['top_bidder']}<br>Price: ${m.price}<br><div class='button' onclick="market.invokeCustody('listAsset', [${hash}, ${m.price}, '${m['top_bidder']}'])">Finalize Price</div>`
                                 }
-                                else if(m['top_bidder'].toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
-                                    auctionDetails+=`You have won this auction<br>If seller has finalized price, please pay now<div class='button' onclick="market.invokeCustody('claim', [${hash}, ${m.price}])">Pay Now</div>`
+                                else if(provider&&provider.provider&&m['top_bidder'].toLowerCase()==provider.provider.selectedAddress.toLowerCase()){
+                                    if(!localStorage.userInfo){
+                                        alert("Please sign in or create account with button on top left. If there are any questions on claiming your item, please contact us.")
+                                    }
+                                    auctionDetails+=`
+                                        You have won this auction<br>If seller has finalized price, please pay now
+                                        <div class='button' onclick="market.invokeCustody('claim', [${hash}, ${m.price}])">Pay Now</div>
+                                        <div>Please contact hello@illust.agency to claim your winning bid.</div>`
                                 }
                             }catch(e){
                                 console.log(e);
@@ -1362,8 +1423,8 @@ var elements = {
         `
     },
     collection:async()=>{
-        let res=await market.displayCollection()
-        return res;
+        account.loadCollection()
+        return elements.loading();
     
     },
     auction:()=>{

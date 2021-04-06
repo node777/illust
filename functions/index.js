@@ -42,6 +42,22 @@ metadataAPI.get('/', (req, res) => {
         res.send("The read failed: " + errorObject.code);
     });
 });
+
+metadataAPI.get('/collection/:a', (req, res) => {
+    var ref = db.ref(`collection/${req.params.a.toLowerCase()}`);
+        
+    ref.on("value", function(snapshot) {
+        res.send(snapshot.val());
+    }, function (errorObject) {
+        console.log("The read failed: " + errorObject.code);
+        res.send("The read failed: " + errorObject.code);
+    });
+});
+metadataAPI.get('/mint/:a/:u', (req, res) => {
+    var ref = db.ref(`collection/${req.params.a.toLowerCase()}/${req.params.u}`);
+        
+    ref.set(1);
+});
 metadataAPI.get('/:a', (req, res) => {
     var ref = db.ref(`assets/${req.params.a}`);
         

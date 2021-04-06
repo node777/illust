@@ -330,6 +330,22 @@ var account={
             alert("Please agree to the Terms of Service");
         }
     }, 
+    loadCollection(){
+        var request = new XMLHttpRequest(); 
+        request.onreadystatechange = function() {
+            if (request.readyState === 4) {
+                
+
+                account.collection=JSON.parse(request.response);
+                market.displayCollection();
+            }
+        }
+        //test api param
+        //request.open("GET", `http://localhost:5001/illust/us-central1/metadata/collection/${(provider&&provider.provider)?provider.provider.selectedAddress:""}`);
+        request.open("GET", `https://us-central1-illust.cloudfunctions.net/metadata/collection/${(provider&&provider.provider)?provider.provider.selectedAddress:""}`);
+        request.send();
+
+    },
     async connectProvider(){
         if(!provider){
             try{
@@ -903,7 +919,20 @@ var assets={
             var sendPromise = contract.mintAsset(assetId.toString(), ethers.utils.getAddress(document.getElementById("assetMintUser").value), ethers.utils.getAddress(document.getElementById("recipient1").value), ethers.utils.getAddress(document.getElementById("recipient2").value), Number(document.getElementById("split").value));
            //console.log(sendPromise)
             sendPromise.then(function(transaction) {
-                document.getElementById("data").innerHTML=(transaction);
+                alert(`Transaction Submitted: ${transaction}`);
+                
+                var request = new XMLHttpRequest(); 
+                request.onreadystatechange = function() {
+                    if (request.readyState === 4) {
+                        
+
+                        //alert(request.response);
+                    }
+                }
+                //test api param
+                //request.open("GET", `http://localhost:5001/illust/us-central1/metadata/collection/${(provider&&provider.provider)?provider.provider.selectedAddress:""}`);
+                request.open("GET", `https://us-central1-illust.cloudfunctions.net/metadata/collection/${document.getElementById("assetMintUser").value}/${assetId.toString()}`);
+                request.send();
             });
         }
         //setApproval
@@ -914,10 +943,11 @@ var assets={
             //let assetId=new ethers.BigNumber.from(document.getElementById("assetMintID").value);
             //console.log(assetId, assetId.toString(), assetId.to);
             //var sendPromise = contract.setApprovalForAll("0x7cca737DC640eC07943aA32736E834eCa9E4C4eC", 1);
-            var sendPromise = contract.setApprovalForAll("0x3EdCea6B637B1d308C74B4F89B17D951995a7a68", 1);
+            var sendPromise = contract.setApprovalForAll("0x1e958A0526B9F52a34e8D3930941B661784f242e", 1);
            //console.log(sendPromise)
             sendPromise.then(function(transaction) {
-                document.getElementById("data").innerHTML=(transaction);
+                alert(`Transaction submitted, please come back once ethereum blockchain has proccessed transaction`);
+                console.log(`${transaction}`)
             });
         }
         else if(w=="checkApproval"){
@@ -925,8 +955,9 @@ var assets={
             contract=await contract.connect(signer);
             //console.log(assetId, assetId.toString(), assetId.to);
             //var sendPromise = contract.setApprovalForAll("0x7cca737DC640eC07943aA32736E834eCa9E4C4eC", 1);
-            var sendPromise = await contract.isApprovedForAll(provider.provider.selectedAddress, "0x3EdCea6B637B1d308C74B4F89B17D951995a7a68");
+            var sendPromise = await contract.isApprovedForAll(provider.provider.selectedAddress, "0x1e958A0526B9F52a34e8D3930941B661784f242e");
            //console.log(sendPromise)
+           //sendPromise.then((tx)=>{console.log(tx)});
             return sendPromise;
         }
         //check balance of address
@@ -978,7 +1009,7 @@ var assets={
         let r="";
         let name;
         let vars="";
-        let displayPrice = ""
+        let displayPrice;
         console.log(m,a);
         if(m[a]){
             if(m[a].try_on){
@@ -988,10 +1019,13 @@ var assets={
             
             }
 
-            let endTime=new Date(m["end_date"]);
+            let endTime=new Date(m[a]["end_date"]);
             let timeNow=new Date(Date.now());
+            console.log(m[a].price,( endTime.getTime()< timeNow.getTime()))
+
             if(m[a].price&&endTime.getTime()>timeNow.getTime()){
                 displayPrice = parseFloat(m[a].price).toFixed(4) + ' ETH'
+                m[a].ending="AUCTION LIVE"
             }
             for(v in m[a]){
                 if(v=="animation_url"){
@@ -1061,7 +1095,7 @@ var market={
         let r={
             message:{
                 asset:asset,
-                "end_date":new Date(document.getElementById("js-end_date").value).getTime(),
+                "end_date":new Date(document.getElementById("js-end_date").value).toISOString(),
                 "start_price":document.getElementById("js-start_price").value
             }
         }
@@ -1080,26 +1114,30 @@ var market={
         request.send(JSON.stringify(r));
     },
     async bid(){
-        let asset=location.hash.split("?")[1]
-        let r={
-            message:{
-                asset:asset,
-                "amount":document.getElementById("js-bidAmount").value,
-                "timestamp":Date.now()
+        if(provider&&provider.provider&&provider.provider.selectedAddress){
+            let asset=location.hash.split("?")[1]
+            let r={
+                message:{
+                    asset:asset,
+                    "amount":document.getElementById("js-bidAmount").value,
+                    "timestamp":Date.now()
+                }
             }
-        }
-        r.sig = await account.sign(JSON.stringify(r.message))
-        
-        var request = new XMLHttpRequest(); 
-        request.onreadystatechange = function() {
-            if (request.readyState === 4) {
-                alert(request.response)
-                changePage().then(changePage())
+            r.sig = await account.sign(JSON.stringify(r.message))
+            
+            var request = new XMLHttpRequest(); 
+            request.onreadystatechange = function() {
+                if (request.readyState === 4) {
+                    alert(request.response)
+                    changePage().then(changePage())
+                }
             }
+            //request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/bid`);
+            request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/bid`);
+            request.send(JSON.stringify(r));
+        }else{
+            alert("Please login or create an account by clicking account button in the top left corner to submit a bid")
         }
-        //request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/bid`);
-        request.open("POST", `https://us-central1-illust.cloudfunctions.net/market/bid`);
-        request.send(JSON.stringify(r));
     },
     async invokeCustody(fn, p){
         let abi=[
@@ -1152,11 +1190,6 @@ var market={
                         "type": "address"
                     },
                     {
-                        "internalType": "uint256",
-                        "name": "price",
-                        "type": "uint256"
-                    },
-                    {
                         "internalType": "address payable",
                         "name": "royaltyReceiver1",
                         "type": "address"
@@ -1207,12 +1240,7 @@ var market={
                 "inputs": [
                     {
                         "internalType": "address payable",
-                        "name": "royaltyReceiver1",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "address payable",
-                        "name": "royaltyReceiver2",
+                        "name": "royaltyReceiver",
                         "type": "address"
                     },
                     {
@@ -1245,11 +1273,6 @@ var market={
                     },
                     {
                         "internalType": "bool",
-                        "name": "automaticPrice",
-                        "type": "bool"
-                    },
-                    {
-                        "internalType": "bool",
                         "name": "firstSale",
                         "type": "bool"
                     },
@@ -1262,21 +1285,6 @@ var market={
                         "internalType": "uint8",
                         "name": "initialRoyaltyPercentage",
                         "type": "uint8"
-                    },
-                    {
-                        "internalType": "uint8",
-                        "name": "royaltySplitPercentage",
-                        "type": "uint8"
-                    },
-                    {
-                        "internalType": "address payable",
-                        "name": "royaltyReceiver1",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "address payable",
-                        "name": "royaltyReceiver2",
-                        "type": "address"
                     }
                 ],
                 "name": "setRoyalties",
@@ -1342,11 +1350,6 @@ var market={
                     },
                     {
                         "internalType": "bool",
-                        "name": "autoPrice",
-                        "type": "bool"
-                    },
-                    {
-                        "internalType": "bool",
                         "name": "firstSale",
                         "type": "bool"
                     },
@@ -1359,21 +1362,6 @@ var market={
                         "internalType": "uint8",
                         "name": "royaltyPercentage",
                         "type": "uint8"
-                    },
-                    {
-                        "internalType": "uint8",
-                        "name": "royaltySplitPercentage",
-                        "type": "uint8"
-                    },
-                    {
-                        "internalType": "address payable",
-                        "name": "royaltyReceiver1",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "address payable",
-                        "name": "royaltyReceiver2",
-                        "type": "address"
                     }
                 ],
                 "stateMutability": "view",
@@ -1393,6 +1381,19 @@ var market={
                         "internalType": "uint256",
                         "name": "price",
                         "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "tokenContract",
+                "outputs": [
+                    {
+                        "internalType": "address payable",
+                        "name": "",
+                        "type": "address"
                     }
                 ],
                 "stateMutability": "view",
@@ -1433,8 +1434,342 @@ var market={
                 "type": "function"
             }
         ]
+        //old abi
+        // let abi=[
+        //     {
+        //         "inputs": [
+        //             {
+        //                 "internalType": "bool",
+        //                 "name": "enable",
+        //                 "type": "bool"
+        //             }
+        //         ],
+        //         "name": "allowMinting",
+        //         "outputs": [],
+        //         "stateMutability": "nonpayable",
+        //         "type": "function"
+        //     },
+        //     {
+        //         "inputs": [
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "asset",
+        //                 "type": "uint256"
+        //             },
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "price",
+        //                 "type": "uint256"
+        //             },
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "winner",
+        //                 "type": "address"
+        //             }
+        //         ],
+        //         "name": "listAsset",
+        //         "outputs": [],
+        //         "stateMutability": "nonpayable",
+        //         "type": "function"
+        //     },
+        //     {
+        //         "inputs": [
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "tokenID",
+        //                 "type": "uint256"
+        //             },
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "owner",
+        //                 "type": "address"
+        //             },
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "price",
+        //                 "type": "uint256"
+        //             },
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "royaltyReceiver1",
+        //                 "type": "address"
+        //             },
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "royaltyReceiver2",
+        //                 "type": "address"
+        //             },
+        //             {
+        //                 "internalType": "uint8",
+        //                 "name": "royaltySplitPercentage",
+        //                 "type": "uint8"
+        //             }
+        //         ],
+        //         "name": "mint",
+        //         "outputs": [],
+        //         "stateMutability": "payable",
+        //         "type": "function"
+        //     },
+        //     {
+        //         "inputs": [
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "asset",
+        //                 "type": "uint256"
+        //             }
+        //         ],
+        //         "name": "pay",
+        //         "outputs": [],
+        //         "stateMutability": "payable",
+        //         "type": "function"
+        //     },
+        //     {
+        //         "inputs": [
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "AinsophContractAddress",
+        //                 "type": "address"
+        //             }
+        //         ],
+        //         "name": "setAinsophContract",
+        //         "outputs": [],
+        //         "stateMutability": "nonpayable",
+        //         "type": "function"
+        //     },
+        //     {
+        //         "inputs": [
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "royaltyReceiver1",
+        //                 "type": "address"
+        //             },
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "royaltyReceiver2",
+        //                 "type": "address"
+        //             },
+        //             {
+        //                 "internalType": "uint8",
+        //                 "name": "royaltyPercentage",
+        //                 "type": "uint8"
+        //             },
+        //             {
+        //                 "internalType": "uint8",
+        //                 "name": "royaltySplitPercentage",
+        //                 "type": "uint8"
+        //             }
+        //         ],
+        //         "name": "setDefaultRoyalties",
+        //         "outputs": [],
+        //         "stateMutability": "nonpayable",
+        //         "type": "function"
+        //     },
+        //     {
+        //         "inputs": [
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "asset",
+        //                 "type": "uint256"
+        //             },
+        //             {
+        //                 "internalType": "bool",
+        //                 "name": "enabled",
+        //                 "type": "bool"
+        //             },
+        //             {
+        //                 "internalType": "bool",
+        //                 "name": "automaticPrice",
+        //                 "type": "bool"
+        //             },
+        //             {
+        //                 "internalType": "bool",
+        //                 "name": "firstSale",
+        //                 "type": "bool"
+        //             },
+        //             {
+        //                 "internalType": "uint8",
+        //                 "name": "percentage",
+        //                 "type": "uint8"
+        //             },
+        //             {
+        //                 "internalType": "uint8",
+        //                 "name": "initialRoyaltyPercentage",
+        //                 "type": "uint8"
+        //             },
+        //             {
+        //                 "internalType": "uint8",
+        //                 "name": "royaltySplitPercentage",
+        //                 "type": "uint8"
+        //             },
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "royaltyReceiver1",
+        //                 "type": "address"
+        //             },
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "royaltyReceiver2",
+        //                 "type": "address"
+        //             }
+        //         ],
+        //         "name": "setRoyalties",
+        //         "outputs": [],
+        //         "stateMutability": "nonpayable",
+        //         "type": "function"
+        //     },
+        //     {
+        //         "inputs": [
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "price",
+        //                 "type": "uint256"
+        //             },
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "asset",
+        //                 "type": "uint256"
+        //             }
+        //         ],
+        //         "name": "setTokenPrice",
+        //         "outputs": [],
+        //         "stateMutability": "nonpayable",
+        //         "type": "function"
+        //     },
+        //     {
+        //         "inputs": [],
+        //         "stateMutability": "nonpayable",
+        //         "type": "constructor"
+        //     },
+        //     {
+        //         "inputs": [
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "amount",
+        //                 "type": "uint256"
+        //             },
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "reciever",
+        //                 "type": "address"
+        //             }
+        //         ],
+        //         "name": "widthdraw",
+        //         "outputs": [],
+        //         "stateMutability": "nonpayable",
+        //         "type": "function"
+        //     },
+        //     {
+        //         "inputs": [
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "",
+        //                 "type": "uint256"
+        //             }
+        //         ],
+        //         "name": "assets",
+        //         "outputs": [
+        //             {
+        //                 "internalType": "bool",
+        //                 "name": "enabled",
+        //                 "type": "bool"
+        //             },
+        //             {
+        //                 "internalType": "bool",
+        //                 "name": "autoPrice",
+        //                 "type": "bool"
+        //             },
+        //             {
+        //                 "internalType": "bool",
+        //                 "name": "firstSale",
+        //                 "type": "bool"
+        //             },
+        //             {
+        //                 "internalType": "uint8",
+        //                 "name": "initialRoyaltyPercentage",
+        //                 "type": "uint8"
+        //             },
+        //             {
+        //                 "internalType": "uint8",
+        //                 "name": "royaltyPercentage",
+        //                 "type": "uint8"
+        //             },
+        //             {
+        //                 "internalType": "uint8",
+        //                 "name": "royaltySplitPercentage",
+        //                 "type": "uint8"
+        //             },
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "royaltyReceiver1",
+        //                 "type": "address"
+        //             },
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "royaltyReceiver2",
+        //                 "type": "address"
+        //             }
+        //         ],
+        //         "stateMutability": "view",
+        //         "type": "function"
+        //     },
+        //     {
+        //         "inputs": [
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "asset",
+        //                 "type": "uint256"
+        //             }
+        //         ],
+        //         "name": "getRoyaltyPrice",
+        //         "outputs": [
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "price",
+        //                 "type": "uint256"
+        //             }
+        //         ],
+        //         "stateMutability": "view",
+        //         "type": "function"
+        //     },
+        //     {
+        //         "inputs": [
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "",
+        //                 "type": "uint256"
+        //             }
+        //         ],
+        //         "name": "winnigBids",
+        //         "outputs": [
+        //             {
+        //                 "internalType": "bool",
+        //                 "name": "enabled",
+        //                 "type": "bool"
+        //             },
+        //             {
+        //                 "internalType": "address payable",
+        //                 "name": "winner",
+        //                 "type": "address"
+        //             },
+        //             {
+        //                 "internalType": "uint256",
+        //                 "name": "price",
+        //                 "type": "uint256"
+        //             },
+        //             {
+        //                 "internalType": "bool",
+        //                 "name": "complete",
+        //                 "type": "bool"
+        //             }
+        //         ],
+        //         "stateMutability": "view",
+        //         "type": "function"
+        //     }
+        // ]
         //MAIN CONTRACT
-        let address="0x3EdCea6B637B1d308C74B4F89B17D951995a7a68";
+        let address="0x1e958A0526B9F52a34e8D3930941B661784f242e";
+        //OLD MAIN CONTRACT
+        //let address="0x3EdCea6B637B1d308C74B4F89B17D951995a7a68";
 
         //ROPSTEN CONTRACT
         //let address="0xA60A90D0FCFc3D1446355BF505B73756EE119B6B";
@@ -1448,8 +1783,8 @@ var market={
         if(fn=="listAsset"){
             let assetID=new ethers.BigNumber.from(location.hash.split("?")[1])
             console.log(assetID);
-            let assetPrice=(p[1]*(1000000000000000000)).toString();
-           //console.log(p[0], assetPrice, ethers.utils.getAddress(p[2]).toString());
+            let assetPrice=(Math.floor(p[1]*(1000000000000000000))).toString();
+           console.log(p[0], assetPrice, ethers.utils.getAddress(p[2]).toString());
             let r=custodyContract.listAsset(assetID, assetPrice, ethers.utils.getAddress(p[2]).toString());
             r.then((tx)=>{
                console.log(tx);
@@ -1464,17 +1799,27 @@ var market={
             let r=await custodyContract.setAinsophContract(p[0]);
            //console.log(r);
         }
+        else if(fn=="setRoyalties"){
+            let assetID=new ethers.BigNumber.from(location.hash.split("?")[1])
+            let enabled=document.getElementById("enabled").value;
+            let fs=document.getElementById("first_sale").value;
+            let percent=document.getElementById("percentage").value;
+            let primary_percentage=document.getElementById("primary_percentage").value;
+            let r=await custodyContract.setRoyalties(assetID,enabled,fs,percent,primary_percentage);
+           console.log(r);
+           alert(`Smart contract function Invoked with status ${r}`)
+        }
         else if(fn=="pay"){
             account.load()
             //console.log(p[0].toString(), p[0], location.hash.split("?")[1].toString())
             let assetID=new ethers.BigNumber.from(location.hash.split("?")[1])
-            let r=await custodyContract.pay(assetID, {
-                gasLimit: 750000,
-                value: (p[1]*(1000000000000000000)).toString()
+            let r=custodyContract.pay(assetID, {
+                gasLimit: 400000,
+                value: (Math.floor(p[1]*(1000000000000000000))).toString()
             });
             r.then((tx)=>{
                console.log(tx);
-               alert(tx);
+               alert('Payment submitted');
             }),(e)=>{
                 console.log(e);
             };
@@ -1503,6 +1848,15 @@ var market={
         else if(fn=="winningBids"){
             let r=await custodyContract.winnigBids(p[0]);
             return r;
+        }
+        else if(fn=="mint"){
+            let assetId=new ethers.BigNumber.from(document.getElementById("assetMintID").value);
+           //console.log(assetId, assetId.toString(), assetId.to);
+            var sendPromise = custodyContract.mintAsset(assetId.toString(), ethers.utils.getAddress(document.getElementById("assetMintUser").value), ethers.utils.getAddress(document.getElementById("recipient1").value), ethers.utils.getAddress(document.getElementById("recipient2").value), Number(document.getElementById("split").value));
+           //console.log(sendPromise)
+            sendPromise.then(function(transaction) {
+                document.getElementById("data").innerHTML=(transaction);
+            });
         }
 
     },
@@ -1553,8 +1907,9 @@ var market={
                     //\check if asset has tags 
                     
                     let creator=assets.tokens[a].creator||"Illust"
+                    console.log(creator, creators)
                    //console.log(creator, creators)
-                    if(creator.toLowerCase()==(creators[0]).toLowerCase()){
+                    if(creator.toLowerCase()==(creators[0]).toLowerCase().replace("%20", " ")){
                         m[a]=assets.tokens[a];
                         marketHeaderFilter = /*html*/`<div class="market__filterHeading">: ${creator}</div>`
                     }
@@ -1590,10 +1945,13 @@ var market={
                 }
             } else if (p1[0]=="live"){
                 
-                marketHeaderFilter = /*html*/`<img class="market__bannerImage" alt="black sludge banner 03/11/2021" src="/assets/banner.png"/>`
+                marketHeaderFilter = /*html*/`<img class="market__bannerImage" alt="black sludge banner 03/11/2021" src="/assets/BrianZiffBanner.png"/>`
                 for(a in assets.tokens){
-                    //check if asset is featured 
-                    if(assets.tokens[a].currentAuction&&a!=777){
+                    //check if asset is featured
+                    let endTime= new Date(assets.tokens[a]["end_date"]);
+                    let timeNow=new Date(Date.now());
+
+                    if(assets.tokens[a].end_date&&endTime.getTime()>timeNow.getTime()&&a!=777&&a!="8456350751317975846800924683986100177337207567287562046240586730923411985742"){
                         m[a]=assets.tokens[a];
                     }
                 }
@@ -1675,21 +2033,24 @@ var market={
         //console.log(assets.tokens)
         if(assets.tokens&&assets.tokens!={}&&Object.keys(assets.tokens).length>0){
             //console.log(assets.tokens, account.info.collection);
-            if(account.info.collection){
-                console.log("collection found")
+            if(account.collection&&account.collection!=""){
+                
+                console.log("collection found", account.collection)
                 let r=/*html*/`<div class='profileAssets__collectionItem'>`
-                for(a in account.info.collection){
+                for(a in account.collection){
                     //console.log(a, assets.tokens, assets.tokens[a])
                     r+=assets.displayAsset(a, assets.tokens);
                 }
                 r+="</div>"
-                document.getElementById('js-profileContents')?document.getElementById('js-profileContents').innerHTML=r:()=>{};
+                document.getElementById('js-profileContents').innerHTML=r;
                 console.log(r);
                 return r;
             }
             else{
                 console.log("NO COLLECTION");
-                return /*html*/`
+
+                document.getElementById('js-profileContents').innerHTML=
+                /*html*/`
                     <span>You have no collection: <a href="https://app.illust.space" style="color:var(--color4);">Start Collecting</a></span>
                     
                 `
@@ -1697,7 +2058,7 @@ var market={
         }
         else{
             console.log("fetching data")
-            market.getAssets(p, market.displayCollection);
+            market.getAssets(p, account.loadCollection);
             return elements.loading();
         }
         
@@ -1714,10 +2075,12 @@ var auction={
         document.getElementById("varBox").innerHTML+=`End date <input id="asset_end" value='${document.getElementById("end_date_input").value}'></input> Initial Price <input id="asset_price" value='${document.getElementById("price_input").value}'></input>`
     },
     "beginAuction":()=>{
-        assetData["end_date"]=document.getElementById("auction_close").value;
-        document.getElementById("varBox").innerHTML+=`end_date:<input id="asset_end_date" value='${document.getElementById("auction_close").value}'></input>`
-        assetData["starting_bid"]=document.getElementById("auction_starting_bid").value;
-        document.getElementById("varBox").innerHTML+=`starting_bid:<input id="asset_starting_bid" value='${document.getElementById("auction_starting_bid").value}'></input>`
+        assetData["end_date"]=new Date(document.getElementById("auction_close").value).toISOString();
+        document.getElementById("varBox").innerHTML+=`end_date:<input id="asset_end_date" value='${new Date(document.getElementById("auction_close").value).toISOString()}'></input>`
+        assetData["starting_price"]=document.getElementById("auction_starting_bid").value;
+        document.getElementById("varBox").innerHTML+=`starting_price:<input id="asset_starting_price" value='${document.getElementById("auction_starting_bid").value}'></input>`
+        assetData["price"]=document.getElementById("auction_starting_bid").value;
+        document.getElementById("varBox").innerHTML+=`price:<input id="asset_price" value='${document.getElementById("auction_starting_bid").value}'></input>`
     }
 }
 
@@ -1971,7 +2334,8 @@ async function editAsset(a){
     request.onreadystatechange = function() {
         if (request.readyState === 4) {
             
-            alert(`${request.responseText}`);
+            alert(`Asset updated`);
+            //alert(`${request.responseText}`);
         }
     }
     request.open("POST", `https://us-central1-illust.cloudfunctions.net/metadata/edit/${a}/${s}`);
